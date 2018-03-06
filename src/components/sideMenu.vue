@@ -72,32 +72,11 @@ export default {
       return this.$route.path;
     },
     onRouteKeys() {
-      // const getParentArray = (path, ms, kas = []) => {
-      //   if (ms && ms.length > 0) {
-      //     for (let k = 0, length = ms.length; k < length; k++) {
-      //       if (path == ms[k].href) {
-      //         kas.push(ms[k].href);
-      //         break;
-      //       }
-      //       let i = kas.length;
-      //       if (ms[k].children && ms[k].children.length > 0) {
-      //         getParentArray(path, ms[k].children, kas);
-      //       }
-      //       if (i < kas.length) {
-      //         kas.push(ms[k].href);
-      //       }
-      //     }
-      //   }
-      //   return kas.reverse();
-      // };
-      let obj=new Object();
       const getParentArray = (path, ms, kas = []) => {
         if (ms && ms.length > 0) {
           for (let k = 0, length = ms.length; k < length; k++) {
             if (path == ms[k].href) {
-              obj.href = ms[k].href;
-              obj.name = ms[k].name;
-              kas.push(obj);
+              kas.push(ms[k].href);
               break;
             }
             let i = kas.length;
@@ -105,9 +84,7 @@ export default {
               getParentArray(path, ms[k].children, kas);
             }
             if (i < kas.length) {
-              obj.href = ms[k].href;
-              obj.name = ms[k].name;
-              kas.push(obj);
+              kas.push(ms[k].href);
             }
           }
         }
