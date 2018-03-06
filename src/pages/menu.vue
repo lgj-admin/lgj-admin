@@ -32,7 +32,7 @@
                   <el-input v-model="form.href"></el-input>
                 </el-form-item>
                 <el-form-item label="图标" :label-width="formLabelWidth">
-                  <i :class="form.icon" v-model="form.icon"></i>
+                  <i :class="form.icon" ></i>
                   <el-button type="text" @click="selectIconDialog=true">选择</el-button>
                 </el-form-item>
                 <el-form-item label="" :label-width="formLabelWidth">
