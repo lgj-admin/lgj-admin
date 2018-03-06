@@ -1,7 +1,7 @@
 <template>
     <panpel class="home">
         <div slot="header"><a href="#">首页啊啊啊</a></div>
-        <div slot="body">改完了</div>
+        <div slot="body">我添加了组织改完了</div>
     </panpel>
 </template>
 
