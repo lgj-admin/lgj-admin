@@ -690,7 +690,8 @@ export default {
             this.updateTreeNode(this.menuTree, merge({}, this.form));
           });
       }
-    }
+    },
+
   }
 };
 </script>
