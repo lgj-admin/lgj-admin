@@ -30,6 +30,7 @@ module.exports = {
       'pages':resolve('src/pages'),
       'common':resolve('src/common'),
       'base':resolve('src/base'),
+      'config':resolve('src/config'),
     }
   },
   module: {
