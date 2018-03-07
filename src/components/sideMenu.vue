@@ -6,7 +6,7 @@
                  :default-active="onRoutes"
                  :default-openeds="onRouteKeys"
                  class="el-menu-style"
-                 @open="handleOpen" 
+                 @open="handleOpen"
                  @close="handleClose"
                  theme="light" router  @select="handleSelect">
           <div v-for="(item,index) in menuList" :key='index'>
@@ -19,6 +19,8 @@
 </template>
 <script>
 import subMenu from "./subMenu.vue";
+import { getCurrentMenu } from "config/utils";
+import { mapMutations } from "vuex";
 
 export default {
   props: {
@@ -30,7 +32,7 @@ export default {
       menuList: [
         {
           id: 1,
-          href: "/home",
+          href: "/",
           name: "菜单管理",
           icon: "fa fa-id-badge",
           children: [
@@ -60,10 +62,16 @@ export default {
     };
   },
   mounted() {
-    let route = this.$route;
+    // let route = this.$route;
   },
   methods: {
-    handleSelect() {},
+    handleSelect(key, keyPath) {
+      const currentMenu = getCurrentMenu(key, this.menuList);
+      this.getCurrentMenu(currentMenu);
+    },
+    ...mapMutations({
+      getCurrentMenu: "GET_CURRENTMENU"
+    }),
     handleOpen() {},
     handleClose() {}
   },

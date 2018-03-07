@@ -8,7 +8,7 @@
                 <div class="content-view">
                     <div style="font-size:12px;margin-bottom:20px">
                       <el-breadcrumb separator="/">
-                        <el-breadcrumb-item  v-for="(item,index) in menuTree" :key="index" :to="{ path: item.href }">{{item.name}}</el-breadcrumb-item>
+                        <el-breadcrumb-item  v-for="(item,index) in currentMenu" :key="index" :to="{ path: item.href }">{{item.name}}</el-breadcrumb-item>
                       </el-breadcrumb>
                     </div>
                     <keep-alive>
@@ -26,6 +26,7 @@ import VHeader from "components/vHeader";
 import VAside from "components/aside";
 import SideMenu from "components/sideMenu";
 import VFooter from "components/footer";
+import { mapGetters } from "vuex";
 
 export default {
   name: "index",
@@ -69,6 +70,11 @@ export default {
     VAside,
     SideMenu,
     VFooter
+  },
+  computed:{
+    ...mapGetters([
+      'currentMenu'
+    ])
   }
 };
 </script>
