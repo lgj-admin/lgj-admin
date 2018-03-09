@@ -1,0 +1,46 @@
+.table {
+  display: table;
+  width: 100%;
+}
+
+.thead {
+  display: table-header-group;
+  border-bottom: 1px solid #ccc;
+  background-color: #eef1f6;
+}
+
+.tbody {
+  display: table-row-group;
+}
+
+.tr {
+  display: table-row;
+  vertical-align: middle;
+  border-bottom: 1px solid #ccc;
+}
+
+.thead .td {
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+.tbody .td {
+  color: #999999;
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+.tbody .tr {
+  border-bottom: 1px solid #ccc;
+}
+
+.td {
+  display: table-cell;
+  text-align: center;
+  padding: 10px;
+}
+
+table a:not(.btn),
+.table a:not(.btn) {
+  text-decoration: none;
+}

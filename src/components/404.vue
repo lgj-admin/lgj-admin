@@ -25,9 +25,6 @@
     margin: 10% auto auto auto;
   }
 
-  .error-page .errorWarp .image {
-  }
-
   .error-page .errorWarp .title {
     color: #666;
     font-size: 36px;

@@ -25,7 +25,7 @@
 import VHeader from "components/vHeader";
 import VAside from "components/aside";
 import SideMenu from "components/sideMenu";
-import VFooter from "components/footer";
+import VFooter from "components/vFooter";
 import { mapGetters } from "vuex";
 
 export default {
@@ -33,36 +33,6 @@ export default {
   data() {
     return {
       show: true,
-      menuTree: [
-        {
-          id: 1,
-          href: "/home",
-          name: "菜单管理",
-          icon: "fa fa-id-badge",
-          children: [
-            {
-              id: 2,
-              parentId: 1,
-              href: "/test",
-              name: "菜单列表",
-              icon: "fa fa-certificate"
-            },
-            {
-              id: 3,
-              parentId: 1,
-              href: "/home",
-              name: "首页列表",
-              icon: "fa fa-sitemap"
-            }
-          ]
-        },
-        {
-          id: 4,
-          href: "/menu",
-          name: "创建菜单",
-          icon: "fa fa-qrcode"
-        }
-      ]
     };
   },
   components: {
@@ -82,7 +52,6 @@ export default {
 <style scoped>
 .index {
   height: 100%;
-  background-color: #f5f5f5;
 }
 .v-header {
   position: fixed;
