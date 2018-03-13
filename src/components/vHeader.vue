@@ -1,10 +1,12 @@
 <template>
     <div class="v-header">
         <div class="v-header-wraper">
-            <a href="#">Admin</a>
+            <div class="header-left">
+              <a href="#">来管家后台管理</a>
+            </div>
             <nav>
-                <div></div>
-                <div class="nav-right">arronwjn</div>
+                <div class="nav-padding nav-name"><span>arronwjn</span></div>
+                <a class="nav-padding nav-out">退出</a>
             </nav>
         </div>
     </div>
@@ -25,18 +27,29 @@ export default {
   height: 40px;
   line-height: 38px;
   box-shadow: 0 2px 3px hsla(0, 0%, 7%, 0.1), 0 0 0 1px hsla(0, 0%, 7%, 0.1);
-  color: #48576a;
-  background-color:#fff;
+  color: #fff;
+  background-color:#2c3e50;
+  font-size:14px;
 }
 .v-header-wraper {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 10px;
+}
+.header-left{
+  width:200px;
+  text-align: center;
 }
 nav {
   display: flex;
   justify-content: space-around;
+}
+nav .nav-padding{
+  padding: 0 5px;
+}
+nav .nav-out{
+  padding-right:20px;
+  cursor:pointer;
 }
 </style>
 
