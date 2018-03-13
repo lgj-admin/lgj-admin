@@ -1,6 +1,6 @@
 <template>
   <aside class="main-sidebar animated">
-    <el-scrollbar tag="div" wrapClass="vue-scrollbar">
+    <!-- <el-scrollbar tag="div" wrapClass="vue-scrollbar"> -->
       <div class="sidebar">
         <el-menu
                  :default-active="onRoutes"
@@ -14,13 +14,14 @@
           </div>
         </el-menu>
       </div>
-    </el-scrollbar>
+    <!-- </el-scrollbar> -->
   </aside>
 </template>
 <script>
 import subMenu from "./subMenu.vue";
 import { getCurrentMenu } from "config/utils";
 import { mapMutations } from "vuex";
+import { menuList } from "../mock/dataBase";
 
 export default {
   props: {
@@ -28,40 +29,11 @@ export default {
   },
   data() {
     return {
-      uniqueOpened: true,
-      menuList: [
-        {
-          id: 1,
-          href: "/",
-          name: "菜单管理",
-          icon: "fa fa-id-badge",
-          children: [
-            {
-              id: 2,
-              parentId: 1,
-              href: "/test",
-              name: "菜单列表",
-              icon: "fa fa-certificate"
-            },
-            {
-              id: 3,
-              parentId: 1,
-              href: "/home",
-              name: "首页列表",
-              icon: "fa fa-sitemap"
-            }
-          ]
-        },
-        {
-          id: 4,
-          href: "/menu",
-          name: "创建菜单",
-          icon: "fa fa-qrcode"
-        }
-      ]
+      uniqueOpened: true
     };
   },
-  mounted() {
+  created() {
+    this.menuList = menuList;
     // let route = this.$route;
   },
   methods: {
@@ -119,25 +91,16 @@ export default {
 
 .main-sidebar {
   width: 201px;
-  background-color: #ffffff;
+  background-color: #2c3e50;
+  box-shadow: 0px 0 20px hsla(0, 0%, 7%, 0.1), 0 0 0 1px hsla(0, 0%, 7%, 0.1);
   z-index: 810;
   -webkit-transition: -webkit-transform 0.3s ease-in-out, width 0.3s ease-in-out;
   -moz-transition: -moz-transform 0.3s ease-in-out, width 0.3s ease-in-out;
   -o-transition: -o-transform 0.3s ease-in-out, width 0.3s ease-in-out;
   transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
 }
-
 .expandSide {
   width: 230px;
-}
-
-.el-menu-style,
-.el-menu-style .el-menu {
-  background-color: #ffffff;
-}
-.el-menu-style .el-menu-item:hover,
-.el-menu-style .el-submenu__title:hover {
-  background-color: #eeeeee !important;
 }
 
 .el-menu-style .el-submenu .el-menu-item {
@@ -160,10 +123,10 @@ export default {
   padding-left: 13px !important;
 }
 
-.vue-scrollbar {
+/* .vue-scrollbar {
   background-color: #ffffff !important;
   height: calc(100vh - 50px);
-}
+} */
 
 .main-sidebar .el-scrollbar__bar.is-vertical {
   display: none;
