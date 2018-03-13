@@ -29,8 +29,8 @@ export default {
   font-size: 14px;
 }
 .panpel-wrapper {
-  background-color: #fff;
-  padding: 10px;
+  background-color: #f5f5f5;
+  padding: 15px;
   padding-bottom: 5px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 6px 0 rgba(0, 0, 0, 0.04);
   border-radius: 4px;

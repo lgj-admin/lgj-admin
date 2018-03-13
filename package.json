@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "element-ui": "^1.4.8",
+    "element-ui": "^2.2.1",
     "font-awesome": "^4.7.0",
     "path-to-regexp": "^2.1.0",
     "vue": "^2.5.2",

@@ -30,8 +30,8 @@
       :validate-event="false"
       @focus="visible = true"
       @click="handleIconClick"
-        @mouseenter.native="inputHovering = true"
-        @mouseleave.native="inputHovering = false"
+      @mouseenter.native="inputHovering = true"
+      @mouseleave.native="inputHovering = false"
       :icon="iconClass">
     </el-input>
     <transition
@@ -67,10 +67,7 @@ import Locale from "element-ui/src/mixins/locale";
 import ElSelectMenu from "element-ui/packages/select/src/select-dropdown.vue";
 import Clickoutside from "element-ui/src/utils/clickoutside";
 import { addClass, removeClass, hasClass } from "element-ui/src/utils/dom";
-import {
-  addResizeListener,
-  removeResizeListener
-} from "element-ui/src/utils/resize-event";
+import {addResizeListener,removeResizeListener} from "element-ui/src/utils/resize-event";
 import treeter from "components/treeter";
 
 const sizeMap = {
@@ -81,11 +78,8 @@ const sizeMap = {
 
 export default {
   mixins: [Emitter, Locale, treeter],
-
   name: "ElSelectTree",
-
   componentName: "ElSelectTree",
-
   computed: {
     iconClass() {
       let criteria =
@@ -98,7 +92,6 @@ export default {
         this.value !== "";
       return criteria ? "circle-close is-show-close" : "caret-top";
     },
-
     emptyText() {
       if (this.loading) {
         return this.loadingText || this.t("el.select.loading");
@@ -110,11 +103,8 @@ export default {
       return null;
     }
   },
-
   components: { ElSelectMenu },
-
   directives: { Clickoutside },
-
   props: {
     name: String,
     value: {},
@@ -144,7 +134,6 @@ export default {
       }
     }
   },
-
   data() {
     return {
       selected: this.multiple ? [] : {},
@@ -159,7 +148,6 @@ export default {
       inputHovering: false
     };
   },
-
   watch: {
     value(val) {
       this.handleResize();
@@ -188,7 +176,6 @@ export default {
       this.$emit("visible-change", val);
     }
   },
-
   methods: {
     handleIconHide() {
       let icon = this.$el.querySelector(".el-input__icon");
@@ -196,14 +183,12 @@ export default {
         removeClass(icon, "is-reverse");
       }
     },
-
     handleIconShow() {
       let icon = this.$el.querySelector(".el-input__icon");
       if (icon && !hasClass(icon, "el-icon-circle-close")) {
         addClass(icon, "is-reverse");
       }
     },
-
     handleMenuEnter() {
       if (!this.dropdownUl) {
         this.dropdownUl = this.$refs.popper.$el.querySelector(
@@ -215,7 +200,6 @@ export default {
         this.resetMenuScroll();
       }
     },
-
     getOverflows() {
       if (this.dropdownUl && this.selected && this.selected.$el) {
         let selectedRect = this.selected.$el.getBoundingClientRect();
@@ -224,7 +208,6 @@ export default {
         this.topOverflow = selectedRect.top - popperRect.top;
       }
     },
-
     resetMenuScroll() {
       if (this.bottomOverflow > 0) {
         this.dropdownUl.scrollTop += this.bottomOverflow;
@@ -232,7 +215,6 @@ export default {
         this.dropdownUl.scrollTop += this.topOverflow;
       }
     },
-
     setSelected(ids) {
       if (!!ids) {
         if (this.multiple) {
@@ -254,7 +236,6 @@ export default {
         this.selectedLabel = "";
       }
     },
-
     handleIconClick(event) {
       if (this.iconClass.indexOf("circle-close") > -1) {
         this.deleteSelected(event);
@@ -262,15 +243,12 @@ export default {
         this.toggleMenu();
       }
     },
-
     doDestroy() {
       this.$refs.popper && this.$refs.popper.doDestroy();
     },
-
     handleClose() {
       this.visible = false;
     },
-
     managePlaceholder() {
       if (this.currentPlaceholder !== "") {
         this.currentPlaceholder = this.$refs.input.value
@@ -278,13 +256,11 @@ export default {
           : this.cachedPlaceHolder;
       }
     },
-
     resetInputState(e) {
       if (e.keyCode !== 8) this.toggleLastOptionHitState(false);
       this.inputLength = this.$refs.input.value.length * 15 + 20;
       this.resetInputHeight();
     },
-
     resetInputHeight() {
       this.$nextTick(() => {
         if (!this.$refs.reference) return;
@@ -301,9 +277,8 @@ export default {
         }
       });
     },
-
     handleTreeNodeClick(nodeData) {
-      console.log(nodeData,'dar2')
+      console.log(nodeData, "dar2");
       if (this.multiple) return;
       this.$emit("input", nodeData.id);
       this.visible = false;
@@ -312,7 +287,7 @@ export default {
       this.handleResize();
     },
     handleCheckChange(data, checked, indeterminate) {
-      console.log(data,'dar')
+      console.log(data, "dar");
       if (!this.multiple) return;
       this.selected = this.$refs.tree.getCheckedNodes();
       let tmpValue = [];
@@ -332,7 +307,6 @@ export default {
         this.visible = !this.visible;
       }
     },
-
     resetScrollTop() {
       let bottomOverflowDistance =
         this.options[this.hoverIndex].$el.getBoundingClientRect().bottom -
@@ -347,7 +321,6 @@ export default {
         this.dropdownUl.scrollTop += topOverflowDistance;
       }
     },
-
     deleteSelected(event) {
       event.stopPropagation();
       this.$emit("input", "");
@@ -355,7 +328,6 @@ export default {
       this.selectedLabel = "";
       this.visible = false;
     },
-
     deleteTag(event, tag) {
       let index = this.selected.indexOf(tag);
       if (index > -1 && !this.disabled) {
@@ -365,11 +337,9 @@ export default {
       }
       event.stopPropagation();
     },
-
     resetInputWidth() {
       this.inputWidth = this.$refs.reference.$el.getBoundingClientRect().width;
     },
-
     handleResize() {
       this.resetInputWidth();
       if (this.multiple) {
@@ -379,7 +349,6 @@ export default {
       }
     }
   },
-
   created() {
     this.cachedPlaceHolder = this.currentPlaceholder = this.placeholder;
     if (this.multiple && !Array.isArray(this.value)) {
@@ -391,7 +360,6 @@ export default {
     this.setSelected();
     this.$on("setSelected", this.setSelected);
   },
-
   mounted() {
     addResizeListener(this.$el, this.handleResize);
     this.$nextTick(() => {
@@ -400,7 +368,6 @@ export default {
       }
     });
   },
-
   beforeDestroy() {
     if (this.$el && this.handleResize)
       removeResizeListener(this.$el, this.handleResize);

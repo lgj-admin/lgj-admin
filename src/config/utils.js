@@ -16,7 +16,7 @@ export function getCurrentMenu(location,arrayMenu) {
         return current.reverse();
       }
     }
-    // return current.reverse();
+    return current.reverse();
   }
   return null;
 }

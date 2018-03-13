@@ -515,6 +515,7 @@
 import selectTree from "components/selectTree.vue";
 import merge from "element-ui/src/utils/merge";
 import Panpel from "base/panpel"
+import {menuList} from '../mock/dataBase'
 
 export default {
   components: {
@@ -531,36 +532,6 @@ export default {
         id: "id"
       },
       maxId: 7000000,
-      menuTree: [
-        {
-          id: 1,
-          href: "/home",
-          name: "菜单管理",
-          icon: "fa fa-id-badge",
-          children: [
-            {
-              id: 2,
-              parentId: 1,
-              href: "/test",
-              name: "菜单列表",
-              icon: "fa fa-certificate"
-            },
-            {
-              id: 3,
-              parentId: 1,
-              href: "/home",
-              name: "首页列表",
-              icon: "fa fa-sitemap"
-            }
-          ]
-        },
-        {
-          id: 4,
-          href: "/menu",
-          name: "创建菜单",
-          icon: "fa fa-qrcode"
-        }
-      ],
       form: {
         id: null,
         name: "",
@@ -573,6 +544,9 @@ export default {
         desc: ""
       }
     };
+  },
+  created(){
+    this.menuTree = menuList;
   },
   methods: {
     selectIcon(event) {

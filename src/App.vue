@@ -14,9 +14,9 @@ export default {
 </script>
 
 <style>
-html{
+/* html{
   font-size:14px;
-}
+} */
 html,body{
   height:100%;
 }
