@@ -4,6 +4,7 @@ import Home from 'pages/home'
 import Index from 'pages/index'
 import Menu from 'pages/menu'
 import NotFoundView from 'components/404.vue'
+import Order from 'pages/order'
 
 Vue.use(Router)
 
@@ -25,6 +26,10 @@ export default new Router({
         {
           path: '/menu',
           component: Menu
+        },
+        {
+          path:'/order',
+          component:Order
         },
         { path: '*', component: NotFoundView }
       ]

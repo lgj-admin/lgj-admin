@@ -45,6 +45,9 @@ export default {
     ...mapGetters([
       'currentMenu'
     ])
+  },
+  method:{
+    
   }
 };
 </script>

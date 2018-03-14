@@ -49,7 +49,6 @@
             <div slot="model-body" @submit="handlesubmit()">safasfasf</div>
         </model-box>
     </div>
-
 </template>
 
 <script>
