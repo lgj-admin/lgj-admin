@@ -45,8 +45,8 @@
                 </div>
             </div>
         </panpel>
-        <model-box>
-            <div slot="model-body" @submit="handlesubmit()">safasfasf</div>
+        <model-box @selectSubmit="handlesubmit()">
+            <div slot="model-body" >safasfasf</div>
         </model-box>
     </div>
 
