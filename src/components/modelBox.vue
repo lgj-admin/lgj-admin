@@ -1,21 +1,44 @@
 <template>
-  <div class="modelBox">
-      <div class="wrapper">
-          <div class="wrapper-body">
-              <slot name="model-body"></slot>
-          </div>
-          <div class="wrapper-footer">
-              <el-button @click="submit">提交</el-button>
-          </div>
-      </div>
-  </div>
+  <el-dialog
+      :title="title"
+      :visible.sync="centerDialogVisible"
+      width="30%"
+      :modal-append-to-body="true"
+      @close="$emit('update:show',false)"
+      center>
+      <slot name="dialog-body"></slot>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="Submit">提 交</el-button>
+      </span>
+  </el-dialog>
 </template>
 
 <script>
 export default {
-  methods: {
-    submit() {
-      this.$emit('selectSubmit');
+  data() {
+    return {
+      centerDialogVisible: this.show
+    };
+  },
+  props: {
+    show: {
+      type: Boolean,
+      default: false
+    },
+    title:{
+      type:String,
+      default:'提示'
+    }
+  },
+  methods:{
+    Submit(){
+      this.$emit('update:show',this.show);
+      this.$emit('selectSubmit')
+    }
+  },
+  watch: {
+    show() {
+      this.centerDialogVisible = this.show;
     }
   }
 };
@@ -40,7 +63,7 @@ export default {
   display: flex;
   justify-content: center;
 }
-.wrapper-body{
+.wrapper-body {
   margin: 0 auto;
 }
 </style>

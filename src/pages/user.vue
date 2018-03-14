@@ -1,5 +1,5 @@
 <template>
-    <div class="home">
+    <div class="user">
         <panpel>
             <div slot="header" class="header-content">
                 <div class="header-content-left">
@@ -18,37 +18,31 @@
                     <div class="body-table table">
                         <div class="thead body-table-thead">
                             <div class="tr">
-                                <div class="td">全部地区</div>
                                 <div class="td">昵称</div>
                                 <div class="td">手机号</div>
-                                <div class="td">服务技能</div>
-                                <div class="td">区域经理</div>
-                                <div class="td">大区经理</div>
+                                <div class="td">注册时间</div>
+                                <div class="td">注册地</div>
                                 <div class="td">操作</div>
                             </div>
                         </div>
                         <div class="tbody">
                             <div class="tr body-table-tr">
-                                <div class="td">太原</div>
                                 <div class="td">灰太狼</div>
                                 <div class="td">13756334567</div>
-                                <div class="td">日常清洗</div>
-                                <div class="td">马青</div>
-                                <div class="td">马庆</div>
+                                <div class="td">2018-02-11-12:23</div>
+                                <div class="td">太原</div>
                                 <div class="td">
-                                  <span @click="showmodelEdit = true">分配编辑</span>
+                                  <span>注销</span>
                                   <span>删除</span>
                                 </div>
                             </div>
                             <div class="tr body-table-tr">
-                                <div class="td">太原</div>
                                 <div class="td">灰太狼</div>
                                 <div class="td">13756334567</div>
-                                <div class="td">日常清洗</div>
-                                <div class="td">马青</div>
-                                <div class="td">马奇</div>
+                                <div class="td">2018-02-11-12:23</div>
+                                <div class="td">太原</div>
                                 <div class="td">
-                                  <span @click="showmodelEdit = true">分配编辑</span>
+                                  <span>注销</span>
                                   <span>删除</span>
                                 </div>
                             </div>
@@ -57,49 +51,19 @@
                 </div>
             </div>
         </panpel>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加员工">
+        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加用户">
           <div slot="dialog-body">
               <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-                  <el-form-item label="姓名" prop="name">
+                  <el-form-item label="昵称" prop="name">
                       <el-input v-model="ruleForm.name"></el-input>
                   </el-form-item>
                   <el-form-item label="手机号" prop="name">
                       <el-input v-model="ruleForm.name"></el-input>
                   </el-form-item>
-                  <el-form-item label="大区经理" prop="name">
+                  <el-form-item label="密码" prop="name">
                       <el-input v-model="ruleForm.name"></el-input>
                   </el-form-item>
-                  <el-form-item label="地区" prop="name">
-                      <el-input v-model="ruleForm.name"></el-input>
-                  </el-form-item>
-                  <el-form-item label="区域经理" prop="name">
-                      <el-input v-model="ruleForm.name"></el-input>
-                  </el-form-item>
-                  <el-form-item label="服务技能" prop="name">
-                      <el-input v-model="ruleForm.name"></el-input>
-                  </el-form-item>
-              </el-form>
-          </div>
-        </model-box>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodelEdit" title="分配编辑员工">
-          <div slot="dialog-body">
-              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-                  <el-form-item label="姓名" prop="name">
-                      <el-input v-model="ruleForm.name"></el-input>
-                  </el-form-item>
-                  <el-form-item label="手机号" prop="name">
-                      <el-input v-model="ruleForm.name"></el-input>
-                  </el-form-item>
-                  <el-form-item label="大区经理" prop="name">
-                      <el-input v-model="ruleForm.name"></el-input>
-                  </el-form-item>
-                  <el-form-item label="地区" prop="name">
-                      <el-input v-model="ruleForm.name"></el-input>
-                  </el-form-item>
-                  <el-form-item label="区域经理" prop="name">
-                      <el-input v-model="ruleForm.name"></el-input>
-                  </el-form-item>
-                  <el-form-item label="服务技能" prop="name">
+                  <el-form-item label="确认密码" prop="name">
                       <el-input v-model="ruleForm.name"></el-input>
                   </el-form-item>
               </el-form>
@@ -121,15 +85,8 @@ export default {
       rules: {
         name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
       },
-      editRuleForm:{
-
-      },
-      editRules:{
-
-      },
       searchValue: "",
-      showmodel: false,
-      showmodelEdit: false,
+      showmodel: false
     };
   },
   methods: {
@@ -174,9 +131,6 @@ export default {
 .body-table-tr {
   background-color: #fff;
   margin-top: 5px;
-}
-.body-table-tr span{
-  cursor: pointer;
 }
 </style>
 
