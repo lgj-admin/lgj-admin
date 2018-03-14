@@ -9,6 +9,7 @@ export const API_URL = {
         fetchUrl: ROOT_URL + '/public/portal/apiarticle/get_article_details',
         remark: '文章详情',
         method: 'POST',
+        writer:'李童'
         // tableName : 'ez_store',
     },
   
