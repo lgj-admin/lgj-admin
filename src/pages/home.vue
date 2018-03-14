@@ -55,7 +55,6 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
-
 export default {
   data() {
     return {
