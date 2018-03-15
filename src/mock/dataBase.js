@@ -23,7 +23,7 @@ export const menuList =[
   },
   {
     id: 4,
-    href: "/test",
+    href: "/user",
     name: "用户管理",
     icon: "fa fa-qrcode"
   }

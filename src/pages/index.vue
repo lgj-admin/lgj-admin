@@ -51,7 +51,8 @@ export default {
 
 <style scoped>
 .index {
-  height: 100%;
+  min-width: 1366px;
+  height:100%;
 }
 .v-header {
   position: fixed;
@@ -67,9 +68,11 @@ export default {
   display: flex;
   justify-content: space-between;
   padding-top: 40px;
+  overflow: hidden;
 }
 .content-view {
   flex: 1;
   padding: 20px;
+  overflow: auto;
 }
 </style>
