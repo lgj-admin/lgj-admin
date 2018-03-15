@@ -25,12 +25,18 @@ export const menuList =[
     id: 4,
     href: "/user",
     name: "用户管理",
-    icon: "fa fa-qrcode"
+    icon: "fa fa-user"
   },
   {
     id:5,
     href:"/order",
     name: "订单管理",
-    icon: "fa fa-book"
-  }
+    icon: "fa fa-first-order"
+  },
+  {
+    id: 6,
+    href: "/service",
+    name: "服务管理",
+    icon: "fa fa-server"
+  },
 ]

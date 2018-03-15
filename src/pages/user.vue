@@ -32,8 +32,8 @@
                                 <div class="td">2018-02-11-12:23</div>
                                 <div class="td">太原</div>
                                 <div class="td">
-                                  <span>注销</span>
-                                  <span>删除</span>
+                                  <a href="#">注销</a>
+                                  <a href="#">删除</a>
                                 </div>
                             </div>
                             <div class="tr body-table-tr">
@@ -42,11 +42,19 @@
                                 <div class="td">2018-02-11-12:23</div>
                                 <div class="td">太原</div>
                                 <div class="td">
-                                  <span>注销</span>
-                                  <span>删除</span>
+                                  <a href="#">注销</a>
+                                  <a href="#">删除</a>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="body-page">
+                        <el-pagination
+                            background
+                            layout="prev, pager, next"
+                            :total="1000"
+                        >
+                        </el-pagination>
                     </div>
                 </div>
             </div>
@@ -121,16 +129,16 @@ export default {
 .search-button {
   margin-left: 10px;
 }
-.body-content {
-  padding: 10px 0 20px 0;
-  font-size: 12px;
-}
 .body-table-thead {
   margin-bottom: 5px;
 }
 .body-table-tr {
   background-color: #fff;
   margin-top: 5px;
+}
+.body-page{
+  text-align: right;
+  padding:10px 0;
 }
 </style>
 

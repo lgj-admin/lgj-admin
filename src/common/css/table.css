@@ -3,12 +3,19 @@
   width: 100%;
   /* border-collapse: collapse; */
   border-spacing: 0 12px;
-}
+  font-size:14px;
 
+}
+.table>.table,.tbody>.tr>.td>span,a,div,i{
+  font-weight: 600;
+  vertical-align: middle;
+}
 .thead {
   display: table-header-group;
   border-bottom: 1px solid #ccc;
   background-color: #eef1f6;
+  font-weight: 600;
+  vertical-align: middle;
 }
 
 .tbody {
@@ -21,15 +28,8 @@
   border-bottom: 1px solid #ccc;
 }
 
-.thead .td {
-  font-weight: bold;
-  vertical-align: middle;
-}
-
 .tbody .td {
   color: #999999;
-  font-weight: bold;
-  vertical-align: middle;
 }
 
 .tbody .tr {

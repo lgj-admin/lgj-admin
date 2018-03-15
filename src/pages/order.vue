@@ -90,7 +90,7 @@ import Panpel from "base/panpel"
 
 <style type="text/css" scoped>
 	.body{
-		background-color: #fff;
+		/* background-color: #fff; */
 	}
 	.bottom{
 		padding: 10px 0;

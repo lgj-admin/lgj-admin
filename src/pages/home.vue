@@ -2,15 +2,25 @@
     <div class="home">
         <panpel>
             <div slot="header" class="header-content">
-                <div class="header-content-left">
-                    <el-input placeholder="请输入内容"
-                              v-model="searchValue"
-                              clearable>
-                    </el-input>
-                  <el-button class="search-button">搜索</el-button>
+                <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+                    <el-menu-item index="1">员工等级</el-menu-item>
+                    <el-menu-item index="2">员工管理</el-menu-item>
+                </el-menu>
+                <div class="bottom" v-show="activeIndex == 2">
+                    <div class="header-content-left">
+                        <el-input placeholder="请输入内容"
+                                  v-model="searchValue"
+                                  clearable>
+                        </el-input>
+                        <el-button class="search-button" >搜索</el-button>
+                    </div>
+                    <div class="header-content-right">
+                        <el-button @click="showmodel=true" >添加</el-button>
+                    </div>
                 </div>
-                <div class="header-content-right">
-                    <el-button @click="showmodel=true">添加</el-button>
+                <div class="bottom" v-show="activeIndex == 1">
+                    <el-button @click="setlevel=true">设置等级</el-button>
+                    <div></div>
                 </div>
             </div>
             <div slot="body">
@@ -79,8 +89,8 @@
                                 </div>
                                 <div class="td">二级</div>
                                 <div class="td">
-                                    <span @click="showmodelEdit = true">分配编辑</span>
-                                    <span>删除</span>
+                                    <a  href="#" @click="showmodelEdit = true">分配编辑</a>
+                                    <a href="#">删除</a>
                                 </div>
                             </div>
                             <div class="tr body-table-tr">
@@ -107,13 +117,13 @@
                                 </div>
                                 <div class="td">二级</div>
                                 <div class="td">
-                                  <span @click="showmodelEdit = true">分配编辑</span>
-                                  <span>删除</span>
+                                  <a  href="#" @click="showmodelEdit = true">分配编辑</a>
+                                  <a href="#">删除</a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="footer-page">
+                    <div class="body-page">
                         <el-pagination
                             background
                             layout="prev, pager, next"
@@ -125,114 +135,139 @@
             </div>
         </panpel>
         <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加员工">
-          <div slot="dialog-body">
-              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="30%">
-                  <el-form-item label="姓名" prop="name">
-                      <el-input v-model="ruleForm.name"></el-input>
-                  </el-form-item>
-                  <el-form-item label="手机号" prop="name">
-                      <el-input v-model="ruleForm.name"></el-input>
-                  </el-form-item>
-                  <el-form-item label="等级" prop="name">
-                      <el-select v-model="ruleForm.name" placeholder="员工等级">
-                          <el-option
-                                v-for="item in serviceSkills"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                          </el-option>
-                      </el-select>
-                  </el-form-item>
-                  <el-form-item label="大区经理" prop="name">
-                      <el-select v-model="ruleForm.name" placeholder="员工等级">
-                          <el-option
-                                v-for="item in serviceSkills"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                          </el-option>
-                      </el-select>
-                  </el-form-item>
-                  <el-form-item label="地区" prop="name">
-                      <el-select v-model="ruleForm.name" placeholder="员工等级">
-                          <el-option
-                                v-for="item in serviceSkills"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                          </el-option>
-                      </el-select>
-                  </el-form-item>
-                  <el-form-item label="区域经理" prop="name">
-                      <el-select v-model="ruleForm.name" placeholder="员工等级">
-                          <el-option
-                                v-for="item in serviceSkills"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                          </el-option>
-                      </el-select>
-                  </el-form-item>
-                  <el-form-item label="服务技能" prop="name">
-                      <el-checkbox-group
-                            v-model="checkedCities1"
-                      >
-                            <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
-                      </el-checkbox-group>
-                  </el-form-item>
-              </el-form>
-          </div>
+            <div slot="dialog-body">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="30%">
+                    <el-form-item label="姓名" prop="name">
+                        <el-input v-model="ruleForm.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="手机号" prop="name">
+                        <el-input v-model="ruleForm.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="等级" prop="name">
+                        <el-select v-model="ruleForm.name" placeholder="员工等级">
+                            <el-option
+                                  v-for="item in serviceSkills"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="大区经理" prop="name">
+                        <el-select v-model="ruleForm.name" placeholder="员工等级">
+                            <el-option
+                                  v-for="item in serviceSkills"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="地区" prop="name">
+                        <el-select v-model="ruleForm.name" placeholder="员工等级">
+                            <el-option
+                                  v-for="item in serviceSkills"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="区域经理" prop="name">
+                        <el-select v-model="ruleForm.name" placeholder="员工等级">
+                            <el-option
+                                  v-for="item in serviceSkills"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="服务技能" prop="name">
+                        <el-checkbox-group
+                              v-model="checkedCities1"
+                        >
+                              <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                </el-form>
+            </div>
         </model-box>
         <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodelEdit" title="分配编辑员工">
-          <div slot="dialog-body">
-              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-                  <el-form-item label="姓名" prop="name">
-                      <el-input v-model="ruleForm.name"></el-input>
-                  </el-form-item>
-                  <el-form-item label="手机号" prop="name">
-                      <el-input v-model="ruleForm.name"></el-input>
-                  </el-form-item>
-                  <el-form-item label="大区经理" prop="name">
-                      <el-select v-model="ruleForm.name" placeholder="员工等级">
-                          <el-option
-                                v-for="item in serviceSkills"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                          </el-option>
-                      </el-select>
-                  </el-form-item>
-                  <el-form-item label="地区" prop="name">
-                      <el-select v-model="ruleForm.name" placeholder="员工等级">
-                          <el-option
-                                v-for="item in serviceSkills"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                          </el-option>
-                      </el-select>
-                  </el-form-item>
-                  <el-form-item label="区域经理" prop="name">
-                      <el-select v-model="ruleForm.name" placeholder="员工等级">
-                          <el-option
-                                v-for="item in serviceSkills"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                          </el-option>
-                      </el-select>
-                  </el-form-item>
-                  <el-form-item label="服务技能" prop="name">
-                      <el-checkbox-group
-                            v-model="checkedCities1"
-                      >
-                            <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
-                      </el-checkbox-group>
-                  </el-form-item>
-              </el-form>
-          </div>
+            <div slot="dialog-body">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+                    <el-form-item label="姓名" prop="name">
+                        <el-input v-model="ruleForm.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="手机号" prop="name">
+                        <el-input v-model="ruleForm.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="大区经理" prop="name">
+                        <el-select v-model="ruleForm.name" placeholder="员工等级">
+                            <el-option
+                                  v-for="item in serviceSkills"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="地区" prop="name">
+                        <el-select v-model="ruleForm.name" placeholder="员工等级">
+                            <el-option
+                                  v-for="item in serviceSkills"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="区域经理" prop="name">
+                        <el-select v-model="ruleForm.name" placeholder="员工等级">
+                            <el-option
+                                  v-for="item in serviceSkills"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="服务技能" prop="name">
+                        <el-checkbox-group
+                              v-model="checkedCities1"
+                        >
+                              <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                </el-form>
+            </div>
         </model-box>
-
+        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="setlevel" title="设置等级">
+            <div slot="dialog-body">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
+                    <el-form-item label="等级名称" prop="name">
+                        <el-input v-model="ruleForm.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="员工所在地区" prop="name">
+                        <el-select v-model="ruleForm.name" placeholder="">
+                            <el-option
+                                  v-for="item in serviceSkills"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="达到等级要求" prop="name">
+                        <el-checkbox-group
+                              v-model="checkedCities1"
+                        >
+                              <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </model-box>
     </div>
 </template>
 
@@ -242,6 +277,7 @@ import ModelBox from "components/modelBox";
 export default {
   data() {
     return {
+      activeIndex:'1',//tags索引
       ruleForm: {
         name: ""
       },
@@ -255,8 +291,9 @@ export default {
 
       },
       searchValue: "",
-      showmodel: false,
-      showmodelEdit: false,
+      showmodel: false,//添加模态框状态
+      showmodelEdit: false,//编辑模态框状态
+      setlevel: false,//设置等级模态框状态
       serviceSkills: [{
         value: '选项1',
         label: '黄金糕'
@@ -283,7 +320,6 @@ export default {
   },
   methods: {
     handlesubmit(formName) {
-      console.log("bbb");
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.showmodel = false;
@@ -291,7 +327,10 @@ export default {
           return false;
         }
       });
-
+    },
+    handleSelect(e){
+      this.activeIndex = e;
+      console.log(e)
     }
   },
   components: {
@@ -302,20 +341,18 @@ export default {
 </script>
 
 <style scoped>
-.header-content {
+.bottom{
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 10px 0;
+  box-sizing: border-box;
 }
 .header-content-left {
   flex: 1;
 }
 .search-button {
   margin-left: 10px;
-}
-.body-content {
-  padding: 10px 0 20px 0;
-  font-size: 12px;
 }
 .body-table-thead {
   margin-bottom: 5px;
@@ -327,8 +364,9 @@ export default {
 .body-table-tr span{
   cursor: pointer;
 }
-.footer-page{
+.body-page{
   text-align: right;
+  padding:10px 0;
 }
 </style>
 

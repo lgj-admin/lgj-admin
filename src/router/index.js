@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import NotFoundView from 'components/404.vue'
 import Home from 'pages/home'
 import User from 'pages/user'
 import Index from 'pages/index'
 import Menu from 'pages/menu'
-import NotFoundView from 'components/404.vue'
 import Order from 'pages/order'
+import Service from 'pages/service'
 
 Vue.use(Router)
 
@@ -35,6 +36,10 @@ export default new Router({
         {
           path:'/order',
           component:Order
+        },
+        {
+          path: '/service',
+          component: Service
         },
         { path: '*', component: NotFoundView }
       ]
