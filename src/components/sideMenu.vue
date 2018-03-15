@@ -44,8 +44,12 @@ export default {
     ...mapMutations({
       getCurrentMenu: "GET_CURRENTMENU"
     }),
-    handleOpen() {},
-    handleClose() {}
+    handleOpen() {
+
+    },
+    handleClose() {
+
+    }
   },
   computed: {
     onRoutes() {

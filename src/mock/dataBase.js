@@ -23,8 +23,14 @@ export const menuList =[
   },
   {
     id: 4,
-    href: "/test",
+    href: "/user",
     name: "用户管理",
     icon: "fa fa-qrcode"
+  },
+  {
+    id:5,
+    href:"/order",
+    name: "订单管理",
+    icon: "fa fa-book"
   }
 ]

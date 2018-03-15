@@ -1,5 +1,8 @@
 import axios from 'axios'
-import { API_URL } from "../service/ApiSetting";
+import {
+  API_URL
+} from "../service/ApiSetting";
+import qs from 'qs'
 
 
 // const ROOT_URL = 'http://cio.ueepub.cn';
@@ -41,88 +44,123 @@ const ROOT_URL = 'https://cnodejs.org/api/v1';
 // )
 
 
-const ApiDataModule = function (baseURL, params){
+const ApiDataModule = function (baseURL, params) {
 
-    /**
-    * 封装post请求
-    * @param url
-    * @param data
-    * @returns {Promise}
-    */
-    if (API_URL[baseURL].method === 'POST'){
-        return new Promise((resolve,reject) => {
+  /**
+   * 封装post请求
+   * @param url
+   * @param data
+   * @returns {Promise}
+   */
+  if (API_URL[baseURL].method === 'POST') {
+    return new Promise((resolve, reject) => {
+      axios({
+          method: 'post',
+          url: API_URL[baseURL].fetchUrl,
+          data: qs.stringify(params),
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+      })
+      .then(response => {
+        resolve(response);
+      })
+      .catch(err => {
+        reject(err)
+      })
+      // axios.post(API_URL[baseURL].fetchUrl, qs.stringify(params))
+      //   .then(response => {
+      //     resolve(response);
+      //   })
+      //   .catch(err => {
+      //     reject(err)
+      //   })
 
-            axios.post(API_URL[baseURL].fetchUrl, params)
-                .then(response =>{
-                    resolve(response.data);
-                })
-                .catch(err =>{
-                    reject(err)
-                })
+    })
+  }
 
+  /**
+   * 封装FormData请求
+   * @param url
+   * @param data
+   * @returns {Promise}
+   */
+  if (API_URL[baseURL].method === 'POST') {
+    return new Promise((resolve, reject) => {
+
+      axios.post(API_URL[baseURL].fetchUrl, params)
+        .then(response => {
+          resolve(response);
         })
-    }
-    
-    /**
-    * 封装get请求
-    * @param url
-    * @param data
-    * @returns {Promise}
-    */
-    if (API_URL[baseURL].method === 'GET'){
-        return new Promise((resolve,reject) =>{
-
-            axios.get(API_URL[baseURL].fetchUrl, { params: params})
-                .then(response =>{
-                    resolve(response.data);
-                })
-                .catch(err =>{
-                    reject(err)
-                })
-
-        })
-    }
-
-    /**
-    * 封装patch请求
-    * @param url
-    * @param data
-    * @returns {Promise}
-    */
-    if (API_URL[baseURL].method === 'patch'){
-
-        return new Promise((resolve, reject) => {
-
-            axios.patch(API_URL[baseURL].fetchUrl, params)
-                .then(response => {
-                    resolve(response.data);
-                }, err => {
-                    reject(err)
-                })
-                
-        })
-    }
-
-    /**
-    * 封装put请求
-    * @param url
-    * @param data
-    * @returns {Promise}
-    */
-    if (API_URL[baseURL].method === 'put'){
-
-        return new Promise((resolve, reject) => {
-
-            axios.put(API_URL[baseURL].fetchUrl, params)
-                .then(response => {
-                    resolve(response.data);
-                }, err => {
-                    reject(err)
-                })
-
+        .catch(err => {
+          reject(err)
         })
 
-    }
+    })
+  }
+
+  /**
+   * 封装get请求
+   * @param url
+   * @param data
+   * @returns {Promise}
+   */
+  if (API_URL[baseURL].method === 'GET') {
+    return new Promise((resolve, reject) => {
+
+      axios.get(API_URL[baseURL].fetchUrl, {
+          params: params
+        })
+        .then(response => {
+          resolve(response);
+        })
+        .catch(err => {
+          reject(err)
+        })
+
+    })
+  }
+
+  /**
+   * 封装patch请求
+   * @param url
+   * @param data
+   * @returns {Promise}
+   */
+  if (API_URL[baseURL].method === 'patch') {
+
+    return new Promise((resolve, reject) => {
+
+      axios.patch(API_URL[baseURL].fetchUrl, params)
+        .then(response => {
+          resolve(response);
+        }, err => {
+          reject(err)
+        })
+
+    })
+  }
+
+  /**
+   * 封装put请求
+   * @param url
+   * @param data
+   * @returns {Promise}
+   */
+  if (API_URL[baseURL].method === 'put') {
+
+    return new Promise((resolve, reject) => {
+
+      axios.put(API_URL[baseURL].fetchUrl, params)
+        .then(response => {
+          resolve(response);
+        }, err => {
+          reject(err)
+        })
+
+    })
+
+  }
 }
 
 export default ApiDataModule;
