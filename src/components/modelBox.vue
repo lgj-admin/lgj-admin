@@ -2,7 +2,7 @@
   <el-dialog
       :title="title"
       :visible.sync="centerDialogVisible"
-      width="30%"
+      :width="width"
       :modal-append-to-body="true"
       @close="$emit('update:show',false)"
       center>
@@ -28,7 +28,11 @@ export default {
     title:{
       type:String,
       default:'提示'
-    }
+    },
+    width:{
+      type:String,
+      default:'30%'
+    },
   },
   methods:{
     Submit(){

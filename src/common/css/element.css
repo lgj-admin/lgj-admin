@@ -31,7 +31,9 @@
 .content-view .el-input {
   width: 230px;
 }
-
+.table .el-input{
+  width:120px;
+}
 .content-view .el-input__inner {
   height: 30px;
 }
@@ -53,22 +55,3 @@
   border:1px solid #ccc;
 }
 
-/* el-dialog样式 */
-/* .app .el-dialog__wrapper{
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  top:0;
-  left:0;
-  width: calc(100% - 201px);
-  height: calc(100% - 40px);
-}
-
-.app .v-modal{
-  position: fixed;
-  bottom: 0;
-  right: 0;
-
-  width: calc(100% - 201px);
-  height: calc(100% - 40px);
-} */

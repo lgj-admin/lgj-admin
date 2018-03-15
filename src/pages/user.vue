@@ -119,7 +119,7 @@ export default {
   flex: 1;
 }
 .search-button {
-  margin-left: 5px;
+  margin-left: 10px;
 }
 .body-content {
   padding: 10px 0 20px 0;
