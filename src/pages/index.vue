@@ -70,9 +70,11 @@ export default {
   display: flex;
   justify-content: space-between;
   padding-top: 40px;
+  overflow: hidden;
 }
 .content-view {
   flex: 1;
   padding: 20px;
+  overflow: auto;
 }
 </style>
