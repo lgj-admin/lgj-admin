@@ -54,7 +54,8 @@ export default {
 
 <style scoped>
 .index {
-  height: 100%;
+  min-width: 1366px;
+  height:100%;
 }
 .v-header {
   position: fixed;

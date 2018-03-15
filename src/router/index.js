@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from 'pages/home'
+import User from 'pages/user'
 import Index from 'pages/index'
 import Menu from 'pages/menu'
 import NotFoundView from 'components/404.vue'
@@ -22,6 +23,10 @@ export default new Router({
         {
           path: '/home',
           component: Home
+        },
+        {
+          path: '/user',
+          component: User
         },
         {
           path: '/menu',
