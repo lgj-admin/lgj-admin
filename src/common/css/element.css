@@ -54,3 +54,11 @@
 .el-tree{
   border:1px solid #ccc;
 }
+
+/*
+    order.vue 样式 
+    by leecu
+*/
+.service-item .right .el-input{
+    width: auto !important;
+}
