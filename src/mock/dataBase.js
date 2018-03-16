@@ -16,7 +16,6 @@ export const menuList =[
   },
   {
     id: 3,
-    parentId: 1,
     href: "/home",
     name: "员工管理",
     icon: "fa fa-sitemap"
@@ -38,5 +37,11 @@ export const menuList =[
     href: "/service",
     name: "服务管理",
     icon: "fa fa-server"
+  },
+  {
+    id: 7,
+    href: "/carousel",
+    name: "轮播图管理",
+    icon: "fa fa-file-image-o"
   },
 ]

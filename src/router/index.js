@@ -7,6 +7,7 @@ import Index from 'pages/index'
 import Menu from 'pages/menu'
 import Order from 'pages/order'
 import Service from 'pages/service'
+import Carousel from 'pages/carousel'
 
 Vue.use(Router)
 
@@ -40,6 +41,10 @@ export default new Router({
         {
           path: '/service',
           component: Service
+        },
+        {
+          path: '/carousel',
+          component: Carousel
         },
         { path: '*', component: NotFoundView }
       ]

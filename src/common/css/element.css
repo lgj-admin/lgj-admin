@@ -54,3 +54,10 @@
 .el-tree{
   border:1px solid #ccc;
 }
+
+.service .el-tree {
+  border:none;
+}
+.service .el-tree-node__content{
+  padding:10px 0;
+}

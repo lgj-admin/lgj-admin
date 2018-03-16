@@ -11,9 +11,9 @@
                         <el-breadcrumb-item  v-for="(item,index) in currentMenu" :key="index" :to="{ path: item.href }">{{item.name}}</el-breadcrumb-item>
                       </el-breadcrumb>
                     </div>
-                    <keep-alive>
+                    <!-- <keep-alive> -->
                         <router-view></router-view>
-                    </keep-alive>
+                    <!-- </keep-alive> -->
                     <v-footer></v-footer>
                 </div>
             </div>
@@ -47,7 +47,7 @@ export default {
     ])
   },
   method:{
-    
+
   }
 };
 </script>

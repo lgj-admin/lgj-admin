@@ -21,7 +21,85 @@
             </div>
             <div slot="body">
                 <div class="body-content">
-                    <tree-grid :columns="columns" :tree-structure="true" :data-source="data"></tree-grid>
+                    <!-- <tree-grid :columns="columns" :tree-structure="true" :data-source="data"  v-show="activeIndex == 1"></tree-grid> -->
+                    <div  v-show="activeIndex == 1">
+                        <div class="header-flex">
+                            <div class="table-item">服务分类</div>
+                            <div class="table-item">排序</div>
+                            <div class="table-item">添加下级分类</div>
+                        </div>
+                        <el-tree
+
+                              :data="data5"
+                              node-key="id"
+                              default-expand-all
+                              :expand-on-click-node="false">
+                              <div class="custom-tree-node body-flex" slot-scope="{ node, data }">
+                                <div class="table-item">{{ node.label }}</div>
+                                <div class="table-item">1</div>
+                                <div class="table-item">
+                                    <el-button
+                                      type="text"
+                                      size="mini"
+                                      @click="() => append(data)">
+                                        <i class="el-icon-circle-plus-outline"></i>
+                                    </el-button>
+                                    <a href="#">编辑</a>
+                                    <el-button
+                                      type="text"
+                                      size="mini"
+                                      @click="() => remove(node, data)">
+                                        <i class="el-icon-remove-outline"></i>
+                                    </el-button>
+                                </div>
+                            </div>
+                        </el-tree>
+                    </div>
+                    <div class="body-table table" v-show="activeIndex == 2">
+                        <div class="thead body-table-thead">
+                            <div class="tr">
+                                <div class="td">服务名称</div>
+                                <div class="td">全部服务</div>
+                                <div class="td">价格</div>
+                                <div class="td">全部地区</div>
+                                <div class="td">上架</div>
+                                <div class="td">首页分类展示</div>
+                                <div class="td">精选</div>
+                                <div class="td">排序</div>
+                                <div class="td">操作</div>
+                            </div>
+                        </div>
+                        <div class="tbody">
+                            <div class="tr body-table-tr">
+                                <div class="td">日常清洗</div>
+                                <div class="td">专业服务</div>
+                                <div class="td">125起</div>
+                                <div class="td">太原</div>
+                                <div class="td">是</div>
+                                <div class="td">是</div>
+                                <div class="td">是</div>
+                                <div class="td">1</div>
+                                <div class="td">
+                                  <a href="#">编辑</a>
+                                  <a href="#">删除</a>
+                                </div>
+                            </div>
+                            <div class="tr body-table-tr">
+                                <div class="td">日常清洗</div>
+                                <div class="td">专业服务</div>
+                                <div class="td">125起</div>
+                                <div class="td">太原</div>
+                                <div class="td">是</div>
+                                <div class="td">是</div>
+                                <div class="td">是</div>
+                                <div class="td">1</div>
+                                <div class="td">
+                                  <a href="#">编辑</a>
+                                  <a href="#">删除</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="body-page">
                         <el-pagination
                             background
@@ -45,6 +123,30 @@
                 </el-form>
             </div>
         </model-box>
+        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="addsubcategory" title="添加下级分类">
+            <div slot="dialog-body">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
+                    <el-form-item label="下级分类名称" prop="name">
+                        <el-input v-model="ruleForm.name" placeholder="请输入服务分类名称"></el-input>
+                    </el-form-item>
+                    <el-form-item label="上传分类图标" prop="name">
+                        <el-upload
+                            class="upload-demo"
+                            action="https://jsonplaceholder.typicode.com/posts/"
+                            :on-preview="handlePreview"
+                            :on-remove="handleRemove"
+                            :before-remove="beforeRemove"
+                            multiple
+                            :limit="1"
+                            :on-exceed="handleExceed"
+                            :file-list="fileList">
+                            <el-button size="small" type="primary">点击上传</el-button>
+                            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                        </el-upload>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </model-box>
     </div>
 </template>
 
@@ -52,6 +154,7 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import TreeGrid from "components/treeTable/index.js";
+import TreeNode from "element-ui/packages/tree/src/tree-node.vue";
 
 let id = 1000;
 export default {
@@ -59,49 +162,29 @@ export default {
     const data = [
       {
         id: 1,
-        label: "一级 1",
-        children: [
-          {
-            id: 4,
-            label: "二级 1-1",
-            children: [
-              {
-                id: 9,
-                label: "三级 1-1-1"
-              },
-              {
-                id: 10,
-                label: "三级 1-1-2"
-              }
-            ]
-          }
-        ]
+        label: "衣物清洁",
       },
       {
         id: 2,
-        label: "一级 2",
+        label: "养护清洗",
         children: [
           {
             id: 5,
-            label: "二级 2-1"
+            label: "地板打蜡"
           },
           {
             id: 6,
-            label: "二级 2-2"
+            label: "清洁清厕"
           }
         ]
       },
       {
         id: 3,
-        label: "一级 3",
+        label: "专业清洗",
         children: [
           {
             id: 7,
-            label: "二级 3-1"
-          },
-          {
-            id: 8,
-            label: "二级 3-2"
+            label: "日常清洁"
           }
         ]
       }
@@ -109,90 +192,54 @@ export default {
     return {
       activeIndex: "1", //tags索引
       addcategory: false, //添加分类状态
+      addsubcategory: false, //添加下级分类状态
       ruleForm: {
         name: ""
       },
       rules: {
         name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
       },
-      data: [
+      treeData: [
         {
           id: 1,
-          parentId: 0,
-          name: "测试1",
-          age: 18,
-          sex: "男",
+          name: "日常清洗",
+          sort: "1",
           children: [
             {
               id: 2,
-              parentId: 1,
-              name: "测试2",
-              age: 22,
-              sex: "男"
+              sort: "",
+              name: "日常清洁"
             }
           ]
         },
         {
           id: 3,
-          parentId: 0,
-          name: "测试3",
-          age: 23,
-          sex: "女",
+          sort: "",
+          name: "衣物清洁"
+        },
+        {
+          id: 4,
+          name: "养护清洗",
+          sort: "3",
           children: [
             {
-              id: 4,
-              parentId: 3,
-              name: "测试4",
-              age: 22,
-              sex: "男"
-            },
-            {
               id: 5,
-              parentId: 3,
-              name: "测试5",
-              age: 25,
-              sex: "男"
+              sort: "",
+              name: "地板打蜡"
             },
             {
               id: 6,
-              parentId: 3,
-              name: "测试6",
-              age: 26,
-              sex: "女",
-              children: [
-                {
-                  id: 7,
-                  parentId: 6,
-                  name: "测试7",
-                  age: 27,
-                  sex: "男"
-                }
-              ]
+              sort: "",
+              name: "瓷砖打蜡"
             }
           ]
         }
       ],
-      columns: [
-        {
-          text: "姓名",
-          dataIndex: "name"
-        },
-        {
-          text: "年龄",
-          dataIndex: "age"
-        },
-        {
-          text: "性别",
-          dataIndex: "sex"
-        }
-      ],
-      defaultProps: {
-        children: "children",
-        label: "label"
-      },
-      data5: JSON.parse(JSON.stringify(data))
+      data5: JSON.parse(JSON.stringify(data)),
+      fileList:[]
     };
   },
+  created() {},
   methods: {
     handleSelect(e) {
       this.activeIndex = e;
@@ -208,52 +255,42 @@ export default {
       });
     },
     append(data) {
-      const newChild = { id: id++, label: "testtest", children: [] };
-      if (!data.children) {
-        this.$set(data, "children", []);
-      }
-      data.children.push(newChild);
+      this.addsubcategory = true;
+      // const newChild = { id: id++, label: "testtest", children: [] };
+      // if (!data.children) {
+      //   this.$set(data, "children", []);
+      // }
+      // data.children.push(newChild);
     },
-
     remove(node, data) {
       const parent = node.parent;
       const children = parent.data.children || parent.data;
       const index = children.findIndex(d => d.id === data.id);
       children.splice(index, 1);
     },
-    renderContent(h, { node, data, store }) {
-      return (
-        <div class="custom-tree-node">
-          <div class="tbody">
-            <span class="tr">
-              <span class="td">{node.label}</span>
-              <span class="td">{node.label}</span>
-              <span class="td">
-                <el-button
-                  size="mini"
-                  type="text"
-                  on-click={() => this.append(data)}
-                >
-                  Append
-                </el-button>
-                <el-button
-                  size="mini"
-                  type="text"
-                  on-click={() => this.remove(node, data)}
-                >
-                  Delete
-                </el-button>
-              </span>
-            </span>
-          </div>
-        </div>
+    //upload
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(
+        `当前限制选择 3 个文件，本次选择了 ${
+          files.length
+        } 个文件，共选择了 ${files.length + fileList.length} 个文件`
       );
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`);
     }
   },
   components: {
     Panpel,
     ModelBox,
-    TreeGrid
+    TreeGrid,
+    TreeNode
   }
 };
 </script>
@@ -298,6 +335,25 @@ export default {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
+}
+
+/* tree */
+.header-flex,
+.body-flex {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.header-flex {
+  padding: 10px;
+  background-color: #eef1f6;
+}
+.table-item {
+  width: 33.3%;
+  text-align: center;
+}
+.body-flex i {
+  font-size: 20px;
 }
 </style>
 
