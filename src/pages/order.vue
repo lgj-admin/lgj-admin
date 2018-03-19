@@ -51,7 +51,7 @@
 			    </div>
 			</div>
 		</panpel>
-		<model-box @selectSubmit="addOrder" :show.sync="add_order_switch" title="添加订单">
+		<model-box @selectSubmit="addOrder" :show.sync="add_order_switch" title="添加订单" :width="'40%'">
 		  	<div slot="dialog-body">
 		    	<el-form ref="form" :model="add_order_data" label-width="115px" :label-position="'right'" :rules="add_order_rules">
 		    	  	<el-form-item label="预约客户姓名:" prop="user_name">
@@ -93,13 +93,44 @@
 	  	    	  	<el-form-item label="除尘除螨的项目:">
 	  	    	  		<div class="service-item">
 	  	    	  			<div class="left">
-	  	    	  				<p>油烟机</p>
+	  	    	  				<p>床</p>
 	  	    	  				<p>100元</p>
 	  	    	  			</div>
 	  	    	  			<div class="right">
 	  	    	  				<el-input-number size="mini" v-model="num1"></el-input-number>
 	  	    	  			</div>
 	  	    	  		</div>
+	  	    	  		<div class="service-item">
+	  	    	  			<div class="left">
+	  	    	  				<p>沙发</p>
+	  	    	  				<p>100元</p>
+	  	    	  			</div>
+	  	    	  			<div class="right">
+	  	    	  				<el-input-number size="mini" v-model="num1"></el-input-number>
+	  	    	  			</div>
+	  	    	  		</div>
+	  	    	  	</el-form-item>
+	  	    	  	<el-form-item label="灯具清洗的项目:">
+	  	    	  		<div class="service-item">
+	  	    	  			<div class="left">
+	  	    	  				<p>小型灯</p>
+	  	    	  				<p>100元</p>
+	  	    	  			</div>
+	  	    	  			<div class="right">
+	  	    	  				<el-input-number size="mini" v-model="num1"></el-input-number>
+	  	    	  			</div>
+	  	    	  		</div>
+	  	    	  		<div class="service-item">
+	  	    	  			<div class="left">
+	  	    	  				<p>中型灯</p>
+	  	    	  				<p>100元</p>
+	  	    	  			</div>
+	  	    	  			<div class="right">
+	  	    	  				<el-input-number size="mini" v-model="num1"></el-input-number>
+	  	    	  			</div>
+	  	    	  		</div>
+	  	    	  	</el-form-item>
+	  	    	  	<el-form-item label="家电清洗的项目:">
 	  	    	  		<div class="service-item">
 	  	    	  			<div class="left">
 	  	    	  				<p>油烟机</p>
@@ -109,7 +140,24 @@
 	  	    	  				<el-input-number size="mini" v-model="num1"></el-input-number>
 	  	    	  			</div>
 	  	    	  		</div>
+	  	    	  		<div class="service-item">
+	  	    	  			<div class="left">
+	  	    	  				<p>壁挂式空调</p>
+	  	    	  				<p>100元</p>
+	  	    	  			</div>
+	  	    	  			<div class="right">
+	  	    	  				<el-input-number size="mini" v-model="num1"></el-input-number>
+	  	    	  			</div>
+	  	    	  		</div>
 	  	    	  	</el-form-item>
+	  	    	  	<el-form-item label="地板打蜡的项目:">
+	  	    	  		<el-radio v-model="radio8" label="1" border size="medium">地板打蜡</el-radio>
+	  	    	  		<el-radio v-model="radio8" label="1" border size="medium">地板起腊</el-radio>
+	  	    	  		<el-radio v-model="radio8" label="1" border size="medium">起腊打蜡</el-radio>
+	  	    	  	</el-form-item>
+	  	    	  	<el-form-item label="预约城市:">
+		    	    	<el-input v-model="add_order_data.user_reservation_city"></el-input>
+		    	  	</el-form-item>
 	  	    	  	<el-form-item label="预约备注:">
 		    	    	<el-input v-model="add_order_data.user_reservation_remark"></el-input>
 		    	  	</el-form-item>
@@ -158,7 +206,9 @@ import ModelBox from "components/modelBox";
 		        },
 
 
-		        num1:''
+		        num1:'',
+
+		        radio8:''
 			}
 		},
 		methods:{
@@ -208,6 +258,9 @@ import ModelBox from "components/modelBox";
 	.service-item{
 		display: flex;
 		flex-direction:row;
+		box-sizing: border-box;
+		border-bottom: 1px solid #eeeeee;
+		padding: 5px 0;
 	}
 	.service-item .left{
 		width: 50%;
