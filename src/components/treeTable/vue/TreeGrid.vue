@@ -10,21 +10,35 @@
     </el-table-column>
     <el-table-column v-for="(column, index) in columns" :key="column.dataIndex"
       :label="column.text" :type="column.type">
+      
       <template slot-scope="scope">
-        <span v-if="spaceIconShow(index)" v-for="(space, levelIndex) in scope.row._level" class="ms-tree-space" :key="levelIndex"></span>
+        <!-- <el-menu
+                 class="el-menu-style"
+                 theme="light">
+          <div v-for="(item,index) in data" :key='index'>
+            <sub-menu :param="item"></sub-menu>
+          </div>
+        </el-menu>   -->
+        <el-tree
+        :data="data"
+        :props="defaultProps"
+        accordion
+        @node-click="handleNodeClick">
+      </el-tree>
+        <!-- <span v-if="spaceIconShow(index)" v-for="(space, levelIndex) in scope.row._level" class="ms-tree-space" :key="levelIndex"></span>
         <button style="border:0;background:transparent;outline:none;" class="button is-outlined is-primary is-small " v-if="toggleIconShow(index,scope.row)" @click="toggle(scope.$index)">
           <i v-if="!scope.row._expanded" class="el-icon el-icon-arrow-right" aria-hidden="true"></i>
           <i v-if="scope.row._expanded" class="el-icon el-icon-arrow-right el-table__expand-icon--expanded" aria-hidden="true"></i>
         </button>
         <span v-else-if="index===0" class="ms-tree-space"></span>
-        {{scope.row[column.dataIndex]}}
+        {{scope.row[column.dataIndex]}} -->
       </template>
     </el-table-column>
-    <el-table-column label="操作" v-if="treeType === 'normal'" width="260">
+    <!-- <el-table-column label="操作" v-if="treeType === 'normal'" width="260">
       <template slot-scope="scope">
-        <!-- <el-checkbox v-model="checked">备选项</el-checkbox> -->
+        <el-checkbox v-model="checked">备选项</el-checkbox>
       </template>
-    </el-table-column>
+    </el-table-column> -->
     <el-table-column label="操作" v-if="treeType === 'normal'" width="260">
       <template slot-scope="scope">
         <button type="button" class="el-button el-button--default el-button--small">
@@ -41,9 +55,12 @@
 <script>
   import Utils from '../utils/index.js'
   import { getCurrentMenu } from "config/utils";
-//  import Vue from 'vue'
+  import subMenu from "components/subMenu.vue";
   export default {
     name: 'tree-grid',
+    components:{
+      subMenu
+    },
     props: {
 // 该属性是确认父组件传过来的数据是否已经是树形结构了，如果是，则不需要进行树形格式化
       treeStructure: {
@@ -97,9 +114,9 @@
         let me = this
         if (me.treeStructure) {
           let data = Utils.MSDataTransfer.treeToArray(me.dataSource, null, null, me.defaultExpandAll)
-          console.log(data)
           return data
         }
+        console.log(me.treeStructure,'data')
         return me.dataSource
       }
     },
@@ -129,6 +146,8 @@
       toggleIconShow (index, record) {
         let me = this
         console.log(record,'record')
+        console.log(me.treeStructure,'me.treeStructure')
+        console.log(record.children,'record.children')
         if (me.treeStructure && index === 0 && record.children && record.children.length > 0) {
           return true
         }

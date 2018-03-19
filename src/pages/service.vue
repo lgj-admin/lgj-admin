@@ -349,7 +349,8 @@ export default {
   background-color: #eef1f6;
 }
 .table-item {
-  width: 33.3%;
+  /* width: 33.3%; */
+  flex:1;
   text-align: center;
 }
 .body-flex i {
