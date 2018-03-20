@@ -39,7 +39,7 @@
 			                <div class="td" v-if="active_index == '3' || active_index == '4'">员工</div>
 			                <div class="td" v-else-if="active_index == '5'">2017.3.15</div>
 			                <div class="td">
-			                	<a href="javascript:void(0)">分配</a>
+			                	<a href="javascript:void(0)" @click="allot_order_switch = true">分配</a>
 			                	<a href="javascript:void(0)">管理</a>
 			                	<a href="javascript:void(0)">删除</a>
 			                </div>
@@ -97,7 +97,7 @@
 	  	    	  				<p>100元</p>
 	  	    	  			</div>
 	  	    	  			<div class="right">
-	  	    	  				<el-input-number size="mini" v-model="num1"></el-input-number>
+	  	    	  				<el-input-number size="mini" v-model="add_order_data.num1"></el-input-number>
 	  	    	  			</div>
 	  	    	  		</div>
 	  	    	  		<div class="service-item">
@@ -106,7 +106,7 @@
 	  	    	  				<p>100元</p>
 	  	    	  			</div>
 	  	    	  			<div class="right">
-	  	    	  				<el-input-number size="mini" v-model="num1"></el-input-number>
+	  	    	  				<el-input-number size="mini" v-model="add_order_data.num1"></el-input-number>
 	  	    	  			</div>
 	  	    	  		</div>
 	  	    	  	</el-form-item>
@@ -117,7 +117,7 @@
 	  	    	  				<p>100元</p>
 	  	    	  			</div>
 	  	    	  			<div class="right">
-	  	    	  				<el-input-number size="mini" v-model="num1"></el-input-number>
+	  	    	  				<el-input-number size="mini" v-model="add_order_data.num1"></el-input-number>
 	  	    	  			</div>
 	  	    	  		</div>
 	  	    	  		<div class="service-item">
@@ -126,7 +126,7 @@
 	  	    	  				<p>100元</p>
 	  	    	  			</div>
 	  	    	  			<div class="right">
-	  	    	  				<el-input-number size="mini" v-model="num1"></el-input-number>
+	  	    	  				<el-input-number size="mini" v-model="add_order_data.num1"></el-input-number>
 	  	    	  			</div>
 	  	    	  		</div>
 	  	    	  	</el-form-item>
@@ -137,7 +137,7 @@
 	  	    	  				<p>100元</p>
 	  	    	  			</div>
 	  	    	  			<div class="right">
-	  	    	  				<el-input-number size="mini" v-model="num1"></el-input-number>
+	  	    	  				<el-input-number size="mini" v-model="add_order_data.num1"></el-input-number>
 	  	    	  			</div>
 	  	    	  		</div>
 	  	    	  		<div class="service-item">
@@ -146,23 +146,80 @@
 	  	    	  				<p>100元</p>
 	  	    	  			</div>
 	  	    	  			<div class="right">
-	  	    	  				<el-input-number size="mini" v-model="num1"></el-input-number>
+	  	    	  				<el-input-number size="mini" v-model="add_order_data.num1"></el-input-number>
 	  	    	  			</div>
 	  	    	  		</div>
 	  	    	  	</el-form-item>
 	  	    	  	<el-form-item label="地板打蜡的项目:">
-	  	    	  		<el-radio v-model="radio8" label="1" border size="medium">地板打蜡</el-radio>
-	  	    	  		<el-radio v-model="radio8" label="1" border size="medium">地板起腊</el-radio>
-	  	    	  		<el-radio v-model="radio8" label="1" border size="medium">起腊打蜡</el-radio>
+	  	    	  		<el-radio v-model="add_order_data.radio8" label="1" border size="medium">地板打蜡</el-radio>
+	  	    	  		<el-radio v-model="add_order_data.radio8" label="2" border size="medium">地板起腊</el-radio>
+	  	    	  		<el-radio v-model="add_order_data.radio8" label="3" border size="medium">起腊打蜡</el-radio>
 	  	    	  	</el-form-item>
-	  	    	  	<el-form-item label="预约城市:">
-		    	    	<el-input v-model="add_order_data.user_reservation_city"></el-input>
+	  	    	  	<el-form-item label="面积(地板打蜡):">
+		    	    	<el-input v-model="add_order_data.user_reservation_city" placeholder="请输入平米数"></el-input>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="地毯清洗的项目:">
+		    	  		<el-radio v-model="add_order_data.radio8" label="1" border size="medium">地板打蜡</el-radio>
+		    	  		<el-radio v-model="add_order_data.radio8" label="2" border size="medium">地板起腊</el-radio>
+		    	  		<el-radio v-model="add_order_data.radio8" label="3" border size="medium">起腊打蜡</el-radio>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="面积(地毯清洗):">
+		    	    	<el-input v-model="add_order_data.user_reservation_city" placeholder="请输入平米数"></el-input>
 		    	  	</el-form-item>
 	  	    	  	<el-form-item label="预约备注:">
 		    	    	<el-input v-model="add_order_data.user_reservation_remark"></el-input>
 		    	  	</el-form-item>
 		    	</el-form>
 		  	</div>
+		</model-box>
+		<model-box @selectSubmit="allotOrder" :show.sync="allot_order_switch" title="分配订单">
+			<div slot="dialog-body">
+				<el-form ref="form" :model="allot_order_data" label-width="115px" :label-position="'right'">
+					<el-form-item label="订单编号:">
+		    	    	<p>bh989898</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="预约人:">
+		    	    	<p>张三</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="联系电话:">
+		    	    	<p>12311112222</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="预约时间:">
+		    	    	<p>2018.3.18</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="预约地点:">
+		    	    	<p>x市x区</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="预约内容:">
+		    	    	<p>日常清理</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="服务项目:">
+		    	    	<p>一居室</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="预约备注:">
+		    	    	<p>备注</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="订单金额:">
+		    	    	<p>100元</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="地毯清洗的项目:">
+		    	  		<el-radio v-model="allot_order_data.radio1" label="1" border size="medium">区域经理</el-radio>
+		    	  		<el-radio v-model="allot_order_data.radio1" label="2" border size="medium">员工</el-radio>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="预约大类:">
+	  					<el-select v-model="allot_order_data.daqujingli" clearable placeholder="请选择大区经理">
+	  					  	<el-option label="张三" value="shanghai"></el-option>
+	  					  	<el-option label="李四" value="beijing"></el-option>
+	  					</el-select>
+	  	    	  	</el-form-item>
+	  	    	  	<el-form-item label="预约大类:">
+	  					<el-select v-model="allot_order_data.quyujingli" clearable placeholder="请选择区域经理">
+	  					  	<el-option label="张三" value="shanghai"></el-option>
+	  					  	<el-option label="李四" value="beijing"></el-option>
+	  					</el-select>
+	  	    	  	</el-form-item>
+				</el-form>
+			</div>
 		</model-box>
 	</div>
 </template>
@@ -193,7 +250,9 @@ import ModelBox from "components/modelBox";
 		        	user_reservation_address:'',
 		        	user_reservation_service:'',
 		        	user_reservation_service_item:'',
-		        	user_reservation_remark:''
+		        	user_reservation_remark:'',
+		        	num1:'',
+		        	radio8:''
 		        },
 		        add_order_rules:{
 		        	user_name:[
@@ -206,9 +265,15 @@ import ModelBox from "components/modelBox";
 		        },
 
 
-		        num1:'',
-
-		        radio8:''
+		        allot_order_switch:false,
+		        allot_order_data:{
+		        	radio1:'',
+		        	daqujingli:'',
+		        	quyujingli:''
+		        },
+		        allot_order_rules:[
+		        	{},
+		        ]
 			}
 		},
 		methods:{
@@ -220,7 +285,10 @@ import ModelBox from "components/modelBox";
 				this.active_index = index;
 			},
 			addOrder(){
-				console.log('aa')
+				console.log('addOrder');
+			},
+			allotOrder(){
+				console.log('allotOrder');
 			}
 		}
 	}
