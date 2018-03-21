@@ -26,6 +26,13 @@ export const menuList =[
         icon: "fa fa-address-book"
       },
       {
+        id: 14,
+        parentId: 1,
+        href: "/companyinfo",
+        name: "公司信息管理",
+        icon: "fa fa-info-circle",
+      },
+      {
         id: 12,
         href: "/city",
         name: "城市管理",
@@ -43,7 +50,7 @@ export const menuList =[
         id: 10,
         href: "/regional",
         name: "大区经理管理",
-        icon: "fa fa-address-card-o"
+        icon: "fa fa-address-card"
       },
       {
         id: 11,
@@ -55,7 +62,7 @@ export const menuList =[
         id: 3,
         href: "/home",
         name: "员工管理",
-        icon: "fa fa-sitemap"
+        icon: "fa fa-user-plus"
       },
       {
         id: 4,
@@ -82,5 +89,17 @@ export const menuList =[
     href: "/carousel",
     name: "轮播图管理",
     icon: "fa fa-file-image-o"
+  },
+  {
+    id: 15,
+    href: "/comment",
+    name: "评价管理",
+    icon: "fa fa-comments-o"
+  },
+  {
+    id: 16,
+    href: "/log",
+    name: "日志管理",
+    icon: "fa fa-commenting"
   },
 ]

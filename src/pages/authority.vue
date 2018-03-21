@@ -34,8 +34,8 @@
                     <el-form-item label="权限名称" prop="name">
                         <el-input v-model="ruleForm.name" placeholder="请输入权限名称"></el-input>
                     </el-form-item>
-                    <el-form-item label="权限码" prop="name">
-                        <el-input v-model="ruleForm.name"></el-input>
+                    <el-form-item label="权限码" prop="code">
+                        <el-input v-model="ruleForm.code" placeholder="请输入权限码"></el-input>
                     </el-form-item>
                 </el-form>
             </div>
@@ -89,49 +89,15 @@ export default {
       }
     ];
     return {
-      addauthority:false,//添加权限状态
+      addauthority:false,//添加权限模态框状态
       ruleForm: {
-        name: "",
+        name: null,//权限名称
+        code:null,//权限码
       },
       rules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
+        name: [{ required: true, message: "请输入权限名称", trigger: "blur" }],
+        code: [{ required: true, message: "请输入权限码", trigger: "blur" }],
       },
-      treeData: [
-        {
-          id: 1,
-          name: "日常清洗",
-          sort: "1",
-          children: [
-            {
-              id: 2,
-              sort: "",
-              name: "日常清洁"
-            }
-          ]
-        },
-        {
-          id: 3,
-          sort: "",
-          name: "衣物清洁"
-        },
-        {
-          id: 4,
-          name: "养护清洗",
-          sort: "3",
-          children: [
-            {
-              id: 5,
-              sort: "",
-              name: "地板打蜡"
-            },
-            {
-              id: 6,
-              sort: "",
-              name: "瓷砖打蜡"
-            }
-          ]
-        }
-      ],
       data5: JSON.parse(JSON.stringify(data)),
     };
   },
@@ -205,7 +171,8 @@ export default {
 }
 .table-item {
   flex:1;
-  text-align: center;
+  text-align: left;
+  padding: 0 40px;
 }
 .body-flex i {
   font-size: 20px;

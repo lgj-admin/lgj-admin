@@ -3,7 +3,7 @@
         <panpel>
             <div slot="header" class="header-content">
                 <div class="header-content-left">
-                  <el-button class="search-button" @click="showmodel = true">添加广告</el-button>
+                  <el-button class="search-button" @click="showmodel = true" type="primary">添加广告</el-button>
                 </div>
                 <div class="header-content-right">
                 </div>
@@ -30,7 +30,7 @@
                                 <div class="td">1</div>
                                 <div class="td">
                                   <a href="#">编辑</a>
-                                  <a href="#">删除</a>
+                                  <a href="javascript:void(0)" @click="handleDelete">删除</a>
                                 </div>
                             </div>
                             <div class="tr body-table-tr">
@@ -41,8 +41,8 @@
                                 <div class="td">是</div>
                                 <div class="td">1</div>
                                 <div class="td">
-                                  <a href="#">编辑</a>
-                                  <a href="#">删除</a>
+                                  <a href="javascript:void(0)">编辑</a>
+                                  <a href="javascript:void(0)" @click="handleDelete">删除</a>
                                 </div>
                             </div>
                         </div>
@@ -66,6 +66,7 @@
                           class="avatar-uploader"
                           action="https://jsonplaceholder.typicode.com/posts/"
                           :show-file-list="false"
+                          :auto-upload="false"
                           :on-success="handleAvatarSuccess"
                           :before-upload="beforeAvatarUpload"
                       >
@@ -102,7 +103,7 @@ export default {
     return {
       ruleForm: {
         name: "",
-        linkType:'1'
+        linkType: "1"
       },
       rules: {
         name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
@@ -125,9 +126,10 @@ export default {
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
+      console.log(res, file, "asdsadas");
     },
     beforeAvatarUpload(file) {
-      console.log(file)
+      console.log(file);
       const isJPG = file.type === "image/jpeg";
       const isPNG = file.type === "image/png";
       const isLt2M = file.size / 1024 / 1024 < 2;
@@ -139,6 +141,25 @@ export default {
         this.$message.error("上传头像图片大小不能超过 2MB!");
       }
       return isJPG && isLt2M;
+    },
+    handleDelete() {
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     }
   },
   components: {

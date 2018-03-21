@@ -12,13 +12,13 @@
                         <i slot="prefix" class="el-input__icon fa fa-user"></i>
                     </el-input>
                 </el-form-item>
-                <el-form-item label="密码" prop="name">
-                    <el-input v-model="ruleForm.name" placeholder="请输入密码">
+                <el-form-item label="密码" prop="pasd">
+                    <el-input v-model="ruleForm.pasd" placeholder="请输入密码">
                         <i slot="prefix" class="el-input__icon fa fa-thermometer-full"></i>
                     </el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" >登录</el-button>
+                    <el-button type="primary" @click="handlelogin('ruleForm')">登录</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -32,12 +32,25 @@ export default {
   data() {
     return {
       ruleForm: {
-        name: ""
+        name: "",
+        pasd:""
       },
       rules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
+        name: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+        pasd: [{ required: true, message: "请输入密码", trigger: "blur" }]
       },
     };
+  },
+  methods:{
+    handlelogin(formName){
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+
+        } else {
+          return false;
+        }
+      });
+    }
   }
 };
 </script>
@@ -74,7 +87,7 @@ export default {
   padding:30px;
   text-align: center;
   z-index:999;
-  background-color: #fff;
+  background-color: #fdfdfd;
 }
 .login-header{
   padding-bottom:30px;

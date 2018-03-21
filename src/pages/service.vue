@@ -7,13 +7,13 @@
                     <el-menu-item index="2">服务管理</el-menu-item>
                 </el-menu>
                 <div class="bottom" v-show="activeIndex == 1">
-                    <el-button @click="addcategory=true">添加分类</el-button>
+                    <el-button @click="addcategory=true" type="primary">添加分类</el-button>
                     <div></div>
                 </div>
                 <div class="bottom" v-show="activeIndex == 2">
                     <div class="header-content-left">
-                        <el-button @click="addservice = true">添加服务</el-button>
-                        <el-button @click="addlifepackage = true">添加生活套餐</el-button>
+                        <el-button @click="addservice = true" type="primary">添加服务</el-button>
+                        <el-button @click="addlifepackage = true" type="primary">添加生活套餐</el-button>
                     </div>
                     <div class="header-content-right">
                     </div>
@@ -23,37 +23,41 @@
                 <div class="body-content">
                     <!-- <tree-grid :columns="columns" :tree-structure="true" :data-source="data"  v-show="activeIndex == 1"></tree-grid> -->
                     <div  v-show="activeIndex == 1">
-                        <div class="header-flex">
-                            <div class="table-item">服务分类</div>
-                            <div class="table-item">排序</div>
-                            <div class="table-item">添加下级分类</div>
+                        <!-- <div class="header-flex">
+                            <div class="table-item">分类名称</div>
+                            <div class="table-item">操作</div>
                         </div>
                         <el-tree
-
-                              :data="data5"
-                              node-key="id"
-                              default-expand-all
-                              :expand-on-click-node="false">
-                              <div class="custom-tree-node body-flex" slot-scope="{ node, data }">
+                            :data="data5"
+                            node-key="id"
+                            default-expand-all
+                            :expand-on-click-node="false">
+                            <div class="custom-tree-node body-flex" slot-scope="{ node, data }">
                                 <div class="table-item">{{ node.label }}</div>
-                                <div class="table-item">1</div>
                                 <div class="table-item">
-                                    <el-button
-                                      type="text"
-                                      size="mini"
-                                      @click="() => append(data)">
-                                        <i class="el-icon-circle-plus-outline"></i>
-                                    </el-button>
-                                    <a href="#">编辑</a>
-                                    <el-button
-                                      type="text"
-                                      size="mini"
-                                      @click="() => remove(node, data)">
-                                        <i class="el-icon-remove-outline"></i>
-                                    </el-button>
+                                    <i @click="() => append(data)" class="el-icon-circle-plus-outline"></i>
+                                    <a href="#" class="editButton">编辑</a>
+                                    <i @click="() => remove(node, data)" class="el-icon-remove-outline"></i>
                                 </div>
                             </div>
-                        </el-tree>
+                        </el-tree> -->
+                        <div class="body-table table">
+                            <div class="thead body-table-thead">
+                                <div class="tr">
+                                    <div class="td">分类名称</div>
+                                    <div class="td">操作</div>
+                                </div>
+                            </div>
+                            <div class="tbody">
+                                <div class="tr body-table-tr">
+                                    <div class="td">日常清洗</div>
+                                    <div class="td">
+                                      <a href="#">编辑</a>
+                                      <a href="#">删除</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="body-table table" v-show="activeIndex == 2">
                         <div class="thead body-table-thead">
@@ -111,14 +115,11 @@
                 </div>
             </div>
         </panpel>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="addcategory" title="添加分类">
+        <model-box @selectSubmit="handleAddService('ruleForm')" :show.sync="addcategory" title="添加分类">
             <div slot="dialog-body">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
                     <el-form-item label="分类名称" prop="name">
                         <el-input v-model="ruleForm.name" placeholder="请输入服务分类名称"></el-input>
-                    </el-form-item>
-                    <el-form-item label="排序" prop="name">
-                        <el-input v-model="ruleForm.name"></el-input>
                     </el-form-item>
                 </el-form>
             </div>
@@ -151,10 +152,20 @@
             <div slot="dialog-body">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
                     <el-form-item label="选择服务分类" prop="name">
-                        <el-input v-model="ruleForm.name" placeholder="请输入服务分类名称"></el-input>
+                        <el-select v-model="ruleForm.serviceValue" placeholder="服务分类">
+                            <el-option
+                                  v-for="item in selectService"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
-                    <el-form-item label="服务副标题" prop="name">
-                        <el-input v-model="ruleForm.name" placeholder="服务副标题"></el-input>
+                    <el-form-item label="服务名称" prop="name">
+                        <el-input v-model="ruleForm.name" placeholder="请输入服务名称"></el-input>
+                    </el-form-item>
+                    <el-form-item label="服务简介" prop="name">
+                        <el-input v-model="ruleForm.name" placeholder="请输入服务简介"></el-input>
                     </el-form-item>
                     <el-form-item label="选择服务地区" prop="name">
                         <el-checkbox-group
@@ -164,32 +175,34 @@
                         </el-checkbox-group>
                     </el-form-item>
                     <el-form-item label="添加服务项目" prop="serviceType">
-                        <el-radio v-model="ruleForm.serviceType" label="1">按照服务项目</el-radio>
+                        <el-radio v-model="ruleForm.serviceType" label="1">按照服务项目(有图标)</el-radio>
+                        <el-radio v-model="ruleForm.serviceType" label="3">按照服务项目(无图标)</el-radio>
                         <el-radio v-model="ruleForm.serviceType" label="2">按照服务项目和服务面积</el-radio>
                     </el-form-item>
                     <el-form-item>
                         <div class="addservice">
                             <div class="service-content">
-                                <div class="service-item">名称</div>
-                                <div class="service-item" v-show="ruleForm.serviceType == 2">最小服务面积</div>
-                                <div class="service-item">单价</div>
+                                <div class="service-item" style="flex:0 0 145px">名称</div>
+                                <div class="service-item" v-show="ruleForm.serviceType == 2" style="flex:0 0 100px">最小服务面积</div>
+                                <div class="service-item" style="flex:0 0 100px">单价</div>
                                 <div class="service-item">员工提成</div>
                                 <div class="service-item" v-show="ruleForm.serviceType == 2">套餐服务面积</div>
                                 <div class="service-item" v-show="ruleForm.serviceType == 2">
                                     套餐价格<span>元/平</span>
                                 </div>
-                                <div class="service-item" v-show="ruleForm.serviceType == 1">生活套餐价格</div>
+                                <div class="service-item" v-show="ruleForm.serviceType != 2">生活套餐价格</div>
                                 <div class="service-item">套餐员工提成</div>
+                                <div class="service-item" style="flex:0 0 40px;">删除</div>
                             </div>
                             <div class="service-content">
-                                <div class="service-item">
+                                <div class="service-item" style="flex:0 0 145px">
                                     <el-input  v-model="ruleForm.name" placeholder="服务项目"></el-input>
-                                    <el-button style="display:inline-block">添加图标</el-button>
+                                    <el-button style="display:inline-block" v-show="ruleForm.serviceType == 1">添加图标</el-button>
                                 </div>
-                                <div class="service-item" v-show="ruleForm.serviceType == 2">
+                                <div class="service-item" v-show="ruleForm.serviceType == 2" style="flex:0 0 100px">
                                     <el-input></el-input><span>平</span>
                                 </div>
-                                <div class="service-item">
+                                <div class="service-item" style="flex:0 0 100px">
                                     <el-input v-model="ruleForm.name" ></el-input><span>元</span>
                                 </div>
                                 <div class="service-item">
@@ -201,11 +214,14 @@
                                 <div class="service-item" v-show="ruleForm.serviceType == 2">
                                     <el-input></el-input><span>元/平</span>
                                 </div>
-                                <div class="service-item" v-show="ruleForm.serviceType == 1">
+                                <div class="service-item" v-show="ruleForm.serviceType != 2">
                                     <el-input></el-input><span>元</span>
                                 </div>
                                 <div class="service-item">
                                     <el-input placeholder="请填写提成"></el-input><span>元或</span><el-input placeholder="请填写提成"></el-input><span>%</span>
+                                </div>
+                                <div class="service-item service-i" style="flex:0 0 40px;">
+                                    <i class="el-icon-remove"></i>
                                 </div>
                             </div>
                             <div class="service-i">
@@ -213,8 +229,7 @@
                             </div>
                         </div>
                     </el-form-item>
-                    <el-form-item label="添加首页默认图(建议尺寸)">
-                        <!-- <el-button>添加</el-button> -->
+                    <el-form-item label="添加首页分类图标(建议尺寸)">
                         <el-upload
                             class="upload-demo"
                             action="https://jsonplaceholder.typicode.com/posts/"
@@ -228,8 +243,17 @@
                             <el-button size="small" type="primary">点击上传</el-button>
                         </el-upload>
                     </el-form-item>
-                    <el-form-item label="添加服务展示图(建议尺寸)">
-                        <!-- <el-button>添加</el-button> -->
+                    <el-form-item label="添加首页展示图(建议尺寸)">
+                        <el-upload
+                            action="https://jsonplaceholder.typicode.com/posts/"
+                            :show-file-list="false"
+                            list-type="picture-card"
+                        >
+                            <img v-if="dialogImageUrl" :src="dialogImageUrl" class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item label="添加服务详情轮播(建议尺寸)">
                         <el-upload
                             action="https://jsonplaceholder.typicode.com/posts/"
                             list-type="picture-card"
@@ -239,21 +263,6 @@
                         <el-dialog :visible.sync="dialogVisible">
                             <img width="100%" :src="dialogImageUrl" alt="">
                         </el-dialog>
-                    </el-form-item>
-                    <el-form-item label="添加置顶图标(100X100)">
-                        <!-- <el-button>添加</el-button> -->
-                        <el-upload
-                            class="upload-demo"
-                            action="https://jsonplaceholder.typicode.com/posts/"
-                            :on-preview="handlePreview"
-                            :on-remove="handleRemove"
-                            :before-remove="beforeRemove"
-                            multiple
-                            :limit="3"
-                            :on-exceed="handleExceed"
-                            :file-list="fileList">
-                            <el-button size="small" type="primary">点击上传</el-button>
-                        </el-upload>
                     </el-form-item>
                     <el-form-item label="服务说明">
                         <el-input type="textarea"></el-input>
@@ -267,8 +276,8 @@
                     <el-form-item label="套餐名称" prop="name">
                         <el-input v-model="ruleForm.name" placeholder="套餐名称"></el-input>
                     </el-form-item>
-                    <el-form-item label="套餐副标题" prop="name">
-                        <el-input placeholder="套餐副标题"></el-input>
+                    <el-form-item label="套餐简介" prop="name">
+                        <el-input placeholder="套餐简介"></el-input>
                     </el-form-item>
                     <el-form-item label="选择服务地区">
                         <el-checkbox-group
@@ -277,8 +286,8 @@
                               <el-checkbox v-for="city in area" :label="city" :key="city">{{city}}</el-checkbox>
                         </el-checkbox-group>
                     </el-form-item>
-                    <el-form-item label="添加子服务">
-                        <el-button>添加</el-button>
+                    <el-form-item label="添加服务项目">
+                        <el-button @click="()=>{manageservice = true;}">添加</el-button>
                     </el-form-item>
                     <el-form-item label="服务内容">
                         <el-card class="box-card">
@@ -289,7 +298,7 @@
                                         <div>床 X1 X120元</div>
                                         <div>俩室一厅一卫 X1 X120元</div>
                                     </div>
-                                    <div><el-button @click="manageservice = true">管理</el-button></div>
+                                    <div><el-button @click="()=>{manageservice = true;}">管理</el-button></div>
                                 </div>
                                 <div class="box-card-item">
                                     <div>专业清洗-日常清洁</div>
@@ -306,7 +315,7 @@
                             </div>
                         </el-card>
                     </el-form-item>
-                    <el-form-item label="添加首页默认图(建议尺寸)">
+                    <el-form-item label="添加首页分类图标(建议尺寸)">
                         <el-upload
                             class="upload-demo"
                             action="https://jsonplaceholder.typicode.com/posts/"
@@ -316,18 +325,17 @@
                             <el-button size="small" type="primary">点击上传</el-button>
                         </el-upload>
                     </el-form-item>
-                    <el-form-item label="添加服务展示图(建议尺寸)">
+                    <el-form-item label="添加首页默认图(建议尺寸)">
                         <el-upload
                             action="https://jsonplaceholder.typicode.com/posts/"
+                            :show-file-list="false"
                             list-type="picture-card"
                         >
-                            <i class="el-icon-plus"></i>
+                            <img v-if="dialogImageUrl" :src="dialogImageUrl" class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
-                        <el-dialog :visible.sync="dialogVisible">
-                            <img width="100%" :src="dialogImageUrl" alt="">
-                        </el-dialog>
                     </el-form-item>
-                    <el-form-item label="添加置顶图标(100X100)">
+                    <el-form-item label="添加服务展示图">
                         <el-upload
                             class="upload-demo"
                             action="https://jsonplaceholder.typicode.com/posts/"
@@ -347,7 +355,22 @@
             <div slot="dialog-body">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
                     <el-form-item label="选择服务分类" prop="name">
-                        <el-input v-model="ruleForm.name" placeholder="选择服务分类"></el-input>
+                      <el-select v-model="ruleForm.serviceValue" placeholder="服务分类">
+                            <el-option
+                                  v-for="item in selectService"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                            </el-option>
+                        </el-select>
+                        <el-select v-model="ruleForm.serviceValue" placeholder="服务项目">
+                            <el-option
+                                  v-for="item in selectService"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="选择服务项目">
                         <div class="selectproject">
@@ -426,9 +449,14 @@ export default {
       dialogVisible:false,//上传图片value
       dialogImageUrl:'',
       area:['北京','天津','上海'],
+      selectService:[{
+        value:"1",
+        label:'专业清洗'
+      }],
       ruleForm: {
         name: "",
         serviceType:"1",//服务类型
+        serviceValue:null,//服务分类Value
       },
       rules: {
         name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
@@ -443,6 +471,16 @@ export default {
       this.activeIndex = e;
       console.log(e);
     },
+    //添加服务分类
+    handleAddService(formName){
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.showmodel = false;
+        } else {
+          return false;
+        }
+      });
+    },
     handlesubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -453,6 +491,7 @@ export default {
       });
     },
     append(data) {
+      console.log(data)
       this.addsubcategory = true;
       // const newChild = { id: id++, label: "testtest", children: [] };
       // if (!data.children) {
@@ -546,10 +585,16 @@ export default {
 }
 .table-item {
   flex:1;
-  text-align: center;
+  text-align: left;
+  padding:0 40px;
+}
+.table-item .editButton{
+  padding:0 10px;
+  vertical-align: text-top;
 }
 .body-flex i {
   font-size: 20px;
+  color:#409eff;
 }
 .service-content{
   display: flex;
@@ -588,5 +633,6 @@ export default {
   flex:1;
   text-align: left;
 }
+
 </style>
 
