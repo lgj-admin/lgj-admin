@@ -40,7 +40,7 @@
 			                <div class="td" v-else-if="active_index == '5'">2017.3.15</div>
 			                <div class="td">
 			                	<a href="javascript:void(0)" @click="allot_order_switch = true">分配</a>
-			                	<a href="javascript:void(0)">管理</a>
+			                	<a href="javascript:void(0)" @click="manage_order_switch = true">管理</a>
 			                	<a href="javascript:void(0)">删除</a>
 			                </div>
 			            </div>
@@ -202,22 +202,160 @@
 		    	  	<el-form-item label="订单金额:">
 		    	    	<p>100元</p>
 		    	  	</el-form-item>
-		    	  	<el-form-item label="地毯清洗的项目:">
+		    	  	<el-form-item label="分配对象:">
 		    	  		<el-radio v-model="allot_order_data.radio1" label="1" border size="medium">区域经理</el-radio>
 		    	  		<el-radio v-model="allot_order_data.radio1" label="2" border size="medium">员工</el-radio>
 		    	  	</el-form-item>
-		    	  	<el-form-item label="预约大类:">
+		    	  	<el-form-item label="大区经理:">
 	  					<el-select v-model="allot_order_data.daqujingli" clearable placeholder="请选择大区经理">
 	  					  	<el-option label="张三" value="shanghai"></el-option>
 	  					  	<el-option label="李四" value="beijing"></el-option>
 	  					</el-select>
 	  	    	  	</el-form-item>
-	  	    	  	<el-form-item label="预约大类:">
+	  	    	  	<el-form-item label="小区经理:">
 	  					<el-select v-model="allot_order_data.quyujingli" clearable placeholder="请选择区域经理">
 	  					  	<el-option label="张三" value="shanghai"></el-option>
 	  					  	<el-option label="李四" value="beijing"></el-option>
 	  					</el-select>
 	  	    	  	</el-form-item>
+ 					<div class="body-table table">
+ 					    <div class="thead body-table-thead">
+ 					        <div class="tr">
+ 					        	<div class="td">
+ 					        		日常清洁员工
+ 					        	</div>
+ 					            <div class="td">员工姓名</div>
+ 					            <div class="td">员工电话</div>
+ 					            <div class="td">员工状态</div>
+ 					        </div>
+ 					    </div>
+ 					    <div class="tbody">
+ 					        <div class="tr body-table-tr" v-for="item of 5">
+ 					        	<div class="td">
+ 					        		<el-checkbox v-model="allot_order_data.checked"></el-checkbox>
+ 					        	</div>
+ 					            <div class="td">员工{{item}}</div>
+ 					            <div class="td">12312345678</div>
+ 					            <div class="td">空闲</div>
+ 					        </div>
+ 					    </div>
+ 					</div>
+ 					<div class="body-table table">
+ 					    <div class="thead body-table-thead">
+ 					        <div class="tr">
+ 					        	<div class="td">
+ 					        		家电清洗员工
+ 					        	</div>
+ 					            <div class="td">员工姓名</div>
+ 					            <div class="td">员工电话</div>
+ 					            <div class="td">员工状态</div>
+ 					        </div>
+ 					    </div>
+ 					    <div class="tbody">
+ 					        <div class="tr body-table-tr" v-for="item of 5">
+ 					        	<div class="td">
+ 					        		<el-checkbox v-model="allot_order_data.checked"></el-checkbox>
+ 					        	</div>
+ 					            <div class="td">员工{{item}}</div>
+ 					            <div class="td">12312345678</div>
+ 					            <div class="td">空闲</div>
+ 					        </div>
+ 					    </div>
+ 					</div>
+				</el-form>
+			</div>
+		</model-box>
+		<model-box @selectSubmit="manageOrder" :show.sync="manage_order_switch" title="管理订单">
+			<div slot="dialog-body">
+				<el-form ref="form" :model="manage_order_data" label-width="115px" :label-position="'right'">
+					<el-form-item label="订单编号:">
+		    	    	<p>bh989898</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="预约人:">
+		    	    	<p>张三</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="联系电话:">
+		    	    	<p>12311112222</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="预约时间:">
+		    	    	<p>2018.3.18</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="预约地点:">
+		    	    	<p>x市x区</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="预约内容:">
+		    	    	<p>日常清理</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="服务项目:">
+		    	    	<p>一居室</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="预约备注:">
+		    	    	<p>备注</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="订单金额:">
+		    	    	<p>100元</p>
+		    	  	</el-form-item>
+		    	  	<el-form-item label="大区经理:">
+	  					<el-select v-model="allot_order_data.daqujingli" clearable placeholder="请选择大区经理">
+	  					  	<el-option label="张三" value="shanghai"></el-option>
+	  					  	<el-option label="李四" value="beijing"></el-option>
+	  					</el-select>
+	  	    	  	</el-form-item>
+	  	    	  	<el-form-item label="小区经理:">
+	  					<el-select v-model="allot_order_data.quyujingli" clearable placeholder="请选择区域经理">
+	  					  	<el-option label="张三" value="shanghai"></el-option>
+	  					  	<el-option label="李四" value="beijing"></el-option>
+	  					</el-select>
+	  	    	  	</el-form-item>
+	  	    	  	<el-form-item label="小区经理:">
+	  					<el-select v-model="allot_order_data.quyujingli" clearable placeholder="请选择区域经理">
+	  					  	<el-option label="张三" value="shanghai"></el-option>
+	  					  	<el-option label="李四" value="beijing"></el-option>
+	  					</el-select>
+	  	    	  	</el-form-item>
+		    	  	<el-card class="box-card">
+		    	  	   	<div class="body-table table">
+		    	  	   		<div class="thead body-table-thead">
+		    	  	   		    <div class="tr">
+		    	  	   		    	<div class="td">服务分配信息</div>
+		    	  	   		        <div class="td"></div>
+		    	  	   		        <div class="td"></div>
+		    	  	   		    </div>
+		    	  	   		</div>
+		    	  	   	    <div class="tbody">
+		    	  	   	        <div class="tr body-table-tr">
+		    	  	   	            <div class="td">大区经理</div>
+		    	  	   	            <div class="td">张三</div>
+		    	  	   	            <div class="td">12312345678</div>
+		    	  	   	        </div>
+		    	  	   	        <div class="tr body-table-tr">
+		    	  	   	            <div class="td">地区</div>
+		    	  	   	            <div class="td">太原</div>
+		    	  	   	            <div class="td"></div>
+		    	  	   	        </div>
+		    	  	   	        <div class="tr body-table-tr">
+		    	  	   	            <div class="td">区域经理</div>
+		    	  	   	            <div class="td">李四</div>
+		    	  	   	            <div class="td">12312345678</div>
+		    	  	   	        </div>
+		    	  	   	        <div class="tr body-table-tr">
+		    	  	   	            <div class="td">开始时间</div>
+		    	  	   	            <div class="td">2018.3.15 6:00</div>
+		    	  	   	            <div class="td"></div>
+		    	  	   	        </div>
+		    	  	   	        <div class="tr body-table-tr">
+		    	  	   	            <div class="td">结束时间</div>
+		    	  	   	            <div class="td">2018.3.15 6:00</div>
+		    	  	   	            <div class="td"></div>
+		    	  	   	        </div>
+		    	  	   	    </div>
+		    	  	   	</div>
+		    	  	</el-card>
+		    	  	<el-form-item label="服务进程:">
+		    	  		<el-radio v-model="allot_order_data.radio1" label="1" border size="medium">未开始</el-radio>
+		    	  		<el-radio v-model="allot_order_data.radio1" label="2" border size="medium">服务中</el-radio>
+		    	  		<el-radio v-model="allot_order_data.radio1" label="3" border size="medium">确认完成</el-radio>
+		    	  	</el-form-item>
 				</el-form>
 			</div>
 		</model-box>
@@ -269,11 +407,17 @@ import ModelBox from "components/modelBox";
 		        allot_order_data:{
 		        	radio1:'',
 		        	daqujingli:'',
-		        	quyujingli:''
+		        	quyujingli:'',
+		        	checked:''
 		        },
 		        allot_order_rules:[
 		        	{},
-		        ]
+		        ],
+
+		        manage_order_switch:false,
+		        manage_order_data:{
+
+		        }
 			}
 		},
 		methods:{
@@ -288,6 +432,9 @@ import ModelBox from "components/modelBox";
 				console.log('addOrder');
 			},
 			allotOrder(){
+				console.log('allotOrder');
+			},
+			manageOrder(){
 				console.log('allotOrder');
 			}
 		}
