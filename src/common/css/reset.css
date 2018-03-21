@@ -49,8 +49,10 @@ table {
 
 /* custom */
 a {
-  color: #7e8c8d;
+  color: #16a085;
   text-decoration: none;
+  border:none;
+  outline: none;
   -webkit-backface-visibility: hidden;
 }
 

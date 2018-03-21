@@ -3,7 +3,6 @@
         <v-header class="v-header"></v-header>
         <div class="content">
             <div class="content-wrapper">
-                <!-- <v-aside></v-aside> -->
                 <side-menu :show="show"></side-menu>
                 <div class="content-view">
                     <div style="font-size:12px;margin-bottom:20px">
@@ -11,9 +10,9 @@
                         <el-breadcrumb-item  v-for="(item,index) in currentMenu" :key="index" :to="{ path: item.href }">{{item.name}}</el-breadcrumb-item>
                       </el-breadcrumb>
                     </div>
-                    <keep-alive>
+                    <!-- <keep-alive> -->
                         <router-view></router-view>
-                    </keep-alive>
+                    <!-- </keep-alive> -->
                     <v-footer></v-footer>
                 </div>
             </div>
@@ -23,7 +22,6 @@
 
 <script>
 import VHeader from "components/vHeader";
-import VAside from "components/aside";
 import SideMenu from "components/sideMenu";
 import VFooter from "components/vFooter";
 import { mapGetters } from "vuex";
@@ -35,9 +33,11 @@ export default {
       show: true,
     };
   },
+  created(){
+    console.log('aaa')
+  },
   components: {
     VHeader,
-    VAside,
     SideMenu,
     VFooter
   },
@@ -47,7 +47,7 @@ export default {
     ])
   },
   method:{
-    
+
   }
 };
 </script>

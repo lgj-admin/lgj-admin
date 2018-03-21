@@ -7,7 +7,7 @@
       @close="$emit('update:show',false)"
       center>
       <slot name="dialog-body"></slot>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer" class="dialog-footer" v-if="showButton">
         <el-button @click="Submit">提 交</el-button>
       </span>
   </el-dialog>
@@ -33,6 +33,10 @@ export default {
       type:String,
       default:'30%'
     },
+    showButton:{
+      type:Boolean,
+      default:true
+    }
   },
   methods:{
     Submit(){

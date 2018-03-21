@@ -6,7 +6,7 @@
             </div>
             <nav>
                 <div class="nav-padding nav-name"><span>arronwjn</span></div>
-                <a class="nav-padding nav-out">退出</a>
+                <router-link :to="{path:'/login'}" class="nav-padding nav-out">退出</router-link>
             </nav>
         </div>
     </div>

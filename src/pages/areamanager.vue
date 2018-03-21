@@ -18,31 +18,43 @@
                     <div class="body-table table">
                         <div class="thead body-table-thead">
                             <div class="tr">
-                                <div class="td">昵称</div>
+                                <div class="td">用户名</div>
+                                <div class="td">姓名</div>
                                 <div class="td">手机号</div>
-                                <div class="td">注册时间</div>
-                                <div class="td">是否绑定微信</div>
+                                <div class="td">
+                                    <el-select v-model="ruleForm.areaValue" placeholder="选择大区">
+                                        <el-option
+                                              v-for="item in selectregional"
+                                              :key="item.value"
+                                              :label="item.label"
+                                              :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </div>
+                                <div class="td">所属大区经理</div>
                                 <div class="td">操作</div>
                             </div>
                         </div>
                         <div class="tbody">
                             <div class="tr body-table-tr">
                                 <div class="td">灰太狼</div>
+                                <div class="td">马艳红</div>
                                 <div class="td">13756334567</div>
-                                <div class="td">2018-02-11-12:23</div>
-                                <div class="td">是</div>
+                                <div class="td">华北大区——太原</div>
+                                <div class="td">马艳红 13756334567</div>
                                 <div class="td">
-                                    <a href="#">注销</a>
+                                    <a href="#">编辑</a>
                                     <a href="javascript:void(0)" @click="handleDelete">删除</a>
                                 </div>
                             </div>
                             <div class="tr body-table-tr">
                                 <div class="td">灰太狼</div>
+                                <div class="td">马艳红</div>
                                 <div class="td">13756334567</div>
-                                <div class="td">2018-02-11-12:23</div>
-                                <div class="td">是</div>
+                                <div class="td">华北大区——太原</div>
+                                <div class="td">马艳红 13756334567</div>
                                 <div class="td">
-                                    <a href="#">注销</a>
+                                    <a href="#">编辑</a>
                                     <a href="javascript:void(0)" @click="handleDelete">删除</a>
                                 </div>
                             </div>
@@ -59,20 +71,34 @@
                 </div>
             </div>
         </panpel>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加用户">
+        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加区域经理">
             <div slot="dialog-body">
-                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-                    <el-form-item label="昵称" prop="name">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
+                    <el-form-item label="姓名" prop="name">
                         <el-input v-model="ruleForm.name"></el-input>
                     </el-form-item>
                     <el-form-item label="手机号" prop="phone">
                         <el-input v-model="ruleForm.phone"></el-input>
                     </el-form-item>
-                    <el-form-item label="密码" prop="pasd">
-                        <el-input v-model="ruleForm.pasd"></el-input>
+                    <el-form-item label="所属大区" prop="selectArea">
+                        <el-select v-model="ruleForm.selectArea" placeholder="选择大区">
+                              <el-option
+                                    v-for="item in selectregional"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                              </el-option>
+                        </el-select>
                     </el-form-item>
-                    <el-form-item label="确认密码" prop="checkPasd">
-                        <el-input v-model="ruleForm.checkPasd"></el-input>
+                    <el-form-item label="大区经理" prop="selectArea">
+                        <el-select v-model="ruleForm.selectArea" placeholder="选择大区经理">
+                              <el-option
+                                    v-for="item in selectregional"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                              </el-option>
+                        </el-select>
                     </el-form-item>
                 </el-form>
             </div>
@@ -100,42 +126,23 @@ export default {
         callback();
       }
     };
-    const validatePasd = (rule, value, callback) => {
-      if (value === null) {
-        callback(new Error("请输入密码"));
-      } else {
-        if (this.ruleForm.checkPasd !== null) {
-          this.$refs.ruleForm.validateField("checkPasd");
-        }
-        callback();
-      }
-    };
-    const validateCheckPasd = (rule, value, callback) => {
-      if (value === null) {
-        callback(new Error("请再次输入密码"));
-      } else if (value !== this.ruleForm.pasd) {
-        callback(new Error("两次输入密码不一致!"));
-      } else {
-        callback();
-      }
-    };
     return {
       ruleForm: {
-        name: null, //昵称
-        phone: null, //手机号
-        pasd: null, //密码
-        checkPasd: null //确认密码
+        name: null,
+        phone: null,
+        selectArea: null, //选择所属大区
+        areaValue: null //表头选择大区
       },
       rules: {
         name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-        phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
-        pasd: [{ required: true, validator: validatePasd, trigger: "blur" }],
-        checkPasd: [
-          { required: true, validator: validateCheckPasd, trigger: "blur" }
-        ]
+        selectArea: [
+          { required: true, message: "请选择所属大区", trigger: "blur" }
+        ],
+        phone: [{ required: true, validator: validatePhone, trigger: "blur" }]
       },
       searchValue: "",
-      showmodel: false
+      showmodel: false,
+      selectregional: []
     };
   },
   methods: {
