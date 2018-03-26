@@ -3,7 +3,7 @@
         <panpel>
             <div slot="header" class="header-content">
                 <div class="header-content-left">
-                    <el-input placeholder="请输入内容"
+                    <el-input placeholder="用户昵称、手机号"
                               v-model="searchValue"
                               clearable>
                     </el-input>
@@ -32,7 +32,6 @@
                                 <div class="td">2018-02-11-12:23</div>
                                 <div class="td">是</div>
                                 <div class="td">
-                                    <a href="#">注销</a>
                                     <a href="javascript:void(0)" @click="handleDelete">删除</a>
                                 </div>
                             </div>
@@ -42,7 +41,6 @@
                                 <div class="td">2018-02-11-12:23</div>
                                 <div class="td">是</div>
                                 <div class="td">
-                                    <a href="#">注销</a>
                                     <a href="javascript:void(0)" @click="handleDelete">删除</a>
                                 </div>
                             </div>
@@ -51,6 +49,7 @@
                     <div class="body-page">
                         <el-pagination
                             background
+                            @current-change="handlePagination"
                             layout="prev, pager, next"
                             :total="1000"
                         >
@@ -85,6 +84,10 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { isMobil } from "config/utils";
+import ApiDataModule from "config/axios.js";
+
+const Err_OK = 1001;
+const Err_err = 1000;
 
 export default {
   data() {
@@ -127,7 +130,7 @@ export default {
         checkPasd: null //确认密码
       },
       rules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+        name: [{ required: true, message: "请输入昵称", trigger: "blur" }],
         phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
         pasd: [{ required: true, validator: validatePasd, trigger: "blur" }],
         checkPasd: [
@@ -138,7 +141,13 @@ export default {
       showmodel: false
     };
   },
+  created() {
+    ApiDataModule('EMPLOYEELIST').then(res=>{
+      console.log(res)
+    })
+  },
   methods: {
+    //提交
     handlesubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -148,11 +157,17 @@ export default {
         }
       });
     },
+    //搜索
     handleSearch() {
-      if(this.searchValue!=''){
-        alert('此功能暂未开发')
+      if (this.searchValue != "") {
+        alert("此功能暂未开发");
       }
     },
+    //处理分页
+    handlePagination(page) {
+      console.log(page);
+    },
+    //删除
     handleDelete() {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",

@@ -13,17 +13,15 @@
                     <div class="body-table table">
                         <div class="thead body-table-thead">
                             <div class="tr">
-                                <div class="td">手机号</div>
                                 <div class="td">姓名</div>
-                                <div class="td">所属大区</div>
+                                <div class="td">手机号</div>
                                 <div class="td">操作</div>
                             </div>
                         </div>
                         <div class="tbody">
-                            <div class="tr body-table-tr" v-for="(item,index) in branchManagerList" :key="index">
-                                <div class="td">{{item.phone}}</div>
+                            <div class="tr body-table-tr" v-for="(item,index) in customerServiceList" :key="index">
                                 <div class="td">{{item.user_name}}</div>
-                                <div class="td">{{item.area_name}}——{{item.city}}</div>
+                                <div class="td">{{item.phone}}</div>
                                 <div class="td">
                                     <a href="javascript:void(0)" @click="handleEdit(item.admin_id)">编辑</a>
                                     <a href="javascript:void(0)" @click="handleDelete(item.admin_id)">删除</a>
@@ -34,33 +32,26 @@
                     <div class="body-page">
                         <el-pagination
                             background
+                            @current-change="handlePagination"
                             layout="prev, pager, next"
                             :total="total"
-                            @current-change="handlePage"
                         >
                         </el-pagination>
                     </div>
                 </div>
             </div>
         </panpel>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加大区经理">
+        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加客服">
             <div slot="dialog-body">
-                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
-                    <el-form-item label="手机号" prop="phone">
-                        <el-input v-model="ruleForm.phone"></el-input>
-                    </el-form-item>
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+                    <!-- <el-form-item label="用户名" prop="username">
+                        <el-input v-model="ruleForm.username"></el-input>
+                    </el-form-item> -->
                     <el-form-item label="姓名" prop="name">
                         <el-input v-model="ruleForm.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="所属大区" prop="selectArea">
-                        <el-select v-model="ruleForm.selectArea" placeholder="选择大区">
-                              <el-option
-                                    v-for="item in selectregional"
-                                    :key="item.id"
-                                    :label="item.area_name"
-                                    :value="item.id">
-                              </el-option>
-                        </el-select>
+                    <el-form-item label="手机号" prop="phone">
+                        <el-input v-model="ruleForm.phone"></el-input>
                     </el-form-item>
                     <el-form-item v-if="!id" label="密码" prop="pasd">
                         <el-input v-model="ruleForm.pasd"></el-input>
@@ -119,16 +110,16 @@ export default {
     };
     return {
       ruleForm: {
+        username: null, //用户名
         name: null, //姓名
         phone: null, //手机号
-        selectArea: null, //选择所属大区
         pasd: null, //密码
         checkPasd: null //确认密码
       },
       rules: {
         name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-        selectArea: [
-          { required: true, message: "请选择所属大区", trigger: "blur" }
+        username: [
+          { required: true, message: "请输入用户名", trigger: "blur" }
         ],
         phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
         pasd: [{ required: true, validator: validatePasd, trigger: "blur" }],
@@ -136,79 +127,65 @@ export default {
           { required: true, validator: validateCheckPasd, trigger: "blur" }
         ]
       },
+      searchValue: "", //搜素value
       showmodel: false,
-      selectregional: [],
-      branchManagerList: [], //大区经理列表
+      customerServiceList: [], //客服列表
       total: null,
-      id: null //大区经理id
+      id: null
     };
   },
   created() {
-    ApiDataModule("BRANCHMANAGERLIST", {}).then(res => {
+    ApiDataModule("CUSTOMERSERVICELIST").then(res => {
       console.log(res);
-      this.branchManagerList = res.data.data;
+      this.customerServiceList = res.data.data;
       this.total = res.data.total;
-    });
-    ApiDataModule("CITYLIST", {}).then(res => {
-      if (res.code == Err_OK) {
-        this.selectregional = res.data.data;
-      }
     });
   },
   methods: {
-    handlePage(e) {
-      ApiDataModule("BRANCHMANAGERLIST", {
-        page: e
-      }).then(res => {
-        if (res.code == Err_OK) {
-          this.branchManagerList = res.data.data;
-          this.total = res.data.total;
-        }
-      });
-    },
+    //提交
     handlesubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          this.showmodel = false;
           const formData = {
             user_name: this.ruleForm.name,
-            phone: this.ruleForm.phone,
-            city: this.ruleForm.selectArea
+            phone: this.ruleForm.phone
           };
           if (!this.id) {
             formData.password = this.ruleForm.pasd;
             formData.password2 = this.ruleForm.checkPasd;
-            ApiDataModule("BRANCHMANAGER", formData).then(res => {
+            ApiDataModule("CUSTOMERSERVICEADD", formData).then(res => {
               console.log(res);
               if (res.code == Err_OK) {
-                this.showmodel = false;
-                ApiDataModule("BRANCHMANAGERLIST").then(res => {
-                  if (res.code == Err_OK) {
-                    this.branchManagerList = res.data.data;
-                    this.total = res.data.total;
-                  }
+                this.$message({
+                  type: "success",
+                  message: "添加成功"
                 });
                 this.$refs[formName].resetFields();
-                return;
-              } else if (res.code == Err_err) {
+                ApiDataModule("CUSTOMERSERVICELIST").then(res => {
+                  this.customerServiceList = res.data.data;
+                  this.total = res.data.total;
+                });
+              } else {
                 this.$message({
                   type: "warning",
                   message: res.msg
                 });
-                return;
               }
             });
           } else {
             formData.id = this.id;
-            ApiDataModule("BRANCHMANAGERDOEDIT", formData).then(res => {
+            ApiDataModule("CUSTOMERSERVICEDOEDIT", formData).then(res => {
               if (res.code == Err_OK) {
-                console.log(res);
-                ApiDataModule("BRANCHMANAGERLIST").then(res => {
-                  if (res.code == Err_OK) {
-                    this.branchManagerList = res.data.data;
-                    this.total = res.data.total;
-                  }
+                this.$message({
+                  type: "success",
+                  message: "编辑成功"
                 });
-              } else if (res.code == Err_err) {
+                ApiDataModule("CUSTOMERSERVICELIST").then(res => {
+                  this.customerServiceList = res.data.data;
+                  this.total = res.data.total;
+                });
+              } else {
                 this.$message({
                   type: "warning",
                   message: res.msg
@@ -221,29 +198,40 @@ export default {
         }
       });
     },
-    handleEdit(id) {
-      this.id = id;
-      ApiDataModule("BRANCHMANAGEREDIT", {
-        id: id
-      }).then(res => {
-        console.log(res);
-        if (res.code == Err_OK) {
-          this.ruleForm.name = res.data.user_name;
-          this.ruleForm.phone = res.data.phone;
-          this.ruleForm.selectArea = res.data.city_id;
-        }
-      });
-      this.showmodel = true;
+    //搜索
+    handleSearch() {
+      if (this.searchValue != "") {
+        alert("此功能暂未开发");
+      }
     },
+    //处理分页
+    handlePagination(e) {
+      ApiDataModule("CUSTOMERSERVICELIST", {
+        page: e
+      }).then(res => {
+        this.customerServiceList = res.data.data;
+        this.total = res.data.total;
+      });
+    },
+    //添加客服
     add() {
       this.id = null;
       this.ruleForm.name = null;
-      this.ruleForm.pasd = null;
-      this.ruleForm.checkPasd = null;
       this.ruleForm.phone = null;
-      this.ruleForm.selectArea = null;
       this.showmodel = true;
     },
+    //编辑
+    handleEdit(id) {
+      this.id = id;
+      ApiDataModule("CUSTOMERSERVICEEDIT", {
+        id: id
+      }).then(res => {
+        this.ruleForm.name = res.data.user_name;
+        this.ruleForm.phone = res.data.phone;
+        this.showmodel = true;
+      });
+    },
+    //删除
     handleDelete(id) {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -251,25 +239,20 @@ export default {
         type: "warning"
       })
         .then(() => {
-          ApiDataModule("BRANCHMANAGERDELETE", { id: id }).then(res => {
+          ApiDataModule("CUSTOMERSERVICEDELETE", {
+            id: id
+          }).then(res => {
             console.log(res);
             if (res.code == Err_OK) {
-              this.$message({
-                type: "success",
-                message: "删除成功"
-              });
-              ApiDataModule("BRANCHMANAGERLIST").then(res => {
-                if (res.code == Err_OK) {
-                  this.branchManagerList = res.data.data;
-                  this.total = res.data.total;
-                }
-              });
-            } else if (res.code == Err_err) {
-              this.$message({
-                type: "warning",
-                message: res.msg
+              ApiDataModule("CUSTOMERSERVICELIST").then(res => {
+                this.customerServiceList = res.data.data;
+                this.total = res.data.total;
               });
             }
+          });
+          this.$message({
+            type: "success",
+            message: "删除成功!"
           });
         })
         .catch(() => {

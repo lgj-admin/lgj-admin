@@ -3,7 +3,7 @@
         <panpel>
             <div slot="header" class="header-content">
                 <div class="bottom">
-                    <el-button @click="addauthority=true">添加权限</el-button>
+                    <el-button @click="addauthority=true" type="primary">添加权限</el-button>
                     <div></div>
                 </div>
             </div>

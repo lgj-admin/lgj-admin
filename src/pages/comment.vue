@@ -41,7 +41,7 @@
                 </div>
             </div>
         </panpel>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加用户">
+        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="回复评价">
             <div slot="dialog-body">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" >
                     <el-form-item label="回复" prop="name">

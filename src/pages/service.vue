@@ -4,16 +4,17 @@
             <div slot="header" class="header-content">
                 <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
                     <el-menu-item index="1">服务分类</el-menu-item>
-                    <el-menu-item index="2">服务管理</el-menu-item>
+                    <el-menu-item index="2">服务内容</el-menu-item>
+                    <el-menu-item index="3">生活套餐</el-menu-item>
                 </el-menu>
                 <div class="bottom" v-show="activeIndex == 1">
                     <el-button @click="addcategory=true" type="primary">添加分类</el-button>
                     <div></div>
                 </div>
-                <div class="bottom" v-show="activeIndex == 2">
+                <div class="bottom">
                     <div class="header-content-left">
-                        <el-button @click="addservice = true" type="primary">添加服务</el-button>
-                        <el-button @click="addlifepackage = true" type="primary">添加生活套餐</el-button>
+                        <el-button v-show="activeIndex == 2" @click="addservice = true" type="primary">添加服务</el-button>
+                        <el-button v-show="activeIndex == 3" @click="addlifepackage = true" type="primary">添加生活套餐</el-button>
                     </div>
                     <div class="header-content-right">
                     </div>
@@ -21,26 +22,7 @@
             </div>
             <div slot="body">
                 <div class="body-content">
-                    <!-- <tree-grid :columns="columns" :tree-structure="true" :data-source="data"  v-show="activeIndex == 1"></tree-grid> -->
                     <div  v-show="activeIndex == 1">
-                        <!-- <div class="header-flex">
-                            <div class="table-item">分类名称</div>
-                            <div class="table-item">操作</div>
-                        </div>
-                        <el-tree
-                            :data="data5"
-                            node-key="id"
-                            default-expand-all
-                            :expand-on-click-node="false">
-                            <div class="custom-tree-node body-flex" slot-scope="{ node, data }">
-                                <div class="table-item">{{ node.label }}</div>
-                                <div class="table-item">
-                                    <i @click="() => append(data)" class="el-icon-circle-plus-outline"></i>
-                                    <a href="#" class="editButton">编辑</a>
-                                    <i @click="() => remove(node, data)" class="el-icon-remove-outline"></i>
-                                </div>
-                            </div>
-                        </el-tree> -->
                         <div class="body-table table">
                             <div class="thead body-table-thead">
                                 <div class="tr">
@@ -53,7 +35,7 @@
                                     <div class="td">日常清洗</div>
                                     <div class="td">
                                       <a href="#">编辑</a>
-                                      <a href="#">删除</a>
+                                      <a href="javascript:void(0)" @click="handleDelete">删除</a>
                                     </div>
                                 </div>
                             </div>
@@ -85,7 +67,7 @@
                                 <div class="td">1</div>
                                 <div class="td">
                                   <a href="#">编辑</a>
-                                  <a href="#">删除</a>
+                                  <a href="javascript:void(0)" @click="handleDelete">删除</a>
                                 </div>
                             </div>
                             <div class="tr body-table-tr">
@@ -99,7 +81,49 @@
                                 <div class="td">1</div>
                                 <div class="td">
                                   <a href="#">编辑</a>
-                                  <a href="#">删除</a>
+                                  <a href="javascript:void(0)" @click="handleDelete">删除</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="body-table table" v-show="activeIndex == 3">
+                        <div class="thead body-table-thead">
+                            <div class="tr">
+                                <div class="td">服务名称</div>
+                                <div class="td">价格</div>
+                                <div class="td">全部地区</div>
+                                <div class="td">上架</div>
+                                <div class="td">首页分类展示</div>
+                                <div class="td">精选</div>
+                                <div class="td">排序</div>
+                                <div class="td">操作</div>
+                            </div>
+                        </div>
+                        <div class="tbody">
+                            <div class="tr body-table-tr">
+                                <div class="td">日常清洗</div>
+                                <div class="td">125起</div>
+                                <div class="td">太原</div>
+                                <div class="td">是</div>
+                                <div class="td">是</div>
+                                <div class="td">是</div>
+                                <div class="td">1</div>
+                                <div class="td">
+                                  <a href="#">编辑</a>
+                                  <a href="javascript:void(0)" @click="handleDelete">删除</a>
+                                </div>
+                            </div>
+                            <div class="tr body-table-tr">
+                                <div class="td">日常清洗</div>
+                                <div class="td">125起</div>
+                                <div class="td">太原</div>
+                                <div class="td">是</div>
+                                <div class="td">是</div>
+                                <div class="td">是</div>
+                                <div class="td">1</div>
+                                <div class="td">
+                                  <a href="#">编辑</a>
+                                  <a href="javascript:void(0)" @click="handleDelete">删除</a>
                                 </div>
                             </div>
                         </div>
@@ -521,6 +545,25 @@ export default {
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`);
+    },
+    handleDelete(){
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     }
   },
   components: {

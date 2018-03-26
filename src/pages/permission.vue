@@ -3,7 +3,7 @@
         <panpel>
             <div slot="header" class="header-content">
                 <div class="header-content-left">
-                    <el-button @click="showmodel=true">添加</el-button>
+                    <el-button @click="showmodel=true" type="primary">添加</el-button>
                 </div>
                 <div class="header-content-right">
                 </div>

@@ -5,7 +5,6 @@
                 <span>来管家后台管理中心</span>
                 <label>LAIGUANJIA Administration Center</label>
             </div>
-            <!-- <h3>登录</h3> -->
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="66px">
                 <el-form-item label="用户名" prop="name">
                     <el-input v-model="ruleForm.name" placeholder="请输入用户名">
@@ -45,7 +44,9 @@ export default {
     handlelogin(formName){
       this.$refs[formName].validate(valid => {
         if (valid) {
-
+          this.$router.push({
+            path:'/home'
+          })
         } else {
           return false;
         }

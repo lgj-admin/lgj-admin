@@ -4,7 +4,7 @@
       :visible.sync="centerDialogVisible"
       :width="width"
       :modal-append-to-body="true"
-      @close="$emit('update:show',false)"
+      @close="handleClose"
       center>
       <slot name="dialog-body"></slot>
       <span slot="footer" class="dialog-footer" v-if="showButton">
@@ -42,6 +42,10 @@ export default {
     Submit(){
       this.$emit('update:show',this.show);
       this.$emit('selectSubmit')
+    },
+    handleClose(){
+      this.$emit('selectClose')
+      this.$emit('update:show',false);
     }
   },
   watch: {

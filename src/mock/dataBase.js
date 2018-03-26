@@ -1,4 +1,5 @@
-export const menuList =[
+
+export const menuList = [
   {
     id: 1,
     href: "/sdas",
@@ -6,100 +7,129 @@ export const menuList =[
     icon: "fa fa-id-badge",
     children: [
       {
-        id: 13,
+        id: 2,
+        parentId: 1,
+        href: "/companyinfo",
+        name: "公司信息",
+        icon: "fa fa-info-circle",
+      },
+      {
+        id: 3,
         parentId: 1,
         href: "/authority",
         name: "权限管理",
         icon: "fa fa-certificate",
       },
+      // {
+      //   id: 4,
+      //   parentId: 1,
+      //   href: "/menu",
+      //   name: "菜单管理",
+      //   icon: "fa fa-certificate"
+      // },
       {
-        id: 2,
+        id: 5,
         parentId: 1,
-        href: "/menu",
-        name: "菜单管理",
-        icon: "fa fa-certificate"
-      },
-      {
-        id: 8,
         href: "/permission",
-        name: "角色管理",
+        name: "角色权限",
         icon: "fa fa-address-book"
       },
       {
-        id: 14,
+        id: 6,
         parentId: 1,
-        href: "/companyinfo",
-        name: "公司信息管理",
-        icon: "fa fa-info-circle",
+        href: "/service",
+        name: "服务管理",
+        icon: "fa fa-server"
       },
       {
-        id: 12,
+        id: 7,
+        parentId: 1,
+        href: "/carousel",
+        name: "轮播广告",
+        icon: "fa fa-file-image-o"
+      },
+      {
+        id: 8,
+        parentId: 1,
         href: "/city",
-        name: "城市管理",
+        name: "城市区域",
         icon: "fa fa-cc"
       },
     ]
   },
   {
-    id:9,
-    name:'人员管理',
-    href:"",
-    icon:"fa fa-user-circle",
-    children:[
+    id: 9,
+    name: '管理员管理',
+    href: "/asd",
+    icon: "fa fa-user-circle",
+    children: [
       {
         id: 10,
+        parentId: 9,
         href: "/regional",
-        name: "大区经理管理",
+        name: "大区经理",
         icon: "fa fa-address-card"
       },
       {
         id: 11,
+        parentId: 9,
+        href: "/customer",
+        name: "客服",
+        icon: "fa fa-users"
+      },
+    ]
+  },
+  {
+    id: 12,
+    name: '用户管理',
+    href: "/fdgfdg",
+    icon: "fa fa-user-o",
+    children: [
+      {
+        id: 13,
+        parentId: 12,
         href: "/area",
-        name: "区域经理管理",
+        name: "区域经理",
         icon: "fa fa-id-card-o"
       },
       {
-        id: 3,
+        id: 14,
+        parentId: 12,
         href: "/home",
-        name: "员工管理",
+        name: "员工",
         icon: "fa fa-user-plus"
       },
       {
-        id: 4,
+        id: 15,
+        parentId: 12,
         href: "/user",
-        name: "用户管理",
+        name: "用户",
         icon: "fa fa-user"
       },
     ]
   },
   {
-    id:5,
-    href:"/order",
+    id: 16,
+    href: "/order",
     name: "订单管理",
     icon: "fa fa-first-order"
   },
   {
-    id: 6,
-    href: "/service",
-    name: "服务管理",
-    icon: "fa fa-server"
-  },
-  {
-    id: 7,
-    href: "/carousel",
-    name: "轮播图管理",
-    icon: "fa fa-file-image-o"
-  },
-  {
-    id: 15,
+    id: 17,
     href: "/comment",
     name: "评价管理",
-    icon: "fa fa-comments-o"
+    icon: "fa fa-comment"
   },
   {
-    id: 16,
+    id: 18,
     href: "/log",
     name: "日志管理",
     icon: "fa fa-commenting"
+  },
+  {
+    id: 19,
+    href: "/answer",
+    name: "客服问答",
+    icon: "fa fa-comments-o"
   },
 ]

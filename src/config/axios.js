@@ -5,9 +5,6 @@ import {
 import qs from 'qs'
 
 
-// const ROOT_URL = 'http://cio.ueepub.cn';
-const ROOT_URL = 'https://cnodejs.org/api/v1';
-
 //http request 拦截器
 // axios.interceptors.request.use(
 //     config => {
@@ -63,12 +60,12 @@ const ApiDataModule = function (baseURL, params) {
           },
       })
       .then(response => {
-        resolve(response);
+        resolve(response.data);
       })
       .catch(err => {
         reject(err)
       })
-      // axios.post(API_URL[baseURL].fetchUrl, qs.stringify(params))
+      // axios.post(API_URL[baseURL].fetchUrl, params)
       //   .then(response => {
       //     resolve(response);
       //   })
@@ -85,7 +82,7 @@ const ApiDataModule = function (baseURL, params) {
    * @param data
    * @returns {Promise}
    */
-  if (API_URL[baseURL].method === 'POST') {
+  if (API_URL[baseURL].method === 'FormData') {
     return new Promise((resolve, reject) => {
 
       axios.post(API_URL[baseURL].fetchUrl, params)
