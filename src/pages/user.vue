@@ -32,7 +32,8 @@
                                 <div class="td">2018-02-11-12:23</div>
                                 <div class="td">是</div>
                                 <div class="td">
-                                    <a href="javascript:void(0)" @click="handleDelete">删除</a>
+                                    <a href="javascript:void(0)">冻结</a>
+                                    <a href="javascript:void(0)">编辑</a>
                                 </div>
                             </div>
                             <div class="tr body-table-tr">
@@ -41,7 +42,8 @@
                                 <div class="td">2018-02-11-12:23</div>
                                 <div class="td">是</div>
                                 <div class="td">
-                                    <a href="javascript:void(0)" @click="handleDelete">删除</a>
+                                    <a href="javascript:void(0)">冻结</a>
+                                    <a href="javascript:void(0)">编辑</a>
                                 </div>
                             </div>
                         </div>
@@ -84,10 +86,7 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { isMobil } from "config/utils";
-import ApiDataModule from "config/axios.js";
-
-const Err_OK = 1001;
-const Err_err = 1000;
+import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
 
 export default {
   data() {

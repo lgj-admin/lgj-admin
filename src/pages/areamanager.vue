@@ -53,7 +53,7 @@
                 </div>
             </div>
         </panpel>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加区域经理">
+        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" :title="!id?'添加区域经理':'编辑区域经理'">
             <div slot="dialog-body">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
                     <el-form-item label="姓名" prop="name">
@@ -83,10 +83,8 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { isMobil } from "config/utils";
-import ApiDataModule from "config/axios.js";
+import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
 
-const Err_OK = 1001;
-const Err_err = 1000;
 
 export default {
   data() {
@@ -155,7 +153,7 @@ export default {
             //添加操作
             ApiDataModule("AREAMANAGERADD", formData).then(res => {
               console.log(res);
-              if (res.code == Err_OK) {
+              if (res.code == CODE_OK) {
                 this.$message({
                   type: "success",
                   message: "添加成功"
@@ -177,7 +175,7 @@ export default {
             formData.id = this.id;
             ApiDataModule("AREAMANAGERDOEDIT", formData).then(res => {
               console.log(res);
-              if (res.code == Err_OK) {
+              if (res.code == CODE_OK) {
                 this.$message({
                   type: "success",
                   message: "编辑成功"
@@ -202,23 +200,21 @@ export default {
     },
     //搜索
     handleSearch() {
-      if (this.searchValueName != "" || this.searchValueTel != "") {
-        const formData = {};
-        if (this.searchValueName) {
-          formData.name = this.searchValueName;
-        }
-        if (this.searchValueTel) {
-          formData.tel = this.searchValueTel;
-        }
-        ApiDataModule("AREAMANAGERLIST", formData).then(res => {
-          console.log(res);
-          if (res.code == Err_OK) {
-            this.areaManagerList = res.data.data;
-            this.total = res.data.total;
-            this.page = res.data.current_page;
-          }
-        });
+      const formData = {};
+      if (this.searchValueName) {
+        formData.name = this.searchValueName;
       }
+      if (this.searchValueTel) {
+        formData.tel = this.searchValueTel;
+      }
+      ApiDataModule("AREAMANAGERLIST", formData).then(res => {
+        console.log(res);
+        if (res.code == CODE_OK) {
+          this.areaManagerList = res.data.data;
+          this.total = res.data.total;
+          this.page = res.data.current_page;
+        }
+      });
     },
     //添加
     add() {
@@ -250,7 +246,7 @@ export default {
         .then(() => {
           ApiDataModule("AREAMANAGERDELETE", { id: id }).then(res => {
             console.log(res);
-            if (res.code == Err_OK) {
+            if (res.code == CODE_OK) {
               this.$message({
                 type: "success",
                 message: "删除成功!"

@@ -14,22 +14,16 @@
                         <div class="thead body-table-thead">
                             <div class="tr">
                                 <div class="td">角色名称</div>
+                                <div class="td">角色描述</div>
                                 <div class="td">操作</div>
                             </div>
                         </div>
                         <div class="tbody">
-                            <div class="tr body-table-tr">
-                                <div class="td">超级管理员</div>
+                            <div class="tr body-table-tr" v-for="(item,index) in adminRole" :key="index">
+                                <div class="td">{{item.role_name}}</div>
+                                <div class="td">{{item.role_desc}}</div>
                                 <div class="td">
-                                    <a href="javascript:void(0)"></a>
-                                    <a href="javascript:void(0)" @click="handleDelete">删除</a>
-                                </div>
-                            </div>
-                            <div class="tr body-table-tr">
-                                <div class="td">大区经理</div>
-                                <div class="td">
-                                    <a href="javascript:void(0)">编辑</a>
-                                    <a href="javascript:void(0)" @click="handleDelete">删除</a>
+                                    <a href="javascript:void(0)" @click="handleEdit(item.role_id)">编辑</a>
                                 </div>
                             </div>
                         </div>
@@ -51,10 +45,14 @@
                   <el-form-item label="角色名称" prop="name">
                       <el-input v-model="ruleForm.name" placeholder="请输入角色名称"></el-input>
                   </el-form-item>
+                  <el-form-item label="角色描述" prop="desc">
+                      <el-input v-model="ruleForm.desc" placeholder="请输入角色描述"></el-input>
+                  </el-form-item>
                   <el-form-item label="权限" prop="selectAuthority">
                       <el-tree
                               ref="tree"
-                              :data="data5"
+                              :data="systemAuthList"
+                              :props="defaultProps"
                               show-checkbox
                               node-key="id"
                               default-expand-all
@@ -72,6 +70,8 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
+import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
+
 export default {
   data() {
     const data = [
@@ -114,25 +114,58 @@ export default {
     ];
     return {
       ruleForm: {
-        name: "", //角色名称
-        selectAuthority: []
+        name: null, //角色名称
+        selectAuthority: [],
+        desc:null
       },
       rules: {
         name: [{ required: true, message: "请输入角色名称", trigger: "blur" }],
+        desc: [{ required: true, message: "请输入角色描述", trigger: "blur" }],
         selectAuthority: [
           { required: true, message: "请选择权限", trigger: "blur" }
         ]
       },
       showmodel: false,
-      data5: JSON.parse(JSON.stringify(data))
+      id:null,//角色id
+      data5: JSON.parse(JSON.stringify(data)),
+      adminRole:[],//角色列表数据
+      systemAuthList:[],//权限列表
+      defaultProps:{
+        label:'name'
+      }
     };
   },
+  created() {
+    //角色列表
+    ApiDataModule('ADMINROLE').then(res=>{
+      console.log(res);
+      this.adminRole = res.data;
+    })
+    //权限列表
+    ApiDataModule("SYSTEMAUTHLIST").then(res => {
+      console.log(res);
+      if (res.code == CODE_OK) {
+        this.systemAuthList = res.data;
+      }
+    });
+  },
   methods: {
+    //提交
     handlesubmit(formName) {
       console.log(this.$refs.tree.getCheckedKeys());
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.showmodel = false;
+          const formData = {
+            name:this.ruleForm.name,
+            desc:this.ruleForm.desc,
+          };
+          if(this.id){
+            formData.id = this.id;
+          }
+          ApiDataModule('HANDLEADMINROLE',formData).then(res=>{
+            this.showmodel = false;
+            console.log(res);
+          })
         } else {
           return false;
         }
@@ -140,6 +173,16 @@ export default {
     },
     selectAuthority(e) {
       console.log(e);
+    },
+    //编辑
+    handleEdit(id){
+      this.id = id;
+      this.showmodel = true;
+      ApiDataModule("ADMININFO",{
+        id:id
+      }).then(res=>{
+        console.log(res)
+      })
     },
     handleDelete() {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {

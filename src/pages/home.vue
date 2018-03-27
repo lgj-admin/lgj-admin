@@ -9,14 +9,14 @@
                 <div class="bottom">
                     <div class="header-content-left">
                         <el-input placeholder="员工姓名"
-                                  v-model="searchValue"
+                                  v-model="searchValueName"
                                   clearable>
                         </el-input>
                         <el-input placeholder="员工电话"
-                                  v-model="searchValue"
+                                  v-model="searchValueTel"
                                   clearable>
                         </el-input>
-                        <el-select v-model="ruleForm.areaManagerValue" placeholder="区域经理">
+                        <el-select v-model="searchValueSkill" clearable  placeholder="员工技能">
                             <el-option
                                   v-for="item in areaManager"
                                   :key="item.id"
@@ -24,7 +24,7 @@
                                   :value="item.id">
                             </el-option>
                         </el-select>
-                        <el-select v-model="ruleForm.areaManagerValue" placeholder="区域经理">
+                        <el-select v-model="searchValueManager" clearable  placeholder="区域经理">
                             <el-option
                                   v-for="item in areaManager"
                                   :key="item.id"
@@ -87,7 +87,7 @@
                                     {{item.area_name}}——{{item.city}}
                                 </div>
                                 <div class="td">
-                                    <a  href="#" @click="handleEdit(item.id)">分配编辑</a>
+                                    <a  href="javascript:void(0)" @click="handleEdit(item.id)">分配编辑</a>
                                     <a href="javascript:void(0)" @click="handleDelete(item.id)">删除</a>
                                 </div>
                             </div>
@@ -98,6 +98,7 @@
                             background
                             layout="prev, pager, next"
                             :total="total"
+                            @current-change="handlePagination"
                         >
                         </el-pagination>
                     </div>
@@ -150,10 +151,7 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { isMobil } from "config/utils";
-import ApiDataModule from "config/axios.js";
-
-const Err_OK = 1001;
-const Err_err = 1000;
+import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
 
 export default {
   data() {
@@ -172,7 +170,6 @@ export default {
     return {
       activeIndex: "1", //tags索引
       ruleForm: {
-        username: null, //用户名
         name: null, //姓名
         phone: null, //手机号
         regionalManagerValue: null, //大区经理value
@@ -180,9 +177,6 @@ export default {
       },
       rules: {
         name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-        username: [
-          { required: true, message: "请输入用户名", trigger: "blur" }
-        ],
         phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
         regionalManagerValue: [
           { required: true, message: "请选择大区经理", trigger: "change" }
@@ -191,33 +185,12 @@ export default {
           { required: true, message: "请选择区域经理", trigger: "change" }
         ]
       },
-      searchValue: "", //搜索框value
+      searchValueName: "", //搜索框员工姓名value
+      searchValueTel: "", //搜索框员工电话value
+      searchValueManager: "", //搜索框区域经理value
+      searchValueSkill: "", //搜索框员工技能value
       showmodel: false, //添加员工模态框状态
-      showmodelEdit: false, //编辑模态框状态
       setlevel: false, //设置等级模态框状态
-      serviceSkills: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎"
-        },
-        {
-          value: "选项4",
-          label: "龙须面"
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
-        }
-      ],
-      value: "", //表头selectvalue
       cities: ["上海", "北京", "广州", "深圳"],
       checkedCities1: [],
       employeeList: [], //员工列表
@@ -252,6 +225,29 @@ export default {
     });
   },
   methods: {
+    //分页
+    handlePagination(e) {
+      const formData = {
+        page: e
+      };
+      if (this.searchValueName) {
+        formData.name = this.searchValueName;
+      }
+      if (this.searchValueTel) {
+        formData.tel = this.searchValueTel;
+      }
+      if (this.searchValueSkill) {
+        formData.skill = this.searchValueSkill;
+      }
+      if (this.searchValueManager) {
+        formData.area_boss = this.searchValueManager;
+      }
+      ApiDataModule("EMPLOYEELIST", formData).then(res => {
+        this.employeeList = res.data.data;
+        this.total = res.data.total;
+        this.page = res.data.current_page;
+      });
+    },
     //添加员工
     handleAddemployee(formName) {
       this.$refs[formName].validate(valid => {
@@ -262,13 +258,13 @@ export default {
             tel: this.ruleForm.phone,
             city_boss: this.ruleForm.regionalManagerValue,
             area_boss: this.ruleForm.areaManagerValue,
-            skill: this.ruleForm.skill
+            skill: "北京"
           };
           if (!this.id) {
             formData.type = 1;
             ApiDataModule("EMPLOYEEADDEDIT", formData).then(res => {
               console.log(res);
-              if (res.code == Err_OK) {
+              if (res.code == CODE_OK) {
                 this.$message({
                   type: "success",
                   message: "添加成功"
@@ -291,7 +287,7 @@ export default {
             formData.id = this.id;
             ApiDataModule("EMPLOYEEADDEDIT", formData).then(res => {
               console.log(res);
-              if (res.code == Err_OK) {
+              if (res.code == CODE_OK) {
                 this.$message({
                   type: "success",
                   message: "编辑成功"
@@ -316,9 +312,27 @@ export default {
     },
     //搜索
     handleSearch() {
-      if (this.searchValue != "") {
-        alert("此功能暂未开发");
+      const formData = {
+        page: 1
+      };
+      this.page = 1;
+      if (this.searchValueName) {
+        formData.name = this.searchValueName;
       }
+      if (this.searchValueTel) {
+        formData.tel = this.searchValueTel;
+      }
+      if (this.searchValueSkill) {
+        formData.skill = this.searchValueSkill;
+      }
+      if (this.searchValueManager) {
+        formData.area_boss = this.searchValueManager;
+      }
+      ApiDataModule("EMPLOYEELIST", formData).then(res => {
+        this.employeeList = res.data.data;
+        this.total = res.data.total;
+        this.page = res.data.current_page;
+      });
     },
     add() {
       this.id = null;
@@ -350,15 +364,24 @@ export default {
         type: "warning"
       })
         .then(() => {
-          ApiDataModule("EMPLOYEEADDEDIT", { id: id }).then(res => {
+          ApiDataModule("EMPLOYEEDELETE", { id: id }).then(res => {
             console.log(res);
-            if (res.code == Err_OK) {
-              console.log(res);
+            if (res.code == CODE_OK) {
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+              ApiDataModule("EMPLOYEELIST").then(res => {
+                this.employeeList = res.data.data;
+                this.total = res.data.total;
+                this.page = res.data.current_page;
+              });
+            } else {
+              this.$message({
+                type: "warning",
+                message: res.msg
+              });
             }
-          });
-          this.$message({
-            type: "success",
-            message: "删除成功!"
           });
         })
         .catch(() => {

@@ -8,14 +8,15 @@ import qs from 'qs'
 //http request 拦截器
 // axios.interceptors.request.use(
 //     config => {
-//         // const token = getCookie('名称');注意使用的时候需要引入cookie方法，推荐js-cookie
+//         const token = getCookie('名称');注意使用的时候需要引入cookie方法，推荐js-cookie
 //         config.data = JSON.stringify(config.data);
 //         config.headers = {
 //             'Content-Type': 'application/x-www-form-urlencoded'
 //         }
-//         // if(token){
-//         //   config.params = {'token':token}
-//         // }
+//         if(token){
+//           config.params = {'token':token}
+//         }
+//         config.data = { 'role_id': '123' }
 //         return config;
 //     },
 //     error => {
@@ -40,8 +41,9 @@ import qs from 'qs'
 //     }
 // )
 
-
-const ApiDataModule = function (baseURL, params) {
+export const CODE_OK = 1001;//接口成功响应code
+export const CODE_ERR = 1000;//接口响应失败code
+export const ApiDataModule = function (baseURL, params) {
 
   /**
    * 封装post请求
@@ -49,12 +51,20 @@ const ApiDataModule = function (baseURL, params) {
    * @param data
    * @returns {Promise}
    */
+
   if (API_URL[baseURL].method === 'POST') {
+    var obj = { role_id: '123' };
+    var param = {};
+    if (params){
+      param = Object.assign(params, obj);
+    }else{
+      param = Object.assign({}, obj);
+    }
     return new Promise((resolve, reject) => {
       axios({
           method: 'post',
           url: API_URL[baseURL].fetchUrl,
-          data: qs.stringify(params),
+          data: qs.stringify(param),
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
@@ -159,5 +169,3 @@ const ApiDataModule = function (baseURL, params) {
 
   }
 }
-
-export default ApiDataModule;

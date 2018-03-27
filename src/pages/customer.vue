@@ -41,7 +41,7 @@
                 </div>
             </div>
         </panpel>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加客服">
+        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" :title="!id?'添加客服':'编辑客服'">
             <div slot="dialog-body">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
                     <!-- <el-form-item label="用户名" prop="username">
@@ -70,10 +70,7 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { isMobil } from "config/utils";
-import ApiDataModule from "config/axios.js";
-
-const Err_OK = 1001;
-const Err_err = 1000;
+import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
 
 export default {
   data() {
@@ -156,7 +153,7 @@ export default {
             formData.password2 = this.ruleForm.checkPasd;
             ApiDataModule("CUSTOMERSERVICEADD", formData).then(res => {
               console.log(res);
-              if (res.code == Err_OK) {
+              if (res.code == CODE_OK) {
                 this.$message({
                   type: "success",
                   message: "添加成功"
@@ -176,7 +173,7 @@ export default {
           } else {
             formData.id = this.id;
             ApiDataModule("CUSTOMERSERVICEDOEDIT", formData).then(res => {
-              if (res.code == Err_OK) {
+              if (res.code == CODE_OK) {
                 this.$message({
                   type: "success",
                   message: "编辑成功"
@@ -243,7 +240,7 @@ export default {
             id: id
           }).then(res => {
             console.log(res);
-            if (res.code == Err_OK) {
+            if (res.code == CODE_OK) {
               ApiDataModule("CUSTOMERSERVICELIST").then(res => {
                 this.customerServiceList = res.data.data;
                 this.total = res.data.total;

@@ -25,6 +25,7 @@
 
 <script>
 import Panpel from "base/panpel";
+import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
 
 
 export default {
@@ -32,11 +33,39 @@ export default {
     return {
       phone:null,//公司客服电话
       info:null,//公司信息
+      role_id:null,//权限id
     };
+  },
+  created() {
+    ApiDataModule('COMPANYINFO').then(res=>{
+      console.log(res);
+      if(res.code == CODE_OK){
+        this.phone = res.phone;
+        this.info = res.store_desc;
+      }
+    })
   },
   methods: {
     handleSubmit() {
-      console.log("bbb");
+      const formData = {};
+      if(this.role_id != null){
+        formData.role_id = this.role_id;
+      }
+      if(this.phone != null){
+        formData.phone = this.phone;
+      }
+      if(this.info != null){
+        formData.store_desc = this.info;
+      }
+      ApiDataModule('HANDLECONFIG',formData).then(res=>{
+        console.log(res);
+        if(res.code == CODE_OK){
+          this.$message({
+            type:'success',
+            message:'提交成功'
+          })
+        }
+      })
     }
   },
   components: {

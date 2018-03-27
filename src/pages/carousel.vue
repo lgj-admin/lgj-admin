@@ -3,7 +3,7 @@
         <panpel>
             <div slot="header" class="header-content">
                 <div class="header-content-left">
-                  <el-button class="search-button" @click="showmodel = true" type="primary">添加广告</el-button>
+                  <el-button class="search-button" @click="add()" type="primary">添加广告</el-button>
                 </div>
                 <div class="header-content-right">
                 </div>
@@ -17,32 +17,23 @@
                                 <div class="td">轮播图</div>
                                 <div class="td">上架</div>
                                 <div class="td">排序</div>
+                                <div class="td">跳转类型</div>
                                 <div class="td">操作</div>
                             </div>
                         </div>
                         <div class="tbody">
-                            <div class="tr body-table-tr">
-                                <div class="td">1</div>
+                            <div class="tr body-table-tr" v-for="(item,index) in adList" :key="index">
+                                <div class="td">{{item.ad_id}}</div>
                                 <div class="td">
-                                    <img src="../assets/logo.png" alt="" width="100" height="55">
+                                    <img :src="item.ad_code" alt="" width="100" height="55">
                                 </div>
-                                <div class="td">是</div>
-                                <div class="td">1</div>
+                                <div class="td">{{getEnabled(item.enabled)}}</div>
+                                <div class="td">{{item.orderby}}</div>
+                                <div class="td">{{getMediaType(item.media_type)}}</div>
                                 <div class="td">
-                                  <a href="#">编辑</a>
-                                  <a href="javascript:void(0)" @click="handleDelete">删除</a>
-                                </div>
-                            </div>
-                            <div class="tr body-table-tr">
-                                <div class="td">2</div>
-                                <div class="td">
-                                    <img src="../assets/logo.png" alt="" width="100" height="55">
-                                </div>
-                                <div class="td">是</div>
-                                <div class="td">1</div>
-                                <div class="td">
-                                  <a href="javascript:void(0)">编辑</a>
-                                  <a href="javascript:void(0)" @click="handleDelete">删除</a>
+                                  <a href="javascript:void(0)" @click="handleEdit(item.ad_id)">编辑</a>
+                                  <a href="javascript:void(0)" @click="handleEdit(item.ad_id)">上架</a>
+                                  <a href="javascript:void(0)" @click="handleDelete(item.ad_id)">删除</a>
                                 </div>
                             </div>
                         </div>
@@ -76,7 +67,7 @@
                   </el-form-item>
                   <el-form-item label="跳转类型" prop="linkType">
                       <el-radio v-model="ruleForm.linkType" label="1">跳转至活动</el-radio>
-                      <el-radio v-model="ruleForm.linkType" label="2">跳转至文章详情</el-radio>
+                      <el-radio v-model="ruleForm.linkType" label="2">跳转至商品</el-radio>
                   </el-form-item>
                   <el-form-item label="跳转地址" prop="name">
                       <el-input v-model="ruleForm.name"></el-input>
@@ -98,20 +89,33 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
+import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
+
+
 export default {
   data() {
     return {
       ruleForm: {
-        name: "",
-        linkType: "1"
+        name: null,
+        linkType: "1",
+        ad_link:null
       },
       rules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
       },
       searchValue: "",
       showmodel: false,
-      imageUrl: ""
+      imageUrl: "",
+      adList:[],//轮播列表数据
+      id:null,//轮播id
     };
+  },
+  created() {
+    ApiDataModule('ADLIST',{
+      role_id:''
+    }).then(res=>{
+      console.log(res);
+      this.adList = res.data;
+    })
   },
   methods: {
     handlesubmit(formName) {
@@ -142,7 +146,23 @@ export default {
       }
       return isJPG && isLt2M;
     },
-    handleDelete() {
+    add() {
+      this.id = null;
+      this.showmodel = true
+    },
+    handleEdit(id){
+      this.id = id;
+      this.showmodel = true;
+      ApiDataModule('ADINFO',{
+        id:id,
+      }).then(res=>{
+        console.log(res);
+        this.ruleForm.ad_link = res.data.ad_link;
+        this.ruleForm.linkType = res.data.media_type.toString();
+        this.imageUrl = res.data.ad_code;
+      })
+    },
+    handleDelete(id) {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -160,6 +180,30 @@ export default {
             message: "已取消删除"
           });
         });
+    },
+    //上架状态
+    getEnabled(type){
+      let status = '';
+      if(type == 1){
+        status = '是';
+        return status;
+      }
+      if(type == 0){
+        status = '否';
+        return status;
+      }
+    },
+    //跳转类型
+    getMediaType(type){
+      let status = '';
+      if(type == 1){
+        status = '跳转活动';
+        return status;
+      }
+      if(type == 2){
+        status = '跳转商品';
+        return status;
+      }
     }
   },
   components: {

@@ -43,7 +43,7 @@
                 </div>
             </div>
         </panpel>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加大区经理">
+        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" :title="!id?'添加大区经理':'编辑大区经理'">
             <div slot="dialog-body">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
                     <el-form-item label="手机号" prop="phone">
@@ -79,10 +79,7 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { isMobil } from "config/utils";
-import ApiDataModule from "config/axios.js";
-
-const Err_OK = 1001;
-const Err_err = 1000;
+import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
 
 export default {
   data() {
@@ -150,7 +147,7 @@ export default {
       this.total = res.data.total;
     });
     ApiDataModule("CITYLIST", {}).then(res => {
-      if (res.code == Err_OK) {
+      if (res.code == CODE_OK) {
         this.selectregional = res.data.data;
       }
     });
@@ -160,7 +157,7 @@ export default {
       ApiDataModule("BRANCHMANAGERLIST", {
         page: e
       }).then(res => {
-        if (res.code == Err_OK) {
+        if (res.code == CODE_OK) {
           this.branchManagerList = res.data.data;
           this.total = res.data.total;
         }
@@ -179,17 +176,17 @@ export default {
             formData.password2 = this.ruleForm.checkPasd;
             ApiDataModule("BRANCHMANAGER", formData).then(res => {
               console.log(res);
-              if (res.code == Err_OK) {
+              if (res.code == CODE_OK) {
                 this.showmodel = false;
                 ApiDataModule("BRANCHMANAGERLIST").then(res => {
-                  if (res.code == Err_OK) {
+                  if (res.code == CODE_OK) {
                     this.branchManagerList = res.data.data;
                     this.total = res.data.total;
                   }
                 });
                 this.$refs[formName].resetFields();
                 return;
-              } else if (res.code == Err_err) {
+              } else if (res.code == CODE_ERR) {
                 this.$message({
                   type: "warning",
                   message: res.msg
@@ -200,15 +197,15 @@ export default {
           } else {
             formData.id = this.id;
             ApiDataModule("BRANCHMANAGERDOEDIT", formData).then(res => {
-              if (res.code == Err_OK) {
+              if (res.code == CODE_OK) {
                 console.log(res);
                 ApiDataModule("BRANCHMANAGERLIST").then(res => {
-                  if (res.code == Err_OK) {
+                  if (res.code == CODE_OK) {
                     this.branchManagerList = res.data.data;
                     this.total = res.data.total;
                   }
                 });
-              } else if (res.code == Err_err) {
+              } else if (res.code == CODE_ERR) {
                 this.$message({
                   type: "warning",
                   message: res.msg
@@ -227,7 +224,7 @@ export default {
         id: id
       }).then(res => {
         console.log(res);
-        if (res.code == Err_OK) {
+        if (res.code == CODE_OK) {
           this.ruleForm.name = res.data.user_name;
           this.ruleForm.phone = res.data.phone;
           this.ruleForm.selectArea = res.data.city_id;
@@ -253,18 +250,18 @@ export default {
         .then(() => {
           ApiDataModule("BRANCHMANAGERDELETE", { id: id }).then(res => {
             console.log(res);
-            if (res.code == Err_OK) {
+            if (res.code == CODE_OK) {
               this.$message({
                 type: "success",
                 message: "删除成功"
               });
               ApiDataModule("BRANCHMANAGERLIST").then(res => {
-                if (res.code == Err_OK) {
+                if (res.code == CODE_OK) {
                   this.branchManagerList = res.data.data;
                   this.total = res.data.total;
                 }
               });
-            } else if (res.code == Err_err) {
+            } else if (res.code == CODE_ERR) {
               this.$message({
                 type: "warning",
                 message: res.msg

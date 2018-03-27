@@ -60,10 +60,8 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
-import ApiDataModule from "config/axios.js";
+import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
 
-const Err_OK = 1001;
-const Err_err = 1000;
 
 export default {
   data() {
@@ -84,7 +82,7 @@ export default {
   },
   created() {
     ApiDataModule("CITYLIST", {}).then(res => {
-      if (res.code == Err_OK) {
+      if (res.code == CODE_OK) {
         this.cityList = res.data.data;
         this.total = res.data.total;
         console.log(res)
@@ -96,7 +94,7 @@ export default {
       ApiDataModule("CITYLIST", {
         page: e
       }).then(res => {
-        if (res.code == Err_OK) {
+        if (res.code == CODE_OK) {
           this.cityList = res.data.data;
           this.total = res.data.total;
         }
@@ -110,16 +108,16 @@ export default {
               area_name: this.ruleForm.name,
               city: this.ruleForm.city
             }).then(res => {
-              if (res.code == Err_OK) {
+              if (res.code == CODE_OK) {
                 this.showmodel = false;
                 ApiDataModule("CITYLIST", {}).then(res => {
-                  if (res.code == Err_OK) {
+                  if (res.code == CODE_OK) {
                     this.cityList = res.data.data;
                     this.total = res.data.total;
                   }
                 });
                 return;
-              } else if (res.code == Err_err) {
+              } else if (res.code == CODE_ERR) {
                 this.$message({
                   type: "warning",
                   message: res.msg
@@ -133,16 +131,16 @@ export default {
               area_name: this.ruleForm.name,
               city: this.ruleForm.city
             }).then(res => {
-              if (res.code == Err_OK) {
+              if (res.code == CODE_OK) {
                 this.showmodel = false;
                 ApiDataModule("CITYLIST", {}).then(res => {
-                  if (res.code == Err_OK) {
+                  if (res.code == CODE_OK) {
                     this.cityList = res.data.data;
                     this.total = res.data.total;
                   }
                 });
                 return;
-              } else if (res.code == Err_err) {
+              } else if (res.code == CODE_ERR) {
                 this.$message({
                   type: "warning",
                   message: res.msg
@@ -167,7 +165,7 @@ export default {
       ApiDataModule("CITYEIDT", {
         id: id
       }).then(res => {
-        if (res.code == Err_OK) {
+        if (res.code == CODE_OK) {
           this.ruleForm.name = res.data.area_name;
           this.ruleForm.city = res.data.city;
           this.showmodel = true;
@@ -185,13 +183,13 @@ export default {
             id: id
           }).then(res => {
             console.log(res);
-            if (res.code == Err_OK) {
+            if (res.code == CODE_OK) {
               this.$message({
                 type: "success",
                 message: "删除成功!"
               });
               ApiDataModule("CITYLIST", {}).then(res => {
-                if (res.code == Err_OK) {
+                if (res.code == CODE_OK) {
                   this.cityList = res.data.data;
                   this.total = res.data.total;
                 }
