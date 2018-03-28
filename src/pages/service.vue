@@ -172,7 +172,7 @@
                 </el-form>
             </div>
         </model-box>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="addservice" title="添加服务" width="80%">
+        <model-box @selectSubmit="handleSubmitAddService('ruleForm')" :show.sync="addservice" title="添加服务" width="80%">
             <div slot="dialog-body">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
                     <el-form-item label="选择服务分类" prop="name">
@@ -254,7 +254,7 @@
                         </div>
                     </el-form-item>
                     <el-form-item label="添加首页分类图标(建议尺寸)">
-                        <el-upload
+                        <!-- <el-upload
                             class="upload-demo"
                             action="https://jsonplaceholder.typicode.com/posts/"
                             :on-preview="handlePreview"
@@ -265,7 +265,21 @@
                             :on-exceed="handleExceed"
                             :file-list="fileList">
                             <el-button size="small" type="primary">点击上传</el-button>
-                        </el-upload>
+                        </el-upload> -->
+                        <upload
+                            @selectUpload="handleUpload"
+                            :imgArr.sync="imageArr"
+                            listType="pictureList"
+                        >
+                            <!-- <div
+                                slot="upload-pictureList"
+                                v-if="imageArr.length"
+                                v-for="(item,index) in imageArr"
+                                :key="index"
+                            >
+                                <img :src="item" alt="" width="100" height="60">
+                            </div> -->
+                        </upload>
                     </el-form-item>
                     <el-form-item label="添加首页展示图(建议尺寸)">
                         <el-upload
@@ -427,6 +441,9 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
+import Upload from "components/upload";
+import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+
 
 let id = 1000;
 export default {
@@ -487,10 +504,15 @@ export default {
       },
       data5: JSON.parse(JSON.stringify(data)),
       fileList:[],
+      imageArr:[]
     };
   },
   created() {},
   methods: {
+    handleUpload(e){
+        this.imageArr.push(window.URL.createObjectURL(e.target.files[0]));
+        console.log(this.imageArr,'imageArr');
+    },
     handleSelect(e) {
       this.activeIndex = e;
       console.log(e);
@@ -509,6 +531,36 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.showmodel = false;
+        } else {
+          return false;
+        }
+      });
+    },
+    handleSubmitAddService(formName){
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.showmodel = false;
+          const formData = {
+            goods_name:'safsdf',
+            cat_id:'1',
+            goods_remark:'sdgsgsg',
+            shipping_area_ids:[1,2,3],
+            original_img:'dsgdfgdfg',
+            original_type_img:'dsgdsgdsfg',
+            goods_attr:[
+              {
+                key_name:'dsfgfdgfdg',
+                package_price:'345',
+                mc_rebate:123.33,
+                price:'123',
+              },
+            ],
+
+          };
+
+          ApiDataModule("ADDGOODS",formData).then(res=>{
+            console.log(res)
+          })
         } else {
           return false;
         }
@@ -569,6 +621,7 @@ export default {
   components: {
     Panpel,
     ModelBox,
+    Upload
   }
 };
 </script>
