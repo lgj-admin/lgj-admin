@@ -52,7 +52,7 @@
           <div slot="dialog-body">
               <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
                   <el-form-item label="上传图片:(建议尺寸)">
-                      <upload @selectUpload="handleUpload" :imgUrl.sync="imageUrl" ref="upload">
+                      <upload @selectUpload="handleUpload" @selectRemove="handleRemove" :imgUrl.sync="imageUrl" ref="upload">
                           <div slot="upload-card" class="upload-card">
                               <i class="el-icon-plus" v-if="!imageUrl"></i>
                               <img v-if="imageUrl" :src="imageUrl" alt="" width="100%" height="100%">
@@ -164,6 +164,10 @@ export default {
       console.log(e)
       this.imageUrl = window.URL.createObjectURL(e.target.files[0]);
       this.imgFile = e.target.files[0];
+    },
+    handleRemove(){
+      this.imageUrl = null;
+      this.imgFile = null;
     },
     add() {
       console.log('aaa')

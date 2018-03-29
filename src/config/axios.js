@@ -41,8 +41,8 @@ import qs from 'qs'
 //     }
 // )
 
-export const CODE_OK = 1001;//接口成功响应code
-export const CODE_ERR = 1000;//接口响应失败code
+export const CODE_OK = 1001; //接口成功响应code
+export const CODE_ERR = 1000; //接口响应失败code
 export const ApiDataModule = function (baseURL, params) {
 
   /**
@@ -53,11 +53,13 @@ export const ApiDataModule = function (baseURL, params) {
    */
 
   if (API_URL[baseURL].method === 'POST') {
-    var obj = { role_id: '123' };
+    var obj = {
+      role_id: '123'
+    };
     var param = {};
-    if (params){
+    if (params) {
       param = Object.assign(params, obj);
-    }else{
+    } else {
       param = Object.assign({}, obj);
     }
     return new Promise((resolve, reject) => {
@@ -68,13 +70,13 @@ export const ApiDataModule = function (baseURL, params) {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
-      })
-      .then(response => {
-        resolve(response.data);
-      })
-      .catch(err => {
-        reject(err)
-      })
+        })
+        .then(response => {
+          resolve(response.data);
+        })
+        .catch(err => {
+          reject(err)
+        })
       // axios.post(API_URL[baseURL].fetchUrl, params)
       //   .then(response => {
       //     resolve(response);
@@ -94,15 +96,20 @@ export const ApiDataModule = function (baseURL, params) {
    */
   if (API_URL[baseURL].method === 'FormData') {
     return new Promise((resolve, reject) => {
-
-      axios.post(API_URL[baseURL].fetchUrl, params)
+      axios({
+          method: 'post',
+          url: API_URL[baseURL].fetchUrl,
+          data: params,
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
         .then(response => {
           resolve(response);
         })
         .catch(err => {
           reject(err)
         })
-
     })
   }
 

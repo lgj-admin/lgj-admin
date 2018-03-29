@@ -13,14 +13,13 @@
                 <div class="upload-body">
                     <!-- <slot name="upload-pictureList"></slot> -->
                     <div
-                        slot="upload-pictureList"
                         v-if="imgArr.length"
                         v-for="(item,index) in imgArr"
                         :key="index"
                     >
                         <div class="upload-button">
                             <div class="upload-card">
-                                <img :src="item" alt="" width="100" height="60">
+                                  <img :src="item" alt="" width="100" height="60">
                             </div>
                             <div class="upload-delete">
                                 <i class="el-icon-delete" @click="remove(index)"></i>
@@ -36,6 +35,10 @@
                 </div>
             </div>
         </div>
+        <div class="file-button" v-if="listType == 'file'" >
+            <div>上传文件</div>
+            <input type="file" name="" id="" @change="handleChange" ref="inputFile" value="上传文件">
+        </div>
     </div>
 </template>
 
@@ -48,7 +51,9 @@ export default {
     },
     imgArr: {
       type: Array,
-      default: []
+      default(){
+        return [];
+      }
     },
     listType:{
       type:String,
@@ -61,17 +66,15 @@ export default {
   },
   methods: {
     remove(index){
-      // this.imgArr.splice(index,1);
-      const urlArr = this.imgArr.splice(index,1);
-      console.log(index);
-      console.log(urlArr);
-      this.$emit('update:imgArr',urlArr)
+      this.$emit("update:imgArr", this.imgArr);
+      this.$emit("selectRemove", index);
     },
     handleChange(e) {
       this.$emit("selectUpload", e);
     },
     handleDelete() {
-      this.$emit('update:imgUrl','')
+      this.$emit('update:imgUrl',this.imgUrl)
+      this.$emit("selectRemove");
     },
     getInputValue(){
       return this.$refs.inputFile;
@@ -83,7 +86,7 @@ export default {
 <style scoped>
 .upload-wrapper {
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: center;
 }
 .upload-button {
@@ -93,11 +96,12 @@ export default {
   padding:60px 100px;
   border: none;
   outline: none;
-  /* background-color: #2196f3; */
+  background-color: #fbfdff;
   border-radius: 5px;
   color: #fff;
   border: 1px dashed #ccc;
   font-size: 14px;
+  margin:5px;
 }
 .upload-button i {
   font-size: 22px;
@@ -145,5 +149,23 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  flex-wrap:wrap;
+  max-width:100%;
+}
+.file-button{
+  position: relative;
+  padding:0 2px;
+  background-color:#409eff;
+  color:#fff;
+  font-size:14px;
+}
+.file-button input{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
 }
 </style>
