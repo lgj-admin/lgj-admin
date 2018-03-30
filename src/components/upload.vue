@@ -1,6 +1,6 @@
 <template>
-    <div class="upload">
-        <div class="upload-wrapper">
+    <div class="upload" :class="listType == 'file' ?'upload-file':''">
+        <div class="upload-wrapper" v-if="listType != 'file'">
             <div class="upload-button" v-if="listType == 'text'">
                 <slot name="upload-card">
                 </slot>
@@ -30,15 +30,15 @@
                         <div class="upload-card">
                             <i class="el-icon-plus"></i>
                         </div>
-                        <input type="file" name="" id="" @change="handleChange" ref="inputFile">
+                        <input type="file" multiple="true" name="" id="" @change="handleChange" ref="inputFile">
                     </div>
                 </div>
             </div>
         </div>
-        <div class="file-button" v-if="listType == 'file'" >
-            <div>上传文件</div>
-            <input type="file" name="" id="" @change="handleChange" ref="inputFile" value="上传文件">
-        </div>
+        <!-- <div class="file-button" v-if="listType == 'file'" > -->
+            <div v-if="listType == 'file'" class="upload-file-button">上传文件</div>
+            <input v-if="listType == 'file'" class="upload-file-input" type="file" name="" id="" @change="handleChange" ref="inputFile">
+        <!-- </div> -->
     </div>
 </template>
 
@@ -152,20 +152,37 @@ export default {
   flex-wrap:wrap;
   max-width:100%;
 }
-.file-button{
+.upload-file{
   position: relative;
-  padding:0 2px;
+  display: inline-block;
+  padding:14px 40px;
+  line-height: 20px;
+  vertical-align: middle;
+  text-align: center;
+  border-radius: 5px;
   background-color:#409eff;
   color:#fff;
-  font-size:14px;
+  font-size:12px;
+  cursor: pointer;
 }
-.file-button input{
+.upload-file-input{
   position: absolute;
   width: 100%;
   height: 100%;
   top: 0;
   left: 0;
   opacity: 0;
+  cursor: pointer;
+}
+.upload-file-button{
+  position: absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
 }
 </style>

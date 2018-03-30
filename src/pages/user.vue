@@ -3,14 +3,18 @@
         <panpel>
             <div slot="header" class="header-content">
                 <div class="header-content-left">
-                    <el-input placeholder="用户昵称、手机号"
-                              v-model="searchValue"
+                    <el-input placeholder="用户昵称"
+                              v-model="searchNameValue"
+                              clearable>
+                    </el-input>
+                    <el-input placeholder="手机号"
+                              v-model="searchTelValue"
                               clearable>
                     </el-input>
                   <el-button @click="handleSearch" class="search-button" type="primary">搜索</el-button>
                 </div>
                 <div class="header-content-right">
-                    <el-button @click="showmodel=true" type="primary">添加</el-button>
+                    <el-button @click="add" type="primary">添加</el-button>
                 </div>
             </div>
             <div slot="body">
@@ -26,24 +30,14 @@
                             </div>
                         </div>
                         <div class="tbody">
-                            <div class="tr body-table-tr">
-                                <div class="td">灰太狼</div>
-                                <div class="td">13756334567</div>
-                                <div class="td">2018-02-11-12:23</div>
-                                <div class="td">是</div>
+                            <div class="tr body-table-tr" v-for="(item,index) in userList" :key="index">
+                                <div class="td">{{item.nickname}}</div>
+                                <div class="td">{{item.mobile}}</div>
+                                <div class="td">{{item.reg_time}}</div>
+                                <div class="td">{{item.unionid}}</div>
                                 <div class="td">
-                                    <a href="javascript:void(0)">冻结</a>
-                                    <a href="javascript:void(0)">编辑</a>
-                                </div>
-                            </div>
-                            <div class="tr body-table-tr">
-                                <div class="td">灰太狼</div>
-                                <div class="td">13756334567</div>
-                                <div class="td">2018-02-11-12:23</div>
-                                <div class="td">是</div>
-                                <div class="td">
-                                    <a href="javascript:void(0)">冻结</a>
-                                    <a href="javascript:void(0)">编辑</a>
+                                    <a href="javascript:void(0)" @click="handleFreeze(item.user_id,item.is_lock)">{{freezeStatus(item.is_lock)}}</a>
+                                    <a href="javascript:void(0)" @click="handleEdit(item.user_id)">编辑</a>
                                 </div>
                             </div>
                         </div>
@@ -53,14 +47,14 @@
                             background
                             @current-change="handlePagination"
                             layout="prev, pager, next"
-                            :total="1000"
+                            :total="total"
                         >
                         </el-pagination>
                     </div>
                 </div>
             </div>
         </panpel>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加用户">
+        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" :title="!user_id?'添加用户':'编辑用户'">
             <div slot="dialog-body">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
                     <el-form-item label="昵称" prop="name">
@@ -69,10 +63,10 @@
                     <el-form-item label="手机号" prop="phone">
                         <el-input v-model="ruleForm.phone"></el-input>
                     </el-form-item>
-                    <el-form-item label="密码" prop="pasd">
+                    <el-form-item label="密码" prop="pasd" v-if="!user_id">
                         <el-input v-model="ruleForm.pasd"></el-input>
                     </el-form-item>
-                    <el-form-item label="确认密码" prop="checkPasd">
+                    <el-form-item label="确认密码" prop="checkPasd" v-if="!user_id">
                         <el-input v-model="ruleForm.checkPasd"></el-input>
                     </el-form-item>
                 </el-form>
@@ -86,7 +80,7 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { isMobil } from "config/utils";
-import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
+import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
 
 export default {
   data() {
@@ -136,21 +130,58 @@ export default {
           { required: true, validator: validateCheckPasd, trigger: "blur" }
         ]
       },
-      searchValue: "",
-      showmodel: false
+      searchNameValue: "",
+      searchTelValue: "",
+      showmodel: false,
+      userList: [],
+      total: null,
+      page: 1,
+      user_id: null //用户id
     };
   },
   created() {
-    ApiDataModule('EMPLOYEELIST').then(res=>{
-      console.log(res)
-    })
+    ApiDataModule("USERSEARCH").then(res => {
+      console.log(res);
+      this.userList = res.data.data;
+      this.total = res.data.total;
+      this.page = res.data.current_page;
+    });
   },
   methods: {
     //提交
     handlesubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.showmodel = false;
+          const formData = {
+            nickname: this.ruleForm.name,
+            mobile: this.ruleForm.phone
+          };
+          if (this.user_id) {
+            formData.user_id = this.user_id;
+          } else {
+            formData.password = this.ruleForm.pasd;
+            formData.password2 = this.ruleForm.checkPasd;
+          }
+          ApiDataModule("USERADDEDIT", formData).then(res => {
+            if (res.code == CODE_OK) {
+              this.showmodel = false;
+              this.$message({
+                type:'success',
+                message:'提交成功'
+              })
+              ApiDataModule("USERSEARCH").then(res => {
+                this.userList = res.data.data;
+                this.total = res.data.total;
+                this.page = res.data.current_page;
+              });
+            } else {
+              this.$message({
+                type: "warning",
+                message: res.msg
+              });
+            }
+            console.log(res);
+          });
         } else {
           return false;
         }
@@ -158,13 +189,96 @@ export default {
     },
     //搜索
     handleSearch() {
-      if (this.searchValue != "") {
-        alert("此功能暂未开发");
-      }
+      const formData = {
+        nickname: this.searchNameValue,
+        mobile: this.searchTelValue,
+        page: this.page
+      };
+      ApiDataModule("USERSEARCH", formData).then(res => {
+        this.userList = res.data.data;
+        this.total = res.data.total;
+        this.page = res.data.current_page;
+      });
     },
     //处理分页
     handlePagination(page) {
       console.log(page);
+      const formData = {
+        nickname: this.searchNameValue,
+        mobile: this.searchTelValue,
+        page: page
+      };
+      ApiDataModule("USERSEARCH", formData).then(res => {
+        this.userList = res.data.data;
+        this.total = res.data.total;
+        this.page = res.data.current_page;
+      });
+    },
+    add() {
+      this.showmodel = true;
+      this.user_id = null;
+      this.ruleForm.name = null;
+      this.ruleForm.phone = null;
+      this.ruleForm.pasd = null;
+      this.ruleForm.checkPasd = null;
+    },
+    //冻结操作
+    handleFreeze(id, is_lock) {
+      const formData = {
+        user_id: id
+      };
+      const formData2 = {
+        nickname: this.searchNameValue,
+        mobile: this.searchTelValue,
+        page: this.page
+      };
+
+      if (is_lock == 0) {
+        formData.is_lock = 1;
+      } else if (is_lock == 1) {
+        formData.is_lock = 0;
+      }
+      ApiDataModule("USERLOCK", formData).then(res => {
+        console.log(res);
+        if (res.code == CODE_OK) {
+          ApiDataModule("USERSEARCH", formData2).then(res => {
+            this.userList = res.data.data;
+            this.total = res.data.total;
+            this.page = res.data.current_page;
+          });
+          this.$message({
+            type: "success",
+            message: "冻结成功"
+          });
+        } else {
+          this.$message({
+            type: "warning",
+            message: res.msg
+          });
+        }
+      });
+    },
+    //冻结状态
+    freezeStatus(status) {
+      let desc = "";
+      if (status == 0) {
+        desc = "冻结";
+        return desc;
+      }
+      if (status == 1) {
+        desc = "解冻";
+        return desc;
+      }
+    },
+    //编辑 获取用户信息
+    handleEdit(id) {
+      this.user_id = id;
+      ApiDataModule("USEREDIT", { user_id: id }).then(res => {
+        console.log(res);
+        this.ruleForm.name = res.data.nickname;
+        this.ruleForm.phone = res.data.mobile;
+      });
+      this.showmodel = true;
     },
     //删除
     handleDelete() {
