@@ -9,7 +9,8 @@ export function getCurrentMenu(location,arrayMenu) {
       const child = getCurrentMenu(location,e.children);
       if(child && child.length > 0){
         child.push({...e,children:null});
-        return child.reverse();
+        // child.reverse()
+        return child.slice(0, -1);
       }
       if (e.href && pathToRegexp(e.href).exec(location)){
         current.push({...e,children:null})

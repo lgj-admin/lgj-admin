@@ -26,7 +26,7 @@
 		            </div>
 		        </div>
 		        <div class="tbody">
-		            <div class="tr body-table-tr" v-for="item of data">
+		            <div class="tr body-table-tr" v-for="(item,index) of data" :key="index">
 		                <div class="td">123456789</div>
 		                <div class="td">张三</div>
 		                <div class="td">2018-02-11-12:33</div>

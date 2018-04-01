@@ -35,5 +35,8 @@ export default {
   border-radius: 4px;
   border: 1px solid #d3dce6;
 }
+.panpel-header{
+  padding:10px 0;
+}
 </style>
 
