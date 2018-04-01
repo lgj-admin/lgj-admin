@@ -1,6 +1,6 @@
 <template>
   <aside class="main-sidebar animated">
-    <!-- <el-scrollbar tag="div" wrapClass="vue-scrollbar"> -->
+    <el-scrollbar tag="div" wrapClass="vue-scrollbar">
       <div class="sidebar">
         <el-menu
                  :default-active="onRoutes"
@@ -14,7 +14,7 @@
           </div>
         </el-menu>
       </div>
-    <!-- </el-scrollbar> -->
+    </el-scrollbar>
   </aside>
 </template>
 <script>
@@ -127,10 +127,9 @@ export default {
   padding-left: 13px !important;
 }
 
-/* .vue-scrollbar {
-  background-color: #ffffff !important;
-  height: calc(100vh - 50px);
-} */
+.vue-scrollbar {
+  height: calc(100vh - 40px);
+}
 
 .main-sidebar .el-scrollbar__bar.is-vertical {
   display: none;

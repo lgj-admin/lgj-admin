@@ -3,14 +3,18 @@
         <panpel>
             <div slot="header" class="header-content">
                 <div class="header-content-left">
-                    <el-input placeholder="请输入内容"
-                              v-model="searchValue"
+                    <el-input placeholder="请输入区域经理名称"
+                              v-model="searchValueName"
                               clearable>
                     </el-input>
-                  <el-button class="search-button">搜索</el-button>
+                    <el-input placeholder="请输入区域经理电话"
+                              v-model="searchValueTel"
+                              clearable>
+                    </el-input>
+                  <el-button @click="handleSearch" class="search-button" type="primary">搜索</el-button>
                 </div>
                 <div class="header-content-right">
-                    <el-button @click="showmodel=true">添加</el-button>
+                    <el-button @click="add()" type="primary">添加</el-button>
                 </div>
             </div>
             <div slot="body">
@@ -20,39 +24,20 @@
                             <div class="tr">
                                 <div class="td">姓名</div>
                                 <div class="td">手机号</div>
-                                <div class="td">
-                                    <el-select v-model="ruleForm.name" placeholder="选择大区">
-                                        <el-option
-                                              v-for="item in selectregional"
-                                              :key="item.value"
-                                              :label="item.label"
-                                              :value="item.value">
-                                        </el-option>
-                                    </el-select>
-                                </div>
-                                <div class="td">大区经理电话</div>
+                                <div class="td">所属大区</div>
+                                <div class="td">所属大区经理</div>
                                 <div class="td">操作</div>
                             </div>
                         </div>
                         <div class="tbody">
-                            <div class="tr body-table-tr">
-                                <div class="td">灰太狼</div>
-                                <div class="td">13756334567</div>
-                                <div class="td">华北大区——太原</div>
-                                <div class="td">马艳红 13756334567</div>
+                            <div class="tr body-table-tr" v-for="(item,index) in areaManagerList" :key="index">
+                                <div class="td">{{item.name}}</div>
+                                <div class="td">{{item.tel}}</div>
+                                <div class="td">{{item.area_name}}——{{item.city}}</div>
+                                <div class="td">{{item.user_name}} {{item.phone}}</div>
                                 <div class="td">
-                                  <a href="#">编辑</a>
-                                  <a href="#">删除</a>
-                                </div>
-                            </div>
-                            <div class="tr body-table-tr">
-                                <div class="td">灰太狼</div>
-                                <div class="td">13756334567</div>
-                                <div class="td">华北大区——太原</div>
-                                <div class="td">马艳红 13756334567</div>
-                                <div class="td">
-                                  <a href="#">编辑</a>
-                                  <a href="#">删除</a>
+                                    <a href="javascript:void(0)" @click="handleEdit(item.id)">编辑</a>
+                                    <a href="javascript:void(0)" @click="handleDelete(item.id)">删除</a>
                                 </div>
                             </div>
                         </div>
@@ -61,29 +46,29 @@
                         <el-pagination
                             background
                             layout="prev, pager, next"
-                            :total="1000"
+                            :total="total"
                         >
                         </el-pagination>
                     </div>
                 </div>
             </div>
         </panpel>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加区域经理">
+        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" :title="!id?'添加区域经理':'编辑区域经理'">
             <div slot="dialog-body">
-                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
                     <el-form-item label="姓名" prop="name">
                         <el-input v-model="ruleForm.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="手机号" prop="name">
-                        <el-input v-model="ruleForm.name"></el-input>
+                    <el-form-item label="手机号" prop="phone">
+                        <el-input v-model="ruleForm.phone"></el-input>
                     </el-form-item>
-                    <el-form-item label="所属大区" prop="name">
-                        <el-select v-model="ruleForm.name" placeholder="选择大区">
+                    <el-form-item label="大区经理" prop="selectArea">
+                        <el-select v-model="ruleForm.selectArea" placeholder="选择大区经理">
                               <el-option
                                     v-for="item in selectregional"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
+                                    :key="item.admin_id"
+                                    :label="item.user_name"
+                                    :value="item.admin_id">
                               </el-option>
                         </el-select>
                     </el-form-item>
@@ -97,31 +82,194 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
+import { isMobil } from "config/utils";
+import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
+
+
 export default {
   data() {
+    const validatePhone = (rule, value, callback) => {
+      if (value === null) {
+        callback(new Error("请输入手机号"));
+      } else {
+        if (this.ruleForm.checkPhone !== null) {
+          if (!isMobil(value)) {
+            callback(new Error("请输入正确手机号"));
+          }
+        }
+        callback();
+      }
+    };
     return {
       ruleForm: {
-        name: ""
+        name: null,
+        phone: null,
+        selectArea: null, //选择所属大区
+        areaValue: null //表头选择大区
       },
       rules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
+        name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+        selectArea: [
+          { required: true, message: "请选择所属大区", trigger: "blur" }
+        ],
+        phone: [{ required: true, validator: validatePhone, trigger: "blur" }]
       },
-      searchValue: "",
+      searchValueName: "",
+      searchValueTel: "",
       showmodel: false,
-      selectregional:[]
+      selectregional: [],
+      areaManagerList: [], //区域经理列表
+      total: null,
+      page: 1, //当前页数
+      id: null //区域经理id
     };
   },
+  created() {
+    ApiDataModule("AREAMANAGERLIST").then(res => {
+      console.log(res, "aaa");
+      this.areaManagerList = res.data.data;
+      this.total = res.data.total;
+      this.page = res.data.current_page;
+    });
+    ApiDataModule("LEADERLIST", {
+      type: 1
+    }).then(res => {
+      console.log(res);
+      this.selectregional = res.data;
+    });
+  },
   methods: {
+    //提交
     handlesubmit(formName) {
-      console.log("bbb");
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.showmodel = false;
+          const formData = {
+            name: this.ruleForm.name,
+            tel: this.ruleForm.phone,
+            city_boss: this.ruleForm.selectArea
+          };
+          if (!this.id) {
+            //添加操作
+            ApiDataModule("AREAMANAGERADD", formData).then(res => {
+              console.log(res);
+              if (res.code == CODE_OK) {
+                this.$message({
+                  type: "success",
+                  message: "添加成功"
+                });
+                ApiDataModule("AREAMANAGERLIST").then(res => {
+                  this.areaManagerList = res.data.data;
+                  this.total = res.data.total;
+                  this.page = res.data.current_page;
+                });
+              } else {
+                this.$message({
+                  type: "warning",
+                  message: res.msg
+                });
+              }
+            });
+          } else {
+            //编辑操作
+            formData.id = this.id;
+            ApiDataModule("AREAMANAGERDOEDIT", formData).then(res => {
+              console.log(res);
+              if (res.code == CODE_OK) {
+                this.$message({
+                  type: "success",
+                  message: "编辑成功"
+                });
+                ApiDataModule("AREAMANAGERLIST").then(res => {
+                  this.areaManagerList = res.data.data;
+                  this.total = res.data.total;
+                  this.page = res.data.current_page;
+                });
+              } else {
+                this.$message({
+                  type: "warning",
+                  message: res.msg
+                });
+              }
+            });
+          }
         } else {
           return false;
         }
       });
-
+    },
+    //搜索
+    handleSearch() {
+      const formData = {};
+      if (this.searchValueName) {
+        formData.name = this.searchValueName;
+      }
+      if (this.searchValueTel) {
+        formData.tel = this.searchValueTel;
+      }
+      ApiDataModule("AREAMANAGERLIST", formData).then(res => {
+        console.log(res);
+        if (res.code == CODE_OK) {
+          this.areaManagerList = res.data.data;
+          this.total = res.data.total;
+          this.page = res.data.current_page;
+        }
+      });
+    },
+    //添加
+    add() {
+      this.id = null;
+      this.ruleForm.name = null;
+      this.ruleForm.phone = null;
+      this.ruleForm.selectArea = null;
+      this.showmodel = true;
+    },
+    //编辑
+    handleEdit(id) {
+      this.id = id;
+      ApiDataModule("AREAMANAGEREDIT", {
+        id: id
+      }).then(res => {
+        this.ruleForm.name = res.data.name;
+        this.ruleForm.phone = res.data.tel;
+        this.ruleForm.selectArea = res.data.city_boss;
+      });
+      this.showmodel = true;
+    },
+    //删除
+    handleDelete(id) {
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          ApiDataModule("AREAMANAGERDELETE", { id: id }).then(res => {
+            console.log(res);
+            if (res.code == CODE_OK) {
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+              ApiDataModule("AREAMANAGERLIST").then(res => {
+                this.areaManagerList = res.data.data;
+                this.total = res.data.total;
+                this.page = res.data.current_page;
+              });
+            } else {
+              this.$message({
+                type: "warning",
+                message: res.msg
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     }
   },
   components: {
@@ -150,9 +298,9 @@ export default {
   background-color: #fff;
   margin-top: 5px;
 }
-.body-page{
+.body-page {
   text-align: right;
-  padding:10px 0;
+  padding: 10px 0;
 }
 </style>
 

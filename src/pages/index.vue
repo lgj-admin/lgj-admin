@@ -3,7 +3,6 @@
         <v-header class="v-header"></v-header>
         <div class="content">
             <div class="content-wrapper">
-                <!-- <v-aside></v-aside> -->
                 <side-menu :show="show"></side-menu>
                 <div class="content-view">
                     <div style="font-size:12px;margin-bottom:20px">
@@ -23,7 +22,6 @@
 
 <script>
 import VHeader from "components/vHeader";
-import VAside from "components/aside";
 import SideMenu from "components/sideMenu";
 import VFooter from "components/vFooter";
 import { mapGetters } from "vuex";
@@ -35,9 +33,11 @@ export default {
       show: true,
     };
   },
+  created(){
+    console.log('aaa')
+  },
   components: {
     VHeader,
-    VAside,
     SideMenu,
     VFooter
   },

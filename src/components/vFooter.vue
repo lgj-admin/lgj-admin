@@ -1,6 +1,6 @@
 <template>
   <footer class="main-footer">
-    Copyright &copy; 2017-2018 <a href="#">LATGUANJIA</a>. All rights reserved.
+    Copyright &copy; 2017-2018 <a href="#">LAIGUANJIA</a>. All rights reserved.
   </footer>
 </template>
 <script>

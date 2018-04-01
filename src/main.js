@@ -4,11 +4,15 @@ import router from './router'
 import 'common/css/index.css'
 import Element from "element-ui";
 import 'element-ui/lib/theme-chalk/index.css';
-import store from './store/index.js'
+import store from './store/index.js';
+// import myVueEditor from 'my-vue-editor'
+// Vue.use(myVueEditor, options)
+
 
 Vue.use(Element);
 
 Vue.config.productionTip = false
+
 
 /* eslint-disable no-new */
 new Vue({

@@ -5,20 +5,18 @@ import {
 import qs from 'qs'
 
 
-// const ROOT_URL = 'http://cio.ueepub.cn';
-const ROOT_URL = 'https://cnodejs.org/api/v1';
-
 //http request 拦截器
 // axios.interceptors.request.use(
 //     config => {
-//         // const token = getCookie('名称');注意使用的时候需要引入cookie方法，推荐js-cookie
+//         const token = getCookie('名称');注意使用的时候需要引入cookie方法，推荐js-cookie
 //         config.data = JSON.stringify(config.data);
 //         config.headers = {
 //             'Content-Type': 'application/x-www-form-urlencoded'
 //         }
-//         // if(token){
-//         //   config.params = {'token':token}
-//         // }
+//         if(token){
+//           config.params = {'token':token}
+//         }
+//         config.data = { 'role_id': '123' }
 //         return config;
 //     },
 //     error => {
@@ -43,8 +41,9 @@ const ROOT_URL = 'https://cnodejs.org/api/v1';
 //     }
 // )
 
-
-const ApiDataModule = function (baseURL, params) {
+export const CODE_OK = 1001; //接口成功响应code
+export const CODE_ERR = 1000; //接口响应失败code
+export const ApiDataModule = function (baseURL, params) {
 
   /**
    * 封装post请求
@@ -52,23 +51,33 @@ const ApiDataModule = function (baseURL, params) {
    * @param data
    * @returns {Promise}
    */
+
   if (API_URL[baseURL].method === 'POST') {
+    var obj = {
+      role_id: '123'
+    };
+    var param = {};
+    if (params) {
+      param = Object.assign(params, obj);
+    } else {
+      param = Object.assign({}, obj);
+    }
     return new Promise((resolve, reject) => {
       axios({
           method: 'post',
           url: API_URL[baseURL].fetchUrl,
-          data: qs.stringify(params),
+          data: qs.stringify(param),
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
-      })
-      .then(response => {
-        resolve(response);
-      })
-      .catch(err => {
-        reject(err)
-      })
-      // axios.post(API_URL[baseURL].fetchUrl, qs.stringify(params))
+        })
+        .then(response => {
+          resolve(response.data);
+        })
+        .catch(err => {
+          reject(err)
+        })
+      // axios.post(API_URL[baseURL].fetchUrl, params)
       //   .then(response => {
       //     resolve(response);
       //   })
@@ -85,17 +94,22 @@ const ApiDataModule = function (baseURL, params) {
    * @param data
    * @returns {Promise}
    */
-  if (API_URL[baseURL].method === 'POST') {
+  if (API_URL[baseURL].method === 'FormData') {
     return new Promise((resolve, reject) => {
-
-      axios.post(API_URL[baseURL].fetchUrl, params)
+      axios({
+          method: 'post',
+          url: API_URL[baseURL].fetchUrl,
+          data: params,
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
         .then(response => {
           resolve(response);
         })
         .catch(err => {
           reject(err)
         })
-
     })
   }
 
@@ -162,5 +176,3 @@ const ApiDataModule = function (baseURL, params) {
 
   }
 }
-
-export default ApiDataModule;

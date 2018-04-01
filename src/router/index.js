@@ -1,38 +1,41 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import NotFoundView from 'components/404.vue'
-import Login from 'pages/login.vue'
-import Home from 'pages/home'
-import User from 'pages/user'
+import Authority from 'pages/authority'//权限管理页面
+import Areamanager from 'pages/areamanager'//区域经理管理页面
+import Answer from 'pages/answer'//客服问答管理页面
+import City from 'pages/city'//城市管理页面
+import Customer from 'pages/customer'//客服管理
+import Companyinfo from 'pages/companyinfo'//公司信息管理页面
+import Comment from 'pages/comment'//评价管理页面
+import Carousel from 'pages/carousel'//轮播图管理页面
+import Home from 'pages/home'//员工管理页面
 import Index from 'pages/index'
-import Menu from 'pages/menu'
-import Order from 'pages/order'
-import Service from 'pages/service'
-import Permission from 'pages/permission'
-import Regional from 'pages/regional'
-import Areamanager from 'pages/areamanager'
-import City from 'pages/city'
-import Authority from 'pages/authority'
-import Carousel from 'pages/carousel'
+import Login from 'pages/login.vue'//登录页面
+import Menu from 'pages/menu'//菜单管理页面
+import Order from 'pages/order'//订单管理页面
+import Permission from 'pages/permission'//角色管理页面
+import Regional from 'pages/regional'//大区经理管理页面
+import Service from 'pages/service'//服务管理页面
+import User from 'pages/user'//用户管理页面
+import Log from 'pages/log'//日志管理页面
+import NotFoundView from 'components/404.vue'//404页面
 
 Vue.use(Router)
 
-export default new Router({
-  routes: [
+const routerConfig=[
     {
       path: '',
       redirect: '/home'
     },
     {
-      path:'/login',
+      path: '/login',
       component: Login
     },
     {
       path: '/',
       name: 'Index',
       component: Index,
-      children: [
-        {
+      children: [{
           path: '/home',
           component: Home
         },
@@ -45,15 +48,15 @@ export default new Router({
           component: Menu
         },
         {
-          path:'/order',
-          component:Order
+          path: '/order',
+          component: Order
         },
         {
           path: '/service',
           component: Service
         },
         {
-          path:'/permission',
+          path: '/permission',
           component: Permission
         },
         {
@@ -61,23 +64,62 @@ export default new Router({
           component: Regional
         },
         {
-          path:'area',
+          path: '/area',
           component: Areamanager
         },
         {
-          path: 'city',
+          path: '/city',
           component: City
         },
         {
-          path: 'authority',
+          path: '/authority',
           component: Authority
+        },
+        {
+          path: '/companyinfo',
+          component: Companyinfo
+        },
+        {
+          path: '/comment',
+          component: Comment
+        },
+        {
+          path: '/log',
+          component: Log
         },
         {
           path: '/carousel',
           component: Carousel
         },
-        { path: '*', component: NotFoundView }
+        {
+          path: '/customer',
+          component: Customer
+        },
+        {
+          path: '/answer',
+          component: Answer
+        },
+        {
+          path: '*',
+          component: NotFoundView
+        }
       ]
     },
   ]
+
+
+const routers = new Router({
+  routes: routerConfig,
 })
+
+// routers.beforeEach((route,redirect,next)=>{
+//   if(!route.path == '/login'){
+//     next(()=>{
+//       window.location.href = "http://www.swiper.com.cn/demo/index.html";
+//     })
+//   }else{
+//     next()
+//   }
+// })
+
+export default routers;

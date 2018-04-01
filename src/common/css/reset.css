@@ -51,6 +51,8 @@ table {
 a {
   color: #16a085;
   text-decoration: none;
+  border:none;
+  outline: none;
   -webkit-backface-visibility: hidden;
 }
 
