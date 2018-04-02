@@ -1,19 +1,23 @@
 import pathToRegexp from "path-to-regexp";
 
 
-export function getCurrentMenu(location,arrayMenu) {
-  if(arrayMenu){
+export function getCurrentMenu(location, arrayMenu) {
+  if (arrayMenu) {
     let current = [];
-    for (var i = 0; i < arrayMenu.length;i++){
+    for (var i = 0; i < arrayMenu.length; i++) {
       const e = arrayMenu[i];
-      const child = getCurrentMenu(location,e.children);
-      if(child && child.length > 0){
-        child.push({...e,children:null});
+      const child = getCurrentMenu(location, e.children);
+      if (child && child.length > 0) {
+        child.push({ ...e,
+          children: null
+        });
         // child.reverse()
         return child.slice(0, -1);
       }
-      if (e.href && pathToRegexp(e.href).exec(location)){
-        current.push({...e,children:null})
+      if (e.href && pathToRegexp(e.href).exec(location)) {
+        current.push({ ...e,
+          children: null
+        })
         return current.reverse();
       }
     }
@@ -67,14 +71,25 @@ export const isMobil = function (s) {
   }
 }
 /**
+ * 验证是数字和字母
+ */
+export const judgmentVal = function (val) {
+  var patrn = /^[A-Za-z0-9]{6,20}$/;
+  if (!patrn.exec(val)){
+    return false;
+  }else{
+    return true;
+  }
+}
+/**
  * 验证浮点类型
  */
-export const isFloat = function(n){
-  var  patrn = /^-?\d*\.\d+$/;
+export const isFloat = function (n) {
+  var patrn = /^-?\d*\.\d+$/;
   var patrn2 = /^[0-9]*[1-9][0-9]*$/;
-  if(patrn.test(n) || patrn2.test(n)){
+  if (patrn.test(n) || patrn2.test(n)) {
     return true;
-  }else{
+  } else {
     return false;
   }
 }
@@ -156,18 +171,24 @@ export const loadMore = (element, callback) => {
     setTop = element.offsetTop;
     paddingBottom = getStyle(element, 'paddingBottom');
     marginBottom = getStyle(element, 'marginBottom');
-  }, { passive: true })
+  }, {
+    passive: true
+  })
 
   //运动过程中保持监听 scrollTop 的值判断是否到达底部
   element.addEventListener('touchmove', () => {
     loadMore();
-  }, { passive: true })
+  }, {
+    passive: true
+  })
 
   //运动结束时判断是否有惯性运动，惯性运动结束判断是非到达底部
   element.addEventListener('touchend', () => {
     oldScrollTop = document.body.scrollTop;
     moveEnd();
-  }, { passive: true })
+  }, {
+    passive: true
+  })
 
   const moveEnd = () => {
     requestFram = requestAnimationFrame(() => {
@@ -203,16 +224,22 @@ export const showBack = callback => {
   }, false)
   document.addEventListener('touchstart', () => {
     showBackFun();
-  }, { passive: true })
+  }, {
+    passive: true
+  })
 
   document.addEventListener('touchmove', () => {
     showBackFun();
-  }, { passive: true })
+  }, {
+    passive: true
+  })
 
   document.addEventListener('touchend', () => {
     oldScrollTop = document.body.scrollTop;
     moveEnd();
-  }, { passive: true })
+  }, {
+    passive: true
+  })
 
   const moveEnd = () => {
     requestFram = requestAnimationFrame(() => {
@@ -298,10 +325,10 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
 
 
   let flag = true; //假设所有运动到达终点
-  const remberSpeed = {};//记录上一个速度值,在ease-in模式下需要用到
+  const remberSpeed = {}; //记录上一个速度值,在ease-in模式下需要用到
   element.timer = setInterval(() => {
     Object.keys(target).forEach(attr => {
-      let iSpeed = 0;  //步长
+      let iSpeed = 0; //步长
       let status = false; //是否仍需运动
       let iCurrent = attrStyle(attr) || 0; //当前元素属性址
       let speedBase = 0; //目标点需要减去的基础值，三种运动状态的值都不同

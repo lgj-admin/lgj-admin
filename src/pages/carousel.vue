@@ -38,12 +38,12 @@
                         </div>
                     </div>
                     <div class="body-page">
-                        <el-pagination
+                        <!-- <el-pagination
                             background
                             layout="prev, pager, next"
                             :total="1000"
                         >
-                        </el-pagination>
+                        </el-pagination> -->
                     </div>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-const ROOT_URL = 'http://lovelaiguanjia.com';
+export const ROOT_URL = 'http://lovelaiguanjia.com';
 // const ROOT_URL = 'http://cio.ueepub.cn';
 
 export const API_URL = {
@@ -497,6 +497,22 @@ export const API_URL = {
     method: 'POST',
     writer: '王健男',
   },
-
-
+  GETGOODSBYCATE: {
+    domain: ROOT_URL,
+    apiUrl: '/Admin/Goods/getGoodsByCate',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/Admin/Goods/getGoodsByCate',
+    remark: '根据分类获取商品',
+    method: 'POST',
+    writer: '王健男',
+  },
+  GETATTRBYGOODS: {
+    domain: ROOT_URL,
+    apiUrl: '/Admin/Goods/getAttrByGoods',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/Admin/Goods/getAttrByGoods',
+    remark: '根据商品获取商品属性',
+    method: 'POST',
+    writer: '王健男',
+  },
 }

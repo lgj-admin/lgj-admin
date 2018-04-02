@@ -8,12 +8,9 @@
                     <el-menu-item index="3">生活套餐</el-menu-item>
                     <el-menu-item index="4">上传图标</el-menu-item>
                 </el-menu>
-                <div class="bottom" v-show="activeIndex == 1">
-                    <el-button @click="handleCategoryAdd()" type="primary">添加分类</el-button>
-                    <div></div>
-                </div>
                 <div class="bottom">
                     <div class="header-content-left">
+                        <el-button v-show="activeIndex == 1" @click="handleCategoryAdd()" type="primary">添加分类</el-button>
                         <el-button v-show="activeIndex == 2" @click="addservice = true" type="primary">添加服务</el-button>
                         <el-button v-show="activeIndex == 3" @click="addlifepackage = true" type="primary">添加生活套餐</el-button>
                         <!-- <el-button  @click="addlifepackage = true" type="primary">上传服务图标</el-button> -->
@@ -52,7 +49,7 @@
                         <div class="thead body-table-thead">
                             <div class="tr">
                                 <div class="td">服务名称</div>
-                                <div class="td">全部服务</div>
+                                <div class="td">服务分类</div>
                                 <div class="td">价格</div>
                                 <div class="td">全部地区</div>
                                 <div class="td">上架</div>
@@ -136,12 +133,12 @@
                         </div>
                     </div>
                     <div class="body-page">
-                        <el-pagination
+                        <!-- <el-pagination
                             background
                             layout="prev, pager, next"
                             :total="1000"
                         >
-                        </el-pagination>
+                        </el-pagination> -->
                     </div>
                 </div>
             </div>
@@ -193,9 +190,9 @@
                                 <div class="service-item" v-show="ruleForm.serviceType == 3" style="flex:0 0 100px">最小服务面积</div>
                                 <div class="service-item" style="flex:0 0 120px">单价</div>
                                 <div class="service-item">员工提成</div>
-                                <div class="service-item" v-show="ruleForm.serviceType == 3">套餐服务面积</div>
+                                <!-- <div class="service-item" v-show="ruleForm.serviceType == 3">套餐服务面积</div> -->
                                 <div class="service-item" v-show="ruleForm.serviceType == 3">
-                                    套餐价格<span>元</span>
+                                    套餐单价
                                 </div>
                                 <div class="service-item" v-show="ruleForm.serviceType != 3">生活套餐价格</div>
                                 <div class="service-item">套餐员工提成</div>
@@ -204,7 +201,7 @@
                             <div class="service-content" v-for="(item,index) in serviceListIcon" :key="index" v-if="ruleForm.serviceType == 1">
                                 <div class="service-item" style="flex:0 0 145px">
                                     <el-input  v-model="item.key_name" placeholder="服务项目"></el-input>
-                                    <el-button style="display:inline-block">添加图标</el-button>
+                                    <el-button style="display:inline-block" @click="addIconStatus(index)">添加图标</el-button>
                                 </div>
 
                                 <div class="service-item" style="flex:0 0 120px">
@@ -257,9 +254,9 @@
                                 <div class="service-item">
                                     <el-input v-model="item.mc_rebate" placeholder="请填写提成"></el-input><span>%</span>
                                 </div>
-                                <div class="service-item" >
+                                <!-- <div class="service-item" >
                                     <el-input v-model="item.package_area"></el-input><span>平</span>
-                                </div>
+                                </div> -->
                                 <div class="service-item">
                                     <el-input v-model="item.package_price"></el-input><span>元</span>
                                 </div>
@@ -311,7 +308,13 @@
                         </upload>
                     </el-form-item>
                     <el-form-item label="服务说明">
-                        <!-- <el-input type="textarea"></el-input> -->
+                        <div>
+                            <quill-editor v-model="content"
+                                            ref="myQuillEditor"
+                                            class="editer"
+                                            :options="editorOption" @ready="onEditorReady($event)">
+                            </quill-editor>
+                        </div>
                     </el-form-item>
                 </el-form>
             </div>
@@ -401,7 +404,7 @@
             <div slot="dialog-body">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
                     <el-form-item label="选择服务分类" prop="name">
-                      <el-select v-model="ruleForm.serviceValue" placeholder="服务分类">
+                      <el-select v-model="ruleForm.serviceValue" placeholder="服务分类" @change="handleGetServiceItem">
                             <el-option
                                   v-for="item in getCategoryList"
                                   :key="item.id"
@@ -409,17 +412,17 @@
                                   :value="item.id">
                             </el-option>
                         </el-select>
-                        <el-select v-model="ruleForm.serviceValue" placeholder="服务项目">
+                        <el-select placeholder="服务项目" @change="handleGetGoodsItem">
                             <el-option
-                                  v-for="item in getCategoryList"
-                                  :key="item.id"
-                                  :label="item.name"
-                                  :value="item.id">
+                                  v-for="item in getGoodsArray"
+                                  :key="item.goods_id"
+                                  :label="item.goods_name"
+                                  :value="item.goods_id">
                             </el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="选择服务项目">
-                        <div class="selectproject">
+                        <div class="selectproject" v-if="extend_cat_id == 2">
                             <div>名称</div>
                             <div>套餐价</div>
                             <div>员工提成</div>
@@ -443,10 +446,19 @@
                 </el-form>
             </div>
         </model-box>
-        <div >
-              <vue-html5-editor :content="content" ></vue-html5-editor>
-        </div> 
-        
+        <model-box :show.sync="iconStatus" title="选择图标" :showButton="iconSubmitBtn">
+            <div slot="dialog-body">
+                <div class="serviceIcon-content">
+                    <div class="serviceIcon-item" v-for="(item,index) in iconList" :key="index" >
+                        <img :src="item.url" alt="" width='40' height="40">
+                        <div class="serviceIcon-delete">
+                            <i class="el-icon-check" @click="handleAddIcon(item.id)"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </model-box>
+
     </div>
 </template>
 
@@ -455,27 +467,20 @@ import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import Upload from "components/upload";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+import { editorOptions } from "config/vue-quill.editor-config.js";
 import { isFloat } from "config/utils.js";
-import Vue from 'vue'
-import VueHtml5Editor from "vue-html5-editor";
 
+import "quill/dist/quill.core.css";
+import "quill/dist/quill.snow.css";
+import "quill/dist/quill.bubble.css";
+import { quillEditor } from "vue-quill-editor"; //调用编辑器
 
-Vue.use(VueHtml5Editor, {
-  showModuleName: true,
-  image: {
-      sizeLimit: 512 * 1024,
-      compress: true,
-      width: 500,
-      height: 500,
-      quality: 80
-  }
-})
 
 export default {
   data() {
     return {
-      showModuleName: false,
-      content:'<h3>vue html5 editor</h3>',
+      content: "",
+      editorOption: editorOptions,
       activeIndex: "1", //tags索引
       addcategory: false, //添加分类状态
       addservice: false, //添加服务状态
@@ -483,6 +488,9 @@ export default {
       manageservice: false, //管理服务状态
       servicenum: "", //服务数量
       dialogVisible: false, //上传图片value
+      iconStatus: false, //选择图标状态
+      iconActiveIndex: null, //添加服务项目图标索引
+      iconSubmitBtn: false,
       dialogImageUrl: "",
       area: [],
       ruleForm: {
@@ -529,6 +537,7 @@ export default {
       imageUrlCategoryIcon: null, //分类图标路径
       imageUrlHomeShow: null, //首页展示图路径路径
       getCategoryList: [], //分类列表数据
+      getGoodsArray: [],//通过id获取商品数组
       categoryId: null, //服务分类id
       //服务项目无图标数据
       serviceList: [
@@ -544,7 +553,7 @@ export default {
       serviceListIcon: [
         {
           key_name: null, //服务名称
-          attr_icon: "", //服务图标
+          attr_icon: null, //服务图标
           price: null, //服务价格
           package_price: null, //服务套餐价格
           mc_rebate: null, //员工提成
@@ -558,7 +567,7 @@ export default {
           min_area: null, //最小服务面积
           unit_price: null, //服务面积单价
           mc_rebate: null, //员工提成
-          package_area: null, //服务套餐面积
+          // package_area: null, //服务套餐面积
           package_price: null, //服务套餐价格
           mc_packrebate: null //套餐员工提成
         }
@@ -566,7 +575,9 @@ export default {
       verificationServiceNameArray: [],
       verificationServiceNameBtn: true,
       iconList: [], //图标列表数据
-      getGoodsList: [] //服务列表数据
+      getGoodsList: [], //服务列表数据
+      extend_cat_id:null,//服务项目类型
+      goodsAttributesList:[],//服务项目类型
     };
   },
   created() {
@@ -574,11 +585,6 @@ export default {
     ApiDataModule("GETCATEGORY").then(res => {
       console.log(res);
       this.getCategoryList = res.data;
-    });
-    //服务列表
-    ApiDataModule("GETGOODSLIST").then(res => {
-      console.log(res, "getGoodsList");
-      this.getGoodsList = res.data;
     });
     //城市区域
     ApiDataModule("CITYLIST").then(res => {
@@ -591,11 +597,270 @@ export default {
       this.iconList = res.data;
     });
   },
-  mounted() {
-    this.content = "";
-    // var VueHtml5Editor = new VueHtml5Editor('editor');
-  },
+  mounted() {},
   methods: {
+    onEditorReady() {},
+    //el-menu
+    handleSelect(e) {
+      this.activeIndex = e;
+      if (e == 2) {
+        //服务列表
+        ApiDataModule("GETGOODSLIST").then(res => {
+          console.log(res, "getGoodsList");
+          this.getGoodsList = res.data;
+        });
+        return;
+      }
+    },
+    //添加服务分类
+    handleCategoryAdd() {
+      this.ruleForm.categoryName = null;
+      this.categoryId = null;
+      this.addcategory = true;
+    },
+    addIconStatus(index) {
+      this.iconActiveIndex = null;
+      this.iconStatus = true;
+      this.iconActiveIndex = index;
+    },
+    //添加服务图标
+    handleAddIcon(id) {
+      // this.serviceListIcon.attr_icon = id;
+      console.log(id);
+      this.serviceListIcon[this.iconActiveIndex].attr_icon = id;
+
+      this.$message({
+        type: "success",
+        message: "添加成功"
+      });
+      this.iconStatus = false;
+    },
+    //编辑服务分类
+    handleCategoryEdit(id) {
+      this.categoryId = id;
+      ApiDataModule("GETCATEGORYINFO", {
+        id: id
+      }).then(res => {
+        if (res.code == CODE_OK) {
+          this.ruleForm.categoryName = res.data.name;
+        } else {
+          this.$message({
+            type: "warning",
+            message: res.msg
+          });
+        }
+      });
+      this.addcategory = true;
+    },
+    //添加服务分类
+    handleAddService(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          const formData = {
+            name: this.ruleForm.categoryName
+          };
+          if (this.categoryId) {
+            formData.id = this.categoryId;
+          }
+          ApiDataModule("ADDCATEGORY", formData).then(res => {
+            console.log(res);
+            if (res.code == CODE_OK) {
+              ApiDataModule("GETCATEGORY").then(res => {
+                this.getCategoryList = res.data;
+              });
+            }
+          });
+          this.addcategory = false;
+        } else {
+          return false;
+        }
+      });
+    },
+    //添加服务项目
+    addServiceItem() {
+      if (this.ruleForm.serviceType == 1) {
+        this.serviceListIcon.push({
+          key_name: null, //服务名称
+          attr_icon: null, //服务图标
+          price: null, //服务价格
+          package_price: null, //服务套餐价格
+          mc_rebate: null, //员工提成
+          mc_packrebate: null //套餐员工提成
+        });
+        console.log(this.serviceListIcon, "this.serviceList");
+        return;
+      }
+      if (this.ruleForm.serviceType == 3) {
+        this.serviceListArea.push({
+          key_name: null, //服务名称
+          min_area: null, //最小服务面积
+          unit_price: null, //服务面积单价
+          mc_rebate: null, //员工提成
+          // package_area: null, //服务套餐面积
+          package_price: null, //服务套餐价格
+          mc_packrebate: null //套餐员工提成
+        });
+        return;
+      }
+      if (this.ruleForm.serviceType == 2) {
+        this.serviceList.push({
+          key_name: null, //服务名称
+          price: null, //服务价格
+          package_price: null, //服务套餐价格
+          mc_rebate: null, //员工提成
+          mc_packrebate: null //套餐员工提成
+        });
+        return;
+      }
+    },
+    //删除服务项目
+    removeServiceItem(index) {
+      if (this.ruleForm.serviceType == 1) {
+        this.serviceListIcon.splice(index, 1);
+        return;
+      }
+      if (this.ruleForm.serviceType == 2) {
+        this.serviceList.splice(index, 1);
+        return;
+      }
+      if (this.ruleForm.serviceType == 3) {
+        this.serviceListArea.splice(index, 1);
+        return;
+      }
+    },
+    handlesubmit(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.showmodel = false;
+        } else {
+          return false;
+        }
+      });
+    },
+    //通过分类获取商品
+    handleGetServiceItem(id){
+      console.log(id);
+      ApiDataModule('GETGOODSBYCATE',{
+        cate:id
+      }).then(res=>{
+        console.log(res);
+        if(res.code == CODE_OK){
+          this.getGoodsArray = res.data;
+        }
+      })
+    },
+    //根据商品获取商品属性
+    handleGetGoodsItem(id){
+      ApiDataModule('GETATTRBYGOODS',{
+        id:id
+      }).then(res=>{
+        console.log(res,'根据商品获取商品属性');
+        this.extend_cat_id = res.data.info.extend_cat_id;
+        this.goodsAttributesList = res.data.list;
+      })
+    },
+    handleSubmitAddService(formName) {
+      console.log(this.content, "content");
+      console.log(this.serviceListIcon, "serviceListIcon");
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          const verificationService = this.verificationService();
+          if (!verificationService) {
+            this.$message({
+              type: "warning",
+              message: "请完善服务项目数据"
+            });
+            return;
+          }
+          const verificationServiceType = this.verificationServiceType();
+          console.log(
+            this.verificationServiceType(),
+            "this.verificationServiceType()"
+          );
+          if (!verificationServiceType) return;
+          if (!this.verificationServiceNameBtn) return;
+
+          let form = new FormData();
+          if (this.ruleForm.serviceType == 1) {
+            const serviceListIcon = JSON.stringify(this.serviceListIcon);
+            form.append("goods_attr", serviceListIcon);
+          } else if (this.ruleForm.serviceType == 3) {
+            const serviceListArea = JSON.stringify(this.serviceListArea);
+            form.append("goods_attr", serviceListArea);
+          } else {
+            const serviceList = JSON.stringify(this.serviceList);
+            form.append("goods_attr", serviceList);
+          }
+          form.append("goods_content", this.content);
+          form.append("goods_name", this.ruleForm.goods_name);
+          form.append("cat_id", this.ruleForm.serviceValue);
+          form.append("goods_remark", this.ruleForm.goods_remark);
+          form.append("shipping_area_ids", this.ruleForm.checkedArea);
+          form.append("extend_cat_id", this.ruleForm.serviceType);
+          form.append("original_type_img", this.ruleForm.original_type_img);
+          form.append("original_img", this.ruleForm.original_img);
+          this.ruleForm.banner_img.map((item, index) => {
+            form.append(`banner_img${index}`, this.ruleForm.banner_img[index]);
+          });
+          // form.append('banner_img',this.banner_img);
+          ApiDataModule("ADDGOODS", form).then(res => {
+            console.log(res);
+            if (res.data.code == CODE_OK) {
+              this.showmodel = false;
+              this.$message({
+                type: "success",
+                message: "提交成功"
+              });
+            } else {
+              this.$message({
+                type: "warning",
+                message: res.data.msg
+              });
+            }
+          });
+        } else {
+          return false;
+        }
+      });
+    },
+    //upload 上传图标
+    handleUploadFile(e) {
+      console.log(e);
+      const file = e.target.files[0];
+      const form = new FormData();
+      form.append("icon", file);
+      ApiDataModule("UPLOAD_ICON", form).then(res => {
+        console.log(res);
+        if (res.data.code == CODE_OK) {
+          this.$message({
+            type: "success",
+            message: "上传成功"
+          });
+          ApiDataModule("ICONLIST").then(res => {
+            this.iconList = res.data;
+          });
+        }
+      });
+    },
+    //upload
+    handleUpload(e) {
+      this.imageArr.push(window.URL.createObjectURL(e.target.files[0]));
+      this.ruleForm.banner_img.push(e.target.files[0]);
+    },
+    handleRemove(index) {
+      this.imageArr.splice(index, 1);
+      this.ruleForm.banner_img.splice(index, 1);
+    },
+    //upload 上传分类图标
+    handleUploadCategoryIcon(e) {
+      this.imageUrlCategoryIcon = window.URL.createObjectURL(e.target.files[0]);
+      this.ruleForm.original_type_img = e.target.files[0];
+    },
+    //upload 上传首页展示
+    handleUploadHomeShow(e) {
+      this.imageUrlHomeShow = window.URL.createObjectURL(e.target.files[0]);
+      this.ruleForm.original_img = e.target.files[0];
+    },
     //验证服务字段是否为空
     verificationService() {
       let btn = true;
@@ -603,6 +868,10 @@ export default {
       if (this.ruleForm.serviceType == 1) {
         this.serviceListIcon.map((item, index) => {
           if (this.serviceListIcon[index].key_name == null) {
+            btn = false;
+            return;
+          }
+          if (this.serviceListIcon[index].attr_icon == null) {
             btn = false;
             return;
           }
@@ -652,7 +921,7 @@ export default {
         });
         return btn;
       }
-      if (this.ruleForm.serviceType == 2) {
+      if (this.ruleForm.serviceType == 3) {
         this.serviceListArea.map((item, index) => {
           if (this.serviceListArea[index].key_name == null) {
             btn = false;
@@ -670,10 +939,10 @@ export default {
             btn = false;
             return;
           }
-          if (this.serviceListArea[index].package_area == null) {
-            btn = false;
-            return;
-          }
+          // if (this.serviceListArea[index].package_area == null) {
+          //   btn = false;
+          //   return;
+          // }
           if (this.serviceListArea[index].package_price == null) {
             btn = false;
             return;
@@ -813,14 +1082,14 @@ export default {
             btn = false;
             return;
           }
-          if (!isFloat(this.serviceListArea[index].package_area)) {
-            this.$message({
-              type: "warning",
-              message: "套餐服务面积必须为正整数或小数"
-            });
-            btn = false;
-            return;
-          }
+          // if (!isFloat(this.serviceListArea[index].package_area)) {
+          //   this.$message({
+          //     type: "warning",
+          //     message: "套餐服务面积必须为正整数或小数"
+          //   });
+          //   btn = false;
+          //   return;
+          // }
           if (!isFloat(this.serviceListArea[index].package_price)) {
             this.$message({
               type: "warning",
@@ -941,217 +1210,6 @@ export default {
           });
         });
     },
-    //el-menu
-    handleSelect(e) {
-      this.activeIndex = e;
-    },
-    //添加服务分类
-    handleCategoryAdd() {
-      this.ruleForm.categoryName = null;
-      this.categoryId = null;
-      this.addcategory = true;
-    },
-    //编辑服务分类
-    handleCategoryEdit(id) {
-      this.categoryId = id;
-      ApiDataModule("GETCATEGORYINFO", {
-        id: id
-      }).then(res => {
-        if (res.code == CODE_OK) {
-          this.ruleForm.categoryName = res.data.name;
-        } else {
-          this.$message({
-            type: "warning",
-            message: res.msg
-          });
-        }
-      });
-      this.addcategory = true;
-    },
-    //添加服务分类
-    handleAddService(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          const formData = {
-            name: this.ruleForm.categoryName
-          };
-          if (this.categoryId) {
-            formData.id = this.categoryId;
-          }
-          ApiDataModule("ADDCATEGORY", formData).then(res => {
-            console.log(res);
-            if (res.code == CODE_OK) {
-              ApiDataModule("GETCATEGORY").then(res => {
-                this.getCategoryList = res.data;
-              });
-            }
-          });
-          this.addcategory = false;
-        } else {
-          return false;
-        }
-      });
-    },
-    //添加服务项目
-    addServiceItem() {
-      if (this.ruleForm.serviceType == 1) {
-        this.serviceListIcon.push({
-          key_name: null, //服务名称
-          attr_icon: "", //服务图标
-          price: null, //服务价格
-          package_price: null, //服务套餐价格
-          mc_rebate: null, //员工提成
-          mc_packrebate: null //套餐员工提成
-        });
-        console.log(this.serviceListIcon, "this.serviceList");
-        return;
-      }
-      if (this.ruleForm.serviceType == 3) {
-        this.serviceListArea.push({
-          key_name: null, //服务名称
-          min_area: null, //最小服务面积
-          unit_price: null, //服务面积单价
-          mc_rebate: null, //员工提成
-          package_area: null, //服务套餐面积
-          package_price: null, //服务套餐价格
-          mc_packrebate: null //套餐员工提成
-        });
-        return;
-      }
-      if (this.ruleForm.serviceType == 2) {
-        this.serviceList.push({
-          key_name: null, //服务名称
-          price: null, //服务价格
-          package_price: null, //服务套餐价格
-          mc_rebate: null, //员工提成
-          mc_packrebate: null //套餐员工提成
-        });
-        return;
-      }
-    },
-    //删除服务项目
-    removeServiceItem(index) {
-      if (this.ruleForm.serviceType == 1) {
-        this.serviceListIcon.splice(index, 1);
-        return;
-      }
-      if (this.ruleForm.serviceType == 2) {
-        this.serviceList.splice(index, 1);
-        return;
-      }
-      if (this.ruleForm.serviceType == 3) {
-        this.serviceListArea.splice(index, 1);
-        return;
-      }
-    },
-    handlesubmit(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          this.showmodel = false;
-        } else {
-          return false;
-        }
-      });
-    },
-    handleSubmitAddService(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          const verificationService = this.verificationService();
-          if (!verificationService) {
-            this.$message({
-              type: "warning",
-              message: "请完善服务项目数据"
-            });
-            return;
-          }
-          const verificationServiceType = this.verificationServiceType();
-          console.log(
-            this.verificationServiceType(),
-            "this.verificationServiceType()"
-          );
-          if (!verificationServiceType) return;
-          if (!this.verificationServiceNameBtn) return;
-
-          let form = new FormData();
-          if (this.ruleForm.serviceType == 1) {
-            const serviceListIcon = JSON.stringify(this.serviceListIcon);
-            form.append("goods_attr", serviceListIcon);
-          } else if (this.ruleForm.serviceType == 3) {
-            const serviceListArea = JSON.stringify(this.serviceListArea);
-            form.append("goods_attr", serviceListArea);
-          } else {
-            const serviceList = JSON.stringify(this.serviceList);
-            form.append("goods_attr", serviceList);
-          }
-          form.append("goods_name", this.ruleForm.goods_name);
-          form.append("cat_id", this.ruleForm.serviceValue);
-          form.append("goods_remark", this.ruleForm.goods_remark);
-          form.append("shipping_area_ids", this.ruleForm.checkedArea);
-          form.append("extend_cat_id", this.ruleForm.serviceType);
-          form.append("original_type_img", this.ruleForm.original_type_img);
-          form.append("original_img", this.ruleForm.original_img);
-          this.ruleForm.banner_img.map((item, index) => {
-            form.append(`banner_img${index}`, this.ruleForm.banner_img[index]);
-          });
-          // form.append('banner_img',this.banner_img);
-          ApiDataModule("ADDGOODS", form).then(res => {
-            console.log(res);
-            if (res.data.code == CODE_OK) {
-              this.showmodel = false;
-              this.$message({
-                type: "success",
-                message: "提交成功"
-              });
-            } else {
-              this.$message({
-                type: "warning",
-                message: res.data.msg
-              });
-            }
-          });
-        } else {
-          return false;
-        }
-      });
-    },
-    //upload 上传图标
-    handleUploadFile(e) {
-      console.log(e);
-      const file = e.target.files[0];
-      const form = new FormData();
-      form.append("icon", file);
-      ApiDataModule("UPLOAD_ICON", form).then(res => {
-        console.log(res);
-        if (res.data.code == CODE_OK) {
-          this.$message({
-            type: "success",
-            message: "上传成功"
-          });
-          ApiDataModule("ICONLIST").then(res => {
-            this.iconList = res.data;
-          });
-        }
-      });
-    },
-    //upload
-    handleUpload(e) {
-      this.imageArr.push(window.URL.createObjectURL(e.target.files[0]));
-      this.ruleForm.banner_img.push(e.target.files[0]);
-    },
-    handleRemove(index) {
-      this.imageArr.splice(index, 1);
-      this.ruleForm.banner_img.splice(index, 1);
-    },
-    //upload 上传分类图标
-    handleUploadCategoryIcon(e) {
-      this.imageUrlCategoryIcon = window.URL.createObjectURL(e.target.files[0]);
-      this.ruleForm.original_type_img = e.target.files[0];
-    },
-    //upload 上传首页展示
-    handleUploadHomeShow(e) {
-      this.imageUrlHomeShow = window.URL.createObjectURL(e.target.files[0]);
-      this.ruleForm.original_img = e.target.files[0];
-    },
     handleRemoveCategory(type) {
       if (type == "Icon") {
         this.imageUrlCategoryIcon = null;
@@ -1227,6 +1285,7 @@ export default {
     Panpel,
     ModelBox,
     Upload,
+    quillEditor,
   }
 };
 </script>

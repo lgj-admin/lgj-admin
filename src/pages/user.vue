@@ -79,7 +79,7 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
-import { isMobil } from "config/utils";
+import { isMobil,judgmentVal } from "config/utils";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
 
 export default {
@@ -100,8 +100,12 @@ export default {
       if (value === null) {
         callback(new Error("请输入密码"));
       } else {
-        if (this.ruleForm.checkPasd !== null) {
-          this.$refs.ruleForm.validateField("checkPasd");
+        if (!judgmentVal(this.ruleForm.pasd)) {
+          callback(new Error("密码必须为6-20位字母或数字"));
+        }else{
+          if(this.ruleForm.checkPasd != null){
+            this.$refs.ruleForm.validateField("checkPasd");
+          }
         }
         callback();
       }
