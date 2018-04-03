@@ -10,9 +10,9 @@
                 </el-menu>
                 <div class="bottom">
                     <div class="header-content-left">
-                        <el-button v-show="activeIndex == 1" @click="handleCategoryAdd()" type="primary">添加分类</el-button>
-                        <el-button v-show="activeIndex == 2" @click="addservice = true" type="primary">添加服务</el-button>
-                        <el-button v-show="activeIndex == 3" @click="addlifepackage = true" type="primary">添加生活套餐</el-button>
+                        <el-button v-show="activeIndex == 1" @click="handleAddMethods('addServiceCategory')" type="primary">添加分类</el-button>
+                        <el-button v-show="activeIndex == 2" @click="handleAddMethods('addService')" type="primary">添加服务</el-button>
+                        <el-button v-show="activeIndex == 3" @click="handleAddMethods('addpackage')" type="primary">添加生活套餐</el-button>
                         <!-- <el-button  @click="addlifepackage = true" type="primary">上传服务图标</el-button> -->
                         <upload
                             v-show="activeIndex == 4"
@@ -89,9 +89,6 @@
                                 <div class="td">价格</div>
                                 <div class="td">全部地区</div>
                                 <div class="td">上架</div>
-                                <div class="td">首页分类展示</div>
-                                <div class="td">精选</div>
-                                <div class="td">排序</div>
                                 <div class="td">操作</div>
                             </div>
                         </div>
@@ -101,9 +98,6 @@
                                 <div class="td">125起</div>
                                 <div class="td">太原</div>
                                 <div class="td">是</div>
-                                <div class="td">是</div>
-                                <div class="td">是</div>
-                                <div class="td">1</div>
                                 <div class="td">
                                   <a href="#">编辑</a>
                                   <a href="javascript:void(0)" @click="handleDelete">删除</a>
@@ -114,9 +108,6 @@
                                 <div class="td">125起</div>
                                 <div class="td">太原</div>
                                 <div class="td">是</div>
-                                <div class="td">是</div>
-                                <div class="td">是</div>
-                                <div class="td">1</div>
                                 <div class="td">
                                   <a href="#">编辑</a>
                                   <a href="javascript:void(0)" @click="handleDelete">删除</a>
@@ -205,20 +196,20 @@
                                 </div>
 
                                 <div class="service-item" style="flex:0 0 120px">
-                                    <el-input v-model="item.price" ></el-input><span>元</span>
+                                    <el-input v-model="item.price" ></el-input><span>元/次</span>
                                 </div>
                                 <div class="service-item">
                                     <el-input v-model="item.mc_rebate" placeholder="请填写提成"></el-input><span>%</span>
                                 </div>
 
                                 <div class="service-item">
-                                    <el-input v-model="item.package_price"></el-input><span>元</span>
+                                    <el-input v-model="item.package_price"></el-input><span>元/次</span>
                                 </div>
                                 <div class="service-item">
                                     <el-input v-model="item.mc_packrebate" placeholder="请填写提成"></el-input><span>%</span>
                                 </div>
                                 <div class="service-item service-i" style="flex:0 0 40px;">
-                                    <i class="el-icon-remove" @click="removeServiceItem(index)"></i>
+                                    <i class="el-icon-remove" @click="handleDelServiceItem(index,'removeServiceItem')"></i>
                                 </div>
                             </div>
                             <div class="service-content" v-for="(item,index) in serviceList" :key="index" v-if="ruleForm.serviceType == 2">
@@ -238,7 +229,7 @@
                                     <el-input v-model="item.mc_packrebate" placeholder="请填写提成"></el-input><span>%</span>
                                 </div>
                                 <div class="service-item service-i" style="flex:0 0 40px;">
-                                    <i class="el-icon-remove" @click="removeServiceItem(index)"></i>
+                                    <i class="el-icon-remove" @click="handleDelServiceItem(index,'removeServiceItem')"></i>
                                 </div>
                             </div>
                             <div class="service-content" v-for="(item,index) in serviceListArea" :key="index"  v-if="ruleForm.serviceType == 3" >
@@ -254,17 +245,14 @@
                                 <div class="service-item">
                                     <el-input v-model="item.mc_rebate" placeholder="请填写提成"></el-input><span>%</span>
                                 </div>
-                                <!-- <div class="service-item" >
-                                    <el-input v-model="item.package_area"></el-input><span>平</span>
-                                </div> -->
                                 <div class="service-item">
-                                    <el-input v-model="item.package_price"></el-input><span>元</span>
+                                    <el-input v-model="item.package_price"></el-input><span>元/平</span>
                                 </div>
                                 <div class="service-item">
                                     <el-input v-model="item.mc_packrebate" placeholder="请填写提成"></el-input><span>%</span>
                                 </div>
                                 <div class="service-item service-i" style="flex:0 0 40px;">
-                                    <i class="el-icon-remove" @click="removeServiceItem(index)"></i>
+                                    <i class="el-icon-remove" @click="handleDelServiceItem(index,'removeServiceItem')"></i>
                                 </div>
                             </div>
                             <div class="service-i">
@@ -336,75 +324,66 @@
                         </el-checkbox-group>
                     </el-form-item>
                     <el-form-item label="添加服务项目">
-                        <el-button @click="()=>{manageservice = true;}">添加</el-button>
+                        <el-button @click="handleAddMethods('packageServiceItem')">添加</el-button>
                     </el-form-item>
                     <el-form-item label="服务内容">
                         <el-card class="box-card">
                             <div class="text item">
-                                <div class="box-card-item">
-                                    <div>专业清洗-日常清洁</div>
+                                <div class="box-card-item" v-for="(item,index) in selectgoodsItemList" :key="index">
+                                    <div><span>{{item.cate_name}}</span>-<span>{{item.goods_name}}</span></div>
                                     <div>
-                                        <div>床 X1 X120元</div>
-                                        <div>俩室一厅一卫 X1 X120元</div>
+                                        <div><span>{{item.key_name}}X{{item.count}}</span><span>X{{item.package_price}}元</span></div>
                                     </div>
-                                    <div><el-button @click="()=>{manageservice = true;}">管理</el-button></div>
-                                </div>
-                                <div class="box-card-item">
-                                    <div>专业清洗-日常清洁</div>
                                     <div>
-                                        <div>俩室一厅一卫 X1 X120元</div>
+                                        <el-button @click="()=>{manageservice = true;}">管理</el-button>
+                                        <el-button @click="handleDelServiceItem(index,'removeServicePackage')">删除</el-button>
                                     </div>
-                                    <div><el-button @click="manageservice = true">管理</el-button></div>
                                 </div>
-                                <div class="box-card-item"></div>
-                                <div class="box-card-item"></div>
                             </div>
                             <div class="box-footer">
-                                套餐总价：<span>120+135=90</span>
+                                套餐总价：<span>{{getServiceTotal}}</span>
                             </div>
                         </el-card>
                     </el-form-item>
-                    <el-form-item label="添加首页分类图标(建议尺寸)">
-                        <el-upload
-                            class="upload-demo"
-                            action="https://jsonplaceholder.typicode.com/posts/"
-                            multiple
-                            :limit="3"
-                            :file-list="fileList">
-                            <el-button size="small" type="primary">点击上传</el-button>
-                        </el-upload>
-                    </el-form-item>
                     <el-form-item label="添加首页默认图(建议尺寸)">
-                        <el-upload
-                            action="https://jsonplaceholder.typicode.com/posts/"
-                            :show-file-list="false"
-                            list-type="picture-card"
+                        <upload
+                            @selectUpload="handleUploadHomeShow"
+                            @selectRemove="handleRemoveCategory('Show')"
+                            :imgUrl.sync="imageUrlHomeShow"
+                            ref="upload"
                         >
-                            <img v-if="dialogImageUrl" :src="dialogImageUrl" class="avatar">
-                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                        </el-upload>
+                            <div slot="upload-card" class="upload-card">
+                                <i class="el-icon-plus" v-if="!imageUrlHomeShow"></i>
+                                <img v-if="imageUrlHomeShow" :src="imageUrlHomeShow" alt="" width="100%" height="100%">
+                            </div>
+                        </upload>
                     </el-form-item>
                     <el-form-item label="添加服务展示图">
-                        <el-upload
-                            class="upload-demo"
-                            action="https://jsonplaceholder.typicode.com/posts/"
-                            multiple
-                            :limit="3"
-                            :file-list="fileList">
-                            <el-button size="small" type="primary">点击上传</el-button>
-                        </el-upload>
+                        <upload
+                            @selectUpload="handleUpload"
+                            @selectRemove="handleRemove"
+                            :imgArr="imageArr"
+                            listType="pictureList"
+                        >
+                        </upload>
                     </el-form-item>
                     <el-form-item label="服务说明">
-                        <el-input type="textarea"></el-input>
+                        <div>
+                            <quill-editor v-model="content"
+                                            ref="myQuillEditor"
+                                            class="editer"
+                                            :options="editorOption" @ready="onEditorReady($event)">
+                            </quill-editor>
+                        </div>
                     </el-form-item>
                 </el-form>
             </div>
         </model-box>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="manageservice" title="添加服务项目" width="60%">
+        <model-box @selectSubmit="handleAddServiceItem('ruleForm')" :show.sync="manageservice" title="添加服务项目" width="60%">
             <div slot="dialog-body">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
-                    <el-form-item label="选择服务分类" prop="name">
-                      <el-select v-model="ruleForm.serviceValue" placeholder="服务分类" @change="handleGetServiceItem">
+                    <el-form-item label="选择服务分类" prop="serviceCategory">
+                      <el-select v-model="ruleForm.serviceCategory" placeholder="服务分类" @change="handleGetServiceItem">
                             <el-option
                                   v-for="item in getCategoryList"
                                   :key="item.id"
@@ -412,7 +391,9 @@
                                   :value="item.id">
                             </el-option>
                         </el-select>
-                        <el-select placeholder="服务项目" @change="handleGetGoodsItem">
+                    </el-form-item>
+                    <el-form-item label="选择服务项目" prop="serviceItem">
+                        <el-select v-model="ruleForm.serviceItem" placeholder="服务项目" @change="handleGetGoodsItem">
                             <el-option
                                   v-for="item in getGoodsArray"
                                   :key="item.goods_id"
@@ -422,24 +403,52 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="选择服务项目">
-                        <div class="selectproject" v-if="extend_cat_id == 2">
-                            <div>名称</div>
-                            <div>套餐价</div>
-                            <div>员工提成</div>
-                            <div>服务数量</div>
-                        </div>
                         <div class="selectproject">
+                            <div v-if="extend_cat_id != null">名称</div>
+                            <div v-if="extend_cat_id == 2">套餐价</div>
+                            <div v-if="extend_cat_id == 3">服务面积</div>
+                            <div v-if="extend_cat_id == 1 || extend_cat_id == 3">套餐单价</div>
+                            <div v-if="extend_cat_id != null">员工提成</div>
+                            <div  v-if="extend_cat_id == 1">服务数量</div>
+                        </div>
+                        <div class="selectproject" v-if="extend_cat_id == 2" v-for="(item,index) in goodsAttributesList" :key="index">
                             <div>
-                                俩室一厅一卫
+                                <el-radio v-if="extend_cat_id == 2" v-model="ruleForm.selectServiceItem" :label="item.sgp_id">{{item.key_name}}</el-radio>
                             </div>
                             <div>
-                                125元
+                                {{item.package_price}}元
                             </div>
                             <div>
-                                25元
+                                {{item.mc_rebate}}%
+                            </div>
+                        </div>
+                        <div class="selectproject" v-if="extend_cat_id == 1" v-for="(item,index) in goodsAttributesList" :key="index">
+                            <div>
+                                <el-radio v-if="extend_cat_id == 1" v-model="ruleForm.selectServiceItem" :label="item.sgp_id">{{item.key_name}}</el-radio>
                             </div>
                             <div>
-                                <el-input-number v-model="servicenum" :min="1" :max="10" size="mini"></el-input-number>
+                                {{item.package_price}}元
+                            </div>
+                            <div>
+                                {{item.mc_rebate}}%
+                            </div>
+                            <div>
+                                <!-- <el-input-number :class="`servicenum${item.sgp_id}`" :ref="`servicenum${item.sgp_id}`" :min="1" :max="10" size="mini"></el-input-number> -->
+                                <cart-contral :ref="`servicenum${item.sgp_id}`" :count="item"></cart-contral>
+                            </div>
+                        </div>
+                        <div class="selectproject" v-if="extend_cat_id == 3" v-for="(item,index) in goodsAttributesList" :key="index">
+                            <div>
+                                <el-radio v-if="extend_cat_id == 3" v-model="ruleForm.selectServiceItem" :label="item.sgp_id">{{item.key_name}}</el-radio>
+                            </div>
+                            <div>
+                                <input style="border:1px solid #ccc;width:60px;"/>
+                            </div>
+                            <div>
+                                {{item.package_price}}元
+                            </div>
+                            <div>
+                                {{item.mc_rebate}}%
                             </div>
                         </div>
                     </el-form-item>
@@ -466,6 +475,7 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import Upload from "components/upload";
+import CartContral from "components/cartcontral";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
 import { editorOptions } from "config/vue-quill.editor-config.js";
 import { isFloat } from "config/utils.js";
@@ -474,7 +484,6 @@ import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import { quillEditor } from "vue-quill-editor"; //调用编辑器
-
 
 export default {
   data() {
@@ -493,10 +502,13 @@ export default {
       iconSubmitBtn: false,
       dialogImageUrl: "",
       area: [],
+      serviceCount: { count: "1" },
       ruleForm: {
         name: "",
         serviceType: "1", //服务类型
-        serviceValue: null, //选择服务分类Value
+        selectServiceItem: null, //套餐里服务项目radio值
+        serviceCategory: null, //选择服务分类Value
+        serviceItem: null, //选择服务Value
         categoryName: null, //服务分类名称value
         goods_name: null, //服务名称value
         goods_remark: null, //服务简介value
@@ -513,8 +525,11 @@ export default {
         goods_remark: [
           { required: true, message: "请输入服务简介", trigger: "blur" }
         ],
-        serviceValue: [
+        serviceCategory: [
           { required: true, message: "请选择服务分类", trigger: "change" }
+        ],
+        serviceItem: [
+          { required: true, message: "请选择服务", trigger: "change" }
         ],
         checkedArea: [
           { required: true, message: "请选择服务区域", trigger: "change" }
@@ -537,7 +552,7 @@ export default {
       imageUrlCategoryIcon: null, //分类图标路径
       imageUrlHomeShow: null, //首页展示图路径路径
       getCategoryList: [], //分类列表数据
-      getGoodsArray: [],//通过id获取商品数组
+      getGoodsArray: [], //通过id获取商品数组
       categoryId: null, //服务分类id
       //服务项目无图标数据
       serviceList: [
@@ -576,8 +591,9 @@ export default {
       verificationServiceNameBtn: true,
       iconList: [], //图标列表数据
       getGoodsList: [], //服务列表数据
-      extend_cat_id:null,//服务项目类型
-      goodsAttributesList:[],//服务项目类型
+      extend_cat_id: null, //服务项目类型
+      goodsAttributesList: [], //服务项目类型
+      selectgoodsItemList: [] //选择商品属性数组
     };
   },
   created() {
@@ -598,8 +614,41 @@ export default {
     });
   },
   mounted() {},
+  computed: {
+    getServiceTotal() {
+      return 123;
+    }
+  },
   methods: {
     onEditorReady() {},
+    //处理添加按钮的方法
+    handleAddMethods(type) {
+      //添加服务分类
+      if (type == "addServiceCategory") {
+        this.ruleForm.categoryName = null;
+        this.categoryId = null;
+        this.addcategory = true;
+        return;
+      }
+      //添加服务
+      if (type == "addService") {
+        this.addservice = true;
+        return;
+      }
+      //添加生活套餐
+      if (type == "addpackage") {
+        this.addlifepackage = true;
+        return;
+      }
+      //生活套餐 添加服务项目
+      if (type == "packageServiceItem") {
+        this.ruleForm.serviceCategory = null;
+        this.ruleForm.serviceItem = null;
+        this.ruleForm.selectServiceItem = null;
+        this.manageservice = true;
+        return;
+      }
+    },
     //el-menu
     handleSelect(e) {
       this.activeIndex = e;
@@ -611,12 +660,6 @@ export default {
         });
         return;
       }
-    },
-    //添加服务分类
-    handleCategoryAdd() {
-      this.ruleForm.categoryName = null;
-      this.categoryId = null;
-      this.addcategory = true;
     },
     addIconStatus(index) {
       this.iconActiveIndex = null;
@@ -676,7 +719,7 @@ export default {
         }
       });
     },
-    //添加服务项目
+    //服务里添加服务项目
     addServiceItem() {
       if (this.ruleForm.serviceType == 1) {
         this.serviceListIcon.push({
@@ -714,17 +757,24 @@ export default {
       }
     },
     //删除服务项目
-    removeServiceItem(index) {
-      if (this.ruleForm.serviceType == 1) {
-        this.serviceListIcon.splice(index, 1);
+    handleDelServiceItem(index, type) {
+      if (type == "removeServiceItem") {
+        if (this.ruleForm.serviceType == 1) {
+          this.serviceListIcon.splice(index, 1);
+          return;
+        }
+        if (this.ruleForm.serviceType == 2) {
+          this.serviceList.splice(index, 1);
+          return;
+        }
+        if (this.ruleForm.serviceType == 3) {
+          this.serviceListArea.splice(index, 1);
+          return;
+        }
         return;
       }
-      if (this.ruleForm.serviceType == 2) {
-        this.serviceList.splice(index, 1);
-        return;
-      }
-      if (this.ruleForm.serviceType == 3) {
-        this.serviceListArea.splice(index, 1);
+      if(type == 'removeServicePackage'){
+        this.selectgoodsItemList.splice(index,1);
         return;
       }
     },
@@ -738,27 +788,53 @@ export default {
       });
     },
     //通过分类获取商品
-    handleGetServiceItem(id){
-      console.log(id);
-      ApiDataModule('GETGOODSBYCATE',{
-        cate:id
-      }).then(res=>{
+    handleGetServiceItem(id) {
+      this.ruleForm.serviceItem = null;
+      ApiDataModule("GETGOODSBYCATE", {
+        cate: id
+      }).then(res => {
         console.log(res);
-        if(res.code == CODE_OK){
+        if (res.code == CODE_OK) {
           this.getGoodsArray = res.data;
         }
-      })
+      });
     },
     //根据商品获取商品属性
-    handleGetGoodsItem(id){
-      ApiDataModule('GETATTRBYGOODS',{
-        id:id
-      }).then(res=>{
-        console.log(res,'根据商品获取商品属性');
+    handleGetGoodsItem(id) {
+      ApiDataModule("GETATTRBYGOODS", {
+        id: id
+      }).then(res => {
+        console.log(res, "根据商品获取商品属性");
         this.extend_cat_id = res.data.info.extend_cat_id;
         this.goodsAttributesList = res.data.list;
-      })
+      });
     },
+    //生活套餐里添加项目
+    handleAddServiceItem(formName) {
+      console.log(this.goodsAttributesList, "goodsAttributesList");
+      console.log(
+        this.selectgoodsItemList,
+        "ruleForm.selectgoodsItemList"
+      );
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.manageservice = false;
+          this.goodsAttributesList.map((item, index) => {
+            if (item.sgp_id == this.ruleForm.selectServiceItem) {
+              console.log(
+                this.goodsAttributesList[index],
+                "this.goodsAttributesList[index]"
+              );
+              this.selectgoodsItemList.push(this.goodsAttributesList[index]);
+            }
+            console.log(this.selectgoodsItemList, "asdadsadas");
+          });
+        } else {
+          return false;
+        }
+      });
+    },
+    //添加服务方法
     handleSubmitAddService(formName) {
       console.log(this.content, "content");
       console.log(this.serviceListIcon, "serviceListIcon");
@@ -1286,6 +1362,7 @@ export default {
     ModelBox,
     Upload,
     quillEditor,
+    CartContral
   }
 };
 </script>
