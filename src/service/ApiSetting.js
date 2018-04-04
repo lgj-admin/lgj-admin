@@ -515,4 +515,13 @@ export const API_URL = {
     method: 'POST',
     writer: '王健男',
   },
+  ADDGOODSPACKAGE: {
+    domain: ROOT_URL,
+    apiUrl: '/admin/Goods/addGoodsPackage',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/admin/Goods/addGoodsPackage',
+    remark: '添加服务套餐',
+    method: 'FormData',
+    writer: '王健男',
+  },
 }
