@@ -19,6 +19,7 @@ import Service from 'pages/service' //服务管理页面
 import User from 'pages/user' //用户管理页面
 import Log from 'pages/log' //日志管理页面
 import NotFoundView from 'components/404.vue' //404页面
+import { getStore } from "config/utils";
 
 Vue.use(Router)
 
@@ -110,9 +111,11 @@ const routerConfig = [{
 const routers = new Router({
   routes: routerConfig,
 })
+console.log('ADMININFO222', getStore('ADMININFO'));
 
 routers.beforeEach((route, redirect, next) => {
-  if (route.path !== '/login') {
+  console.log('ADMININFO', getStore('ADMININFO'));
+  if (route.path !== '/login' && getStore('ADMININFO')==null) {
     next({
       path: '/login',
     })

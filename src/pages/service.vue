@@ -458,7 +458,6 @@
                 </div>
             </div>
         </model-box>
-
     </div>
 </template>
 
@@ -587,7 +586,7 @@ export default {
       sgp_id_radio: [], //套餐里服务项目属性id 用于判断是否被选
       serviceTotal:null,//商品总价
       // goods_id:null,//服务列表 服务id
-      imageArr:[]
+      imageArr:[],
     };
   },
   created() {
