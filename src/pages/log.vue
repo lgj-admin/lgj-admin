@@ -15,18 +15,10 @@
                             </div>
                         </div>
                         <div class="tbody">
-                            <div class="tr body-table-tr">
-                                <div class="td">添加了用户</div>
-                                <div class="td">侯雪</div>
-                                <div class="td">2017-04-25</div>
-                                <div class="td">
-                                    <a href="javascript:void(0)" @click="handleDelete">删除</a>
-                                </div>
-                            </div>
-                            <div class="tr body-table-tr">
-                                <div class="td">添加了用户</div>
-                                <div class="td">侯雪</div>
-                                <div class="td">2017-04-25</div>
+                            <div class="tr body-table-tr" v-for="(item,index) in logs_list" :key="index">
+                                <div class="td">{{item.description}}</div>
+                                <div class="td">{{item.admin_user_name}}</div>
+                                <div class="td">{{item.time}}</div>
                                 <div class="td">
                                     <a href="javascript:void(0)" @click="handleDelete">删除</a>
                                 </div>
@@ -43,9 +35,23 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
+import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+
 export default {
   data() {
-    return {};
+    return {
+      page:1,
+      total:null,
+      logs_list:[]
+    };
+  },
+  created() {
+    //日志列表
+    ApiDataModule('LOGSLIST').then(res=>{
+      this.logs_list = res.logs_list.data;
+      this.total = res.logs_list.total;
+      console.log(res)
+    })
   },
   methods: {
     handleDelete() {

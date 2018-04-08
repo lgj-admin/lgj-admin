@@ -25,6 +25,19 @@
                                         删除
                                     </a>
                                 </template>
+                                <template slot-scope="props">
+                                    客服回复：
+                                    <span style="margin-right:10px">
+                                        清洗包括哪些？
+                                    </span>
+                                    <span style="margin-right:10px">
+                                        2017-3--29
+                                    </span>
+                                    <a  href="javascript:void(0)"
+                                        style="vertical-align:top">
+                                        删除
+                                    </a>
+                                </template>
                             </el-table-column>
                             <el-table-column
                                 label="用户疑问"
@@ -93,6 +106,11 @@ export default {
       },
       showmodel: false,
       tableData5: [{
+          id: '12987122',
+          name: '日常清洗包括哪些？',
+          user: '侯雪',
+          data: '2017-03-25',
+        },{
           id: '12987122',
           name: '日常清洗包括哪些？',
           user: '侯雪',

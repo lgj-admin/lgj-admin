@@ -12,7 +12,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="密码" prop="pasd">
-                    <el-input v-model="ruleForm.pasd" placeholder="请输入密码">
+                    <el-input v-model="ruleForm.pasd" placeholder="请输入密码" type="password">
                         <i slot="prefix" class="el-input__icon fa fa-thermometer-full"></i>
                     </el-input>
                 </el-form-item>
@@ -27,6 +27,10 @@
 </template>
 
 <script>
+import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+import { setStore } from "config/utils";
+
+
 export default {
   data() {
     return {
@@ -44,14 +48,37 @@ export default {
     handlelogin(formName){
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$router.push({
-            path:'/home'
-          })
+          const formData = {};
+          formData.phone = this.ruleForm.name;
+          formData.pass  = this.ruleForm.pasd;
+          ApiDataModule('ADMINLOGIN',formData).then(res=>{
+            console.log(res)
+            if(res.code == CODE_OK){
+              setStore('ADMININFO',res.admininfo);
+              this.$message({
+                type:'success',
+                message:'登录成功',
+                onClose:()=>{
+                  this.$router.push({
+                    path:'/home'
+                  })
+                }
+              })
+
+            }else{
+              this.$message({
+                type:'warning',
+                message:res.msg
+              })
+            }
+          });
+
         } else {
           return false;
         }
       });
-    }
+    },
+
   }
 };
 </script>

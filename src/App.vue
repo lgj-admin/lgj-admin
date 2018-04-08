@@ -1,8 +1,8 @@
 <template>
   <div class="app">
-    <keep-alive>
+    <!-- <keep-alive> -->
       <router-view></router-view>
-    </keep-alive>
+    <!-- </keep-alive> -->
   </div>
 </template>
 
@@ -10,8 +10,13 @@
 
 export default {
   name: 'App',
+  data(){
+    return{
+    }
+  },
+  methods:{
+  },
   created(){
-    console.log('aaa')
   }
 }
 </script>
