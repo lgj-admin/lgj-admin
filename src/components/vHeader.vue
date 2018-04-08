@@ -5,18 +5,67 @@
               <a href="#">来管家后台管理</a>
             </div>
             <nav>
-                <div class="nav-padding nav-name"><span>arronwjn</span></div>
-                <router-link :to="{path:'/login'}" class="nav-padding nav-out">退出</router-link>
+                <div class="nav-padding nav-name"><span v-html="admininfo.user_name"></span></div>
+                <a class="nav-padding nav-out" @click="handleSiginOut">退出</a>
             </nav>
         </div>
     </div>
 </template>
 
 <script>
+import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+import { getStore,removeStore } from "config/utils";
+
+
 export default {
   name: "v-header",
   data() {
-    return {};
+    return {
+      admininfo:{
+        user_name:''
+      }
+    };
+  },
+  methods:{
+    handleSiginOut(){
+      this.$confirm("此操作将退出系统, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          ApiDataModule('ADMINOUT').then(res=>{
+            if(res.code == CODE_OK){
+              this.$message({
+                type:'success',
+                message:'退出成功',
+                onClose:()=>{
+                  this.$router.push({
+                    path:'/login'
+                  })
+                }
+              })
+              removeStore('ADMININFO');
+            }else{
+              this.$message({
+                type:'warning',
+                message:res.msg
+              })
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消退出"
+          });
+        });
+    }
+  },
+  created(){
+    if(getStore('ADMININFO')){
+      this.admininfo = JSON.parse(getStore('ADMININFO'));
+    }
   }
 };
 </script>

@@ -76,9 +76,9 @@
                   <el-form-item label="跳转地址" prop="ad_link">
                       <el-input v-model="ruleForm.ad_link"></el-input>
                   </el-form-item>
-                  <!-- <el-form-item label="ID" prop="name" v-show="ruleForm.linkType == 2">
-                      <el-input v-model="ruleForm.name"></el-input>
-                  </el-form-item> -->
+                  <el-form-item label="ID" prop="goods_id">
+                      <el-input v-model="ruleForm.goods_id"></el-input>
+                  </el-form-item>
                   <el-form-item>
                       <el-button @click="handlesubmit('ruleForm')">添加</el-button>
                       <el-button @click="showmodel = false">返回列表</el-button>
@@ -104,7 +104,8 @@ export default {
         linkType: "1",
         ad_link: null,
         orderby: null,
-        enabled: "1"
+        enabled: "1",
+        goods_id:null
       },
       rules: {},
       searchValue: "",
@@ -128,6 +129,7 @@ export default {
         if (valid) {
           let form = new FormData();
           form.append("name", this.ruleForm.name);
+          form.append("goods_id", this.ruleForm.goods_id);
           form.append("link", this.ruleForm.ad_link);
           form.append("type", this.ruleForm.linkType);
           form.append("enabled", this.ruleForm.enabled);

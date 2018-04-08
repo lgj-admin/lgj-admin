@@ -36,6 +36,9 @@ export default {
   created(){
     console.log('aaa')
   },
+  methods:{
+
+  },
   components: {
     VHeader,
     SideMenu,
