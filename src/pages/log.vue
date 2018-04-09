@@ -1,7 +1,20 @@
 <template>
-    <div class="user">
+    <div class="log">
         <panpel>
             <div slot="header" class="header-content">
+                <div>
+
+                    <el-date-picker
+                        v-model="logDelTimeValue"
+                        type="datetimerange"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        :default-time="['12:00:00']"
+                        value-format="timestamp"
+                    >
+                    </el-date-picker>
+                    <el-button type="primary" @click="handleDelete">删除</el-button>
+                </div>
             </div>
             <div slot="body">
                 <div class="body-content">
@@ -11,7 +24,7 @@
                                 <div class="td">日志内容</div>
                                 <div class="td">操作人</div>
                                 <div class="td">操作时间</div>
-                                <div class="td">操作</div>
+                                <!-- <div class="td">操作</div> -->
                             </div>
                         </div>
                         <div class="tbody">
@@ -19,11 +32,20 @@
                                 <div class="td">{{item.description}}</div>
                                 <div class="td">{{item.admin_user_name}}</div>
                                 <div class="td">{{item.time}}</div>
-                                <div class="td">
-                                    <a href="javascript:void(0)" @click="handleDelete">删除</a>
-                                </div>
+                                <!-- <div class="td">
+
+                                </div> -->
                             </div>
                         </div>
+                    </div>
+                    <div class="body-page">
+                        <el-pagination
+                            background
+                            @current-change="handlePagination"
+                            layout="prev, pager, next"
+                            :total="total"
+                        >
+                        </el-pagination>
                     </div>
                 </div>
             </div>
@@ -42,7 +64,9 @@ export default {
     return {
       page:1,
       total:null,
-      logs_list:[]
+      logs_list:[],
+      logDelTimeValue:'',
+      total:null,
     };
   },
   created() {
@@ -54,16 +78,46 @@ export default {
     })
   },
   methods: {
+    //处理分页
+    handlePagination(page) {
+      const formData = {
+        page: page
+      };
+      ApiDataModule('LOGSLIST',formData).then(res=>{
+        this.logs_list = res.logs_list.data;
+        this.total = res.logs_list.total;
+      })
+    },
     handleDelete() {
+      if(this.logDelTimeValue.length<=0) return;
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+          const time = 1000;
+          let start = this.logDelTimeValue[0]/time;
+          let end = this.logDelTimeValue[1]/time;
+          const formData = {
+            start:start,
+            end:end,
+          };
+          ApiDataModule('LOGSDEL',formData).then(res=>{
+            if(res.code == CODE_OK){
+              this.$message({
+                type: 'success',
+                message: '删除成功!',
+                onClose:()=>{
+                  ApiDataModule('LOGSLIST').then(res=>{
+                    this.logs_list = res.logs_list.data;
+                    this.total = res.logs_list.total;
+                  })
+                }
+              });
+            }
+            console.log(res);
+          })
+
         }).catch(() => {
           this.$message({
             type: 'info',

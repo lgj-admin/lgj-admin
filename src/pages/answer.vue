@@ -10,53 +10,46 @@
             <div slot="body">
                 <div class="body-content">
                     <div class="body-table">
-                        <el-table :data="tableData5" style="width: 100%">
-                            <el-table-column type="expand">
+                        <el-table :data="feedback_list" style="width: 100%">
+                            <el-table-column type="expand" >
                                 <template slot-scope="props">
-                                    客服回复：
-                                    <span style="margin-right:10px">
-                                        日常清洗包括哪些？
-                                    </span>
-                                    <span style="margin-right:10px">
-                                        2017-3--25
-                                    </span>
-                                    <a  href="javascript:void(0)"
-                                        style="vertical-align:top">
-                                        删除
-                                    </a>
-                                </template>
-                                <template slot-scope="props">
-                                    客服回复：
-                                    <span style="margin-right:10px">
-                                        清洗包括哪些？
-                                    </span>
-                                    <span style="margin-right:10px">
-                                        2017-3--29
-                                    </span>
-                                    <a  href="javascript:void(0)"
-                                        style="vertical-align:top">
-                                        删除
-                                    </a>
+                                    <div  v-if="props.row.reply !=null">
+                                        客服回复：
+                                        <span style="margin-right:10px">
+                                            {{props.row.reply.msg_content}}
+                                        </span>
+                                        <span style="margin-right:10px">
+                                            {{props.row.reply.msg_time}}
+                                        </span>
+                                        <a  href="javascript:void(0)"
+                                            style="vertical-align:top">
+                                            删除
+                                        </a>
+                                    </div>
+                                    <div  v-else>
+                                        暂无回复
+                                    </div>
                                 </template>
                             </el-table-column>
                             <el-table-column
                                 label="用户疑问"
-                                prop="name"
+                                prop="msg_content"
                             >
                             </el-table-column>
                             <el-table-column
                                 label="提问人"
-                                prop="user"
+                                prop="user_name"
                             >
                             </el-table-column>
                             <el-table-column
                                 label="提问时间"
-                                prop="data"
+                                prop="msg_time"
                             >
                             </el-table-column>
                             <el-table-column label="操作">
                                 <template slot-scope="scope">
-                                    <a href="javascript:void(0)" @click="reply">
+                                    <a v-if="scope.row.reply !=null" style="color:#999">已回复</a>
+                                    <a v-else href="javascript:void(0)" @click="reply(scope.row.msg_id)">
                                         回复
                                     </a>
                                     <a href="javascript:void(0)" @click="handleDelete">
@@ -69,8 +62,9 @@
                     <div class="body-page">
                         <el-pagination
                             background
+                            @current-change="handlePagination"
                             layout="prev, pager, next"
-                            :total="1000"
+                            :total="total"
                         >
                         </el-pagination>
                     </div>
@@ -80,8 +74,8 @@
         <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="回复">
             <div slot="dialog-body">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" >
-                    <el-form-item label="回复" prop="name">
-                        <el-input v-model="ruleForm.name" type="textarea" :rows=4></el-input>
+                    <el-form-item label="回复" prop="content">
+                        <el-input v-model="ruleForm.content" type="textarea" :rows=4></el-input>
                     </el-form-item>
                 </el-form>
             </div>
@@ -94,44 +88,80 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { isMobil } from "config/utils";
+import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+
 
 export default {
   data() {
     return {
       ruleForm: {
-        name: null, //昵称
+        content: null, //内容
       },
       rules: {
-        name: [{ required: true, message: "请输入回复内容", trigger: "blur" }],
+        content: [{ required: true, message: "请输入回复内容", trigger: "blur" }],
       },
       showmodel: false,
-      tableData5: [{
-          id: '12987122',
-          name: '日常清洗包括哪些？',
-          user: '侯雪',
-          data: '2017-03-25',
-        },{
-          id: '12987122',
-          name: '日常清洗包括哪些？',
-          user: '侯雪',
-          data: '2017-03-25',
-        }]
+      feedback_list: [],
+      msg_id:null,
+      total:null,
     };
   },
+  created(){
+    ApiDataModule('FEEDBACKLIST').then(res=>{
+      console.log(res);
+      this.feedback_list = res.feedback_list.data;
+      this.total = res.feedback_list.total;
+    })
+  },
   methods: {
+    //处理分页
+    handlePagination(page) {
+      const formData = {
+        page: page
+      };
+      ApiDataModule('FEEDBACKLIST',formData).then(res=>{
+        console.log(res);
+        this.feedback_list = res.feedback_list.data;
+        this.total = res.feedback_list.total;
+      })
+    },
     //提交
     handlesubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.showmodel = false;
+          const formDta = {
+            msg_id:this.msg_id,
+            msg_content:this.ruleForm.content
+          };
+          ApiDataModule('REPLYFEEDBACK',formDta).then(res=>{
+            console.log(res);
+            if(res.code == CODE_OK){
+
+              this.$message({
+                type:'success',
+                message:'回复成功',
+                onClose:()=>{
+                  this.showmodel = false;
+                  this.msg_id = null;
+                }
+              })
+            }else{
+              this.$message({
+                type:'warning',
+                message:res.msg
+              })
+            }
+          })
         } else {
           return false;
         }
       });
     },
     //回复
-    reply() {
+    reply(id) {
       this.showmodel = true;
+      this.msg_id = id;
+      console.log(this.msg_id);
     },
     //删除
     handleDelete() {

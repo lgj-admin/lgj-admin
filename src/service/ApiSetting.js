@@ -2,6 +2,9 @@ export const ROOT_URL = 'http://lovelaiguanjia.com';
 // const ROOT_URL = 'http://cio.ueepub.cn';
 
 export const API_URL = {
+  /*
+  *赵斌接口
+  */
   CITYLIST: {
     domain: ROOT_URL,
     apiUrl: '/Admin/system/cityList',
@@ -263,6 +266,10 @@ export const API_URL = {
     method: 'POST',
     writer: '王健男',
   },
+
+  /*
+  *王超接口
+  */
   HANDLECONFIG: {
     domain: ROOT_URL,
     apiUrl: '/admin/system/handleConfig',
@@ -416,6 +423,15 @@ export const API_URL = {
     method: 'POST',
     writer: '王健男',
   },
+  LOGSDEL: {
+    domain: ROOT_URL,
+    apiUrl: '/admin/system/logsDel',
+    author: '王超',
+    fetchUrl: ROOT_URL + '/admin/system/logsDel',
+    remark: '日志删除',
+    method: 'POST',
+    writer: '王健男',
+  },
   ADMINLOGIN: {
     domain: ROOT_URL,
     apiUrl: '/admin/system/adminLogin',
@@ -434,7 +450,29 @@ export const API_URL = {
     method: 'POST',
     writer: '王健男',
   },
+  FEEDBACKLIST: {
+    domain: ROOT_URL,
+    apiUrl: '/admin/system/feedbackList',
+    author: '王超',
+    fetchUrl: ROOT_URL + '/admin/system/feedbackList',
+    remark: '用户留言列表',
+    method: 'POST',
+    writer: '王健男',
+  },
+  REPLYFEEDBACK: {
+    domain: ROOT_URL,
+    apiUrl: '/admin/system/replyFeedback',
+    author: '王超',
+    fetchUrl: ROOT_URL + '/admin/system/replyFeedback',
+    remark: '回复用户留言',
+    method: 'POST',
+    writer: '王健男',
+  },
 
+
+  /*
+  *刘云鹏接口
+  */
   GETCATEGORY: {
     domain: ROOT_URL,
     apiUrl: '/admin/Goods/getCategory',
@@ -579,4 +617,24 @@ export const API_URL = {
     method: 'POST',
     writer: '王健男',
   },
+  GETORDERLIST: {
+    domain: ROOT_URL,
+    apiUrl: '/Admin/Order/getOrderList',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/Admin/Order/getOrderList',
+    remark: '获取订单列表',
+    method: 'POST',
+    writer: '王健男',
+  },
+  GETORDERINFO: {
+    domain: ROOT_URL,
+    apiUrl: '/Admin/Order/getOrderInfo',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/Admin/Order/getOrderInfo',
+    remark: '获取订单信息',
+    method: 'POST',
+    writer: '王健男',
+  },
+
+
 }

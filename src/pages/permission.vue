@@ -71,6 +71,8 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+import { getStore } from "config/utils";
+
 
 export default {
   data() {
@@ -117,10 +119,12 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           const permissionStr = this.ruleForm.permissionArr.join(",");
+          const admininfo = JSON.parse(getStore('ADMININFO'));
           const formData = {
             name: this.ruleForm.name,
             desc: this.ruleForm.desc,
-            act: permissionStr
+            act: permissionStr,
+            adminid:admininfo.admin_id
           };
           if (this.id) {
             formData.id = this.id;
@@ -129,6 +133,10 @@ export default {
             this.showmodel = false;
             console.log(res);
             if (res.code == CODE_OK) {
+              this.$message({
+                type:'success',
+                message:'操作成功'
+              })
               ApiDataModule("ADMINROLE").then(res => {
                 this.adminRole = res.data;
               });

@@ -42,16 +42,18 @@ export default {
         name: [{ required: true, message: "请输入用户名", trigger: "blur" }],
         pasd: [{ required: true, message: "请输入密码", trigger: "blur" }]
       },
+      submit:true,
     };
   },
   methods:{
     handlelogin(formName){
       this.$refs[formName].validate(valid => {
-        if (valid) {
+        if (valid && this.submit) {
           const formData = {};
           formData.phone = this.ruleForm.name;
           formData.pass  = this.ruleForm.pasd;
           ApiDataModule('ADMINLOGIN',formData).then(res=>{
+            this.submit = false;
             console.log(res)
             if(res.code == CODE_OK){
               setStore('ADMININFO',res.admininfo);
@@ -59,8 +61,9 @@ export default {
                 type:'success',
                 message:'登录成功',
                 onClose:()=>{
+                  this.submit = true;
                   this.$router.push({
-                    path:'/home'
+                    path:'/user'
                   })
                 }
               })

@@ -2,7 +2,7 @@
     <div class="v-header">
         <div class="v-header-wraper">
             <div class="header-left">
-              <a href="#">来管家后台管理</a>
+                <router-link :to="'/user'">来管家后台管理</router-link>
             </div>
             <nav>
                 <div class="nav-padding nav-name"><span v-html="admininfo.user_name"></span></div>
@@ -23,11 +23,13 @@ export default {
     return {
       admininfo:{
         user_name:''
-      }
+      },
+      submit:true,
     };
   },
   methods:{
     handleSiginOut(){
+      if(!this.submit) return
       this.$confirm("此操作将退出系统, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -36,10 +38,12 @@ export default {
         .then(() => {
           ApiDataModule('ADMINOUT').then(res=>{
             if(res.code == CODE_OK){
+              this.submit = false;
               this.$message({
                 type:'success',
                 message:'退出成功',
                 onClose:()=>{
+                  this.submit = true;
                   this.$router.push({
                     path:'/login'
                   })

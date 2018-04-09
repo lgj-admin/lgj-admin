@@ -63,10 +63,10 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item v-if="!id" label="密码" prop="pasd">
-                        <el-input v-model="ruleForm.pasd"></el-input>
+                        <el-input type="password" v-model="ruleForm.pasd"></el-input>
                     </el-form-item>
                     <el-form-item v-if="!id" label="确认密码" prop="checkPasd">
-                        <el-input v-model="ruleForm.checkPasd"></el-input>
+                        <el-input type="password" v-model="ruleForm.checkPasd"></el-input>
                     </el-form-item>
                 </el-form>
             </div>

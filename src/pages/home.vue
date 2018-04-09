@@ -18,10 +18,10 @@
                         </el-input>
                         <el-select v-model="searchValueSkill" clearable  placeholder="员工技能">
                             <el-option
-                                  v-for="item in areaManager"
-                                  :key="item.id"
-                                  :label="item.name"
-                                  :value="item.id">
+                                  v-for="item in goodsList"
+                                  :key="item.goods_id"
+                                  :label="item.goods_name"
+                                  :value="item.goods_id">
                             </el-option>
                         </el-select>
                         <el-select v-model="searchValueManager" clearable  placeholder="区域经理">
@@ -136,9 +136,9 @@
                     </el-form-item>
                     <el-form-item label="服务技能" prop="name">
                         <el-checkbox-group
-                              v-model="checkedCities1"
+                              v-model="checkedServiceKills"
                         >
-                              <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
+                              <el-checkbox v-for="(item,index) in goodsList" :label="item.goods_id" :key="index">{{item.goods_name}}</el-checkbox>
                         </el-checkbox-group>
                     </el-form-item>
                 </el-form>
@@ -192,13 +192,14 @@ export default {
       showmodel: false, //添加员工模态框状态
       setlevel: false, //设置等级模态框状态
       cities: ["上海", "北京", "广州", "深圳"],
-      checkedCities1: [],
+      checkedServiceKills: [],
       employeeList: [], //员工列表
       total: null,
       page: 1,
       id: null,
       regionalManager: [], //大区经理列表
-      areaManager: [] //区域经理列表
+      areaManager: [], //区域经理列表
+      goodsList:[],//服务技能列表
     };
   },
   created() {
@@ -223,6 +224,10 @@ export default {
       console.log(res);
       this.areaManager = res.data;
     });
+    //服务技能
+    ApiDataModule('GETGOODSLIST').then(res=>{
+      this.goodsList = res.data;
+    })
   },
   methods: {
     //分页
@@ -252,19 +257,21 @@ export default {
     handleAddemployee(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.showmodel = false;
+          const checkedServiceKills = this.checkedServiceKills.join(',');
           const formData = {
             name: this.ruleForm.name,
             tel: this.ruleForm.phone,
             city_boss: this.ruleForm.regionalManagerValue,
             area_boss: this.ruleForm.areaManagerValue,
-            skill: "北京"
+            skill: checkedServiceKills
           };
           if (!this.id) {
             formData.type = 1;
             ApiDataModule("EMPLOYEEADDEDIT", formData).then(res => {
               console.log(res);
               if (res.code == CODE_OK) {
+                this.$refs[formName].resetFields();
+                this.showmodel = false;
                 this.$message({
                   type: "success",
                   message: "添加成功"
@@ -288,6 +295,8 @@ export default {
             ApiDataModule("EMPLOYEEADDEDIT", formData).then(res => {
               console.log(res);
               if (res.code == CODE_OK) {
+                this.$refs[formName].resetFields();
+                this.showmodel = false;
                 this.$message({
                   type: "success",
                   message: "编辑成功"
@@ -329,6 +338,7 @@ export default {
         formData.area_boss = this.searchValueManager;
       }
       ApiDataModule("EMPLOYEELIST", formData).then(res => {
+        console.log(res);
         this.employeeList = res.data.data;
         this.total = res.data.total;
         this.page = res.data.current_page;

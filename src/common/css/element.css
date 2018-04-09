@@ -112,3 +112,13 @@
 .service-item .right .el-input{
     width: auto !important;
 }
+/*
+    log.vue 样式
+    by wjn
+*/
+
+.log .el-date-editor--datetimerange.el-input,
+.el-date-editor--datetimerange.el-input__inner {
+
+  height:40px;
+}

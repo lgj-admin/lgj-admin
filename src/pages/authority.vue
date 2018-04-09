@@ -78,6 +78,8 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+import { getStore } from "config/utils";
+
 
 export default {
   data() {
@@ -141,12 +143,13 @@ export default {
     handlesubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          const admininfo = JSON.parse(getStore('ADMININFO'));
           const formData = {
             name: this.ruleForm.name,
             con: this.ruleForm.code,
             act: this.ruleForm.code2,
             group: this.ruleForm.groupCode,
-            role_id: this.ruleForm.name
+            adminid:admininfo.admin_id
           };
           if (this.id) {
             formData.id = this.id;

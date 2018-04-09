@@ -25,7 +25,7 @@ Vue.use(Router)
 
 const routerConfig = [{
     path: '',
-    redirect: '/home'
+    redirect: '/user'
   },
   {
     path: '/login',
@@ -114,7 +114,6 @@ const routers = new Router({
 console.log('ADMININFO222', getStore('ADMININFO'));
 
 routers.beforeEach((route, redirect, next) => {
-  console.log('ADMININFO', getStore('ADMININFO'));
   if (route.path !== '/login' && getStore('ADMININFO')==null) {
     next({
       path: '/login',
