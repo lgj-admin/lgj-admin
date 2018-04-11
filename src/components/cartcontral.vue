@@ -30,19 +30,18 @@ export default {
       // } else {
       //   this.count++;
       // }
-      console.log(this.count)
       // this.$emit("update:count",this.count++);
       this.count.count++;
       // this.$emit("cartAdd", event,this.count)
     },
     decreaseCart(event) {
-      if (!event._constructed) {
-        return;
-      }
-      if (this.count) {
-        this.count--;
-      }
-      this.$emit("cartDecrease", event)
+      // if (!event._constructed) {
+      //   return;
+      // }
+      // if (this.count) {
+      // }
+      this.count.count--;
+      // this.$emit("cartDecrease", event)
     }
   },
   computed:{

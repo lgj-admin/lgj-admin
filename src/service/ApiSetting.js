@@ -635,6 +635,63 @@ export const API_URL = {
     method: 'POST',
     writer: '王健男',
   },
+  DISTRIBUTIONORDER: {
+    domain: ROOT_URL,
+    apiUrl: '/Admin/Order/distributionOrderToStaff',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/Admin/Order/distributionOrderToStaff',
+    remark: '分配订单',
+    method: 'POST',
+    writer: '王健男',
+  },
+  GETSTAFFBYGOODS: {
+    domain: ROOT_URL,
+    apiUrl: '/Admin/order/getStaffByGoods',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/Admin/order/getStaffByGoods',
+    remark: '根据商品获取对应员工',
+    method: 'POST',
+    writer: '王健男',
+  },
+  GETCITYBOSS: {
+    domain: ROOT_URL,
+    apiUrl: '/Admin/Order/getCityBoss',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/Admin/Order/getCityBoss',
+    remark: '获取大区经理',
+    method: 'POST',
+    writer: '王健男',
+  },
+  GETAREABOSSBYCITY: {
+    domain: ROOT_URL,
+    apiUrl: '/Admin/Order/getAreaBossByCity',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/Admin/Order/getAreaBossByCity',
+    remark: '根据大区经理获取区域经理',
+    method: 'POST',
+    writer: '王健男',
+  },
+  GETDATEADDSEVEN: {
+    domain: ROOT_URL,
+    apiUrl: '/Admin/Order/getDateAddSeven',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/Admin/Order/getDateAddSeven',
+    remark: '获取七天日期',
+    method: 'POST',
+    writer: '王健男',
+  },
+  ADDORDER: {
+    domain: ROOT_URL,
+    apiUrl: '/Admin/Order/addOrder',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/Admin/Order/addOrder',
+    remark: '添加订单',
+    method: 'POST',
+    writer: '王健男',
+  },
+
+
+
 
 
 }

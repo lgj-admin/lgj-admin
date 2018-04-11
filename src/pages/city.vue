@@ -43,7 +43,7 @@
         </panpel>
         <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加大区">
           <div slot="dialog-body">
-              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" v-if="showmodel">
                   <el-form-item label="大区名称" prop="name">
                       <el-input v-model="ruleForm.name" placeholder="请填写大区名称"></el-input>
                   </el-form-item>
@@ -173,7 +173,7 @@ export default {
       });
     },
     handleDelete(id) {
-      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+      this.$confirm("此操作将永久删除大区, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"

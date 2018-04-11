@@ -65,7 +65,7 @@
                             <div class="tr body-table-tr" v-for="(item,index) in employeeList" :key="index">
                                 <div class="td">{{item.name}}</div>
                                 <div class="td">{{item.tel}}</div>
-                                <div class="td">{{item.skill}}</div>
+                                <div class="td td-word">{{item.skill}}</div>
                                 <div class="td">
                                   <span>
                                       {{item.user_name}}
@@ -76,12 +76,6 @@
                                 </div>
                                 <div class="td">
                                     {{item.area_boss}}
-                                    <!-- <span>
-                                        马青
-                                    </span>
-                                    <span>
-                                        13756334567
-                                    </span> -->
                                 </div>
                                 <div class="td">
                                     {{item.area_name}}——{{item.city}}
@@ -105,9 +99,9 @@
                 </div>
             </div>
         </panpel>
-        <model-box @selectSubmit="handleAddemployee('ruleForm')" :show.sync="showmodel" :title="id==null ? '添加员工':'分配编辑员工'">
+        <model-box @selectSubmit="handleAddemployee('ruleForm')" :show.sync="showmodel" :title="id==null ? '添加员工':'分配编辑员工'" :width="'40%'">
             <div slot="dialog-body">
-                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="30%">
+                <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="30%" v-if="showmodel">
                     <el-form-item label="姓名" prop="name">
                         <el-input v-model="ruleForm.name"></el-input>
                     </el-form-item>
@@ -134,9 +128,9 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="服务技能" prop="name">
+                    <el-form-item label="服务技能" prop="skill">
                         <el-checkbox-group
-                              v-model="checkedServiceKills"
+                              v-model="ruleForm.skill"
                         >
                               <el-checkbox v-for="(item,index) in goodsList" :label="item.goods_id" :key="index">{{item.goods_name}}</el-checkbox>
                         </el-checkbox-group>
@@ -155,6 +149,17 @@ import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
 
 export default {
   data() {
+    const validateName = (rule, value, callback) => {
+      console.log(value)
+      if(value === null || value === ''){
+        callback(new Error("请输入姓名"));
+      }else{
+        if(value.length > 10){
+          callback(new Error("不能超过10个字符"));
+        }
+        callback();
+      }
+    };
     const validatePhone = (rule, value, callback) => {
       if (value === null) {
         callback(new Error("请输入手机号"));
@@ -173,16 +178,20 @@ export default {
         name: null, //姓名
         phone: null, //手机号
         regionalManagerValue: null, //大区经理value
-        areaManagerValue: null //区域经理value
+        areaManagerValue: null, //区域经理value
+        skill: [], //技能
       },
       rules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+        name: [{ required: true,validator: validateName, trigger: "blur" }],
         phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
         regionalManagerValue: [
           { required: true, message: "请选择大区经理", trigger: "change" }
         ],
         areaManagerValue: [
           { required: true, message: "请选择区域经理", trigger: "change" }
+        ],
+        skill: [
+          { required: true, message: "请选择技能", trigger: "change" }
         ]
       },
       searchValueName: "", //搜索框员工姓名value
@@ -191,8 +200,6 @@ export default {
       searchValueSkill: "", //搜索框员工技能value
       showmodel: false, //添加员工模态框状态
       setlevel: false, //设置等级模态框状态
-      cities: ["上海", "北京", "广州", "深圳"],
-      checkedServiceKills: [],
       employeeList: [], //员工列表
       total: null,
       page: 1,
@@ -257,18 +264,17 @@ export default {
     handleAddemployee(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          const checkedServiceKills = this.checkedServiceKills.join(',');
+          const skill = this.ruleForm.skill.join(',');
           const formData = {
             name: this.ruleForm.name,
             tel: this.ruleForm.phone,
             city_boss: this.ruleForm.regionalManagerValue,
             area_boss: this.ruleForm.areaManagerValue,
-            skill: checkedServiceKills
+            skill: skill
           };
           if (!this.id) {
             formData.type = 1;
             ApiDataModule("EMPLOYEEADDEDIT", formData).then(res => {
-              console.log(res);
               if (res.code == CODE_OK) {
                 this.$refs[formName].resetFields();
                 this.showmodel = false;
@@ -290,6 +296,7 @@ export default {
             });
           } else {
             //编辑
+            console.log('asdasd')
             formData.type = 2;
             formData.id = this.id;
             ApiDataModule("EMPLOYEEADDEDIT", formData).then(res => {
@@ -350,19 +357,22 @@ export default {
       this.ruleForm.phone = null;
       this.ruleForm.regionalManagerValue = null;
       this.ruleForm.areaManagerValue = null;
-      // this.ruleForm.skill = null;
+      this.ruleForm.skill = [];
       this.showmodel = true;
     },
     //编辑
     handleEdit(id) {
       this.id = id;
+      console.log(id,'id')
       ApiDataModule("EMPLOYEEEDIT", { id: id }).then(res => {
         console.log(res);
         this.ruleForm.name = res.data.name;
         this.ruleForm.phone = res.data.tel;
         this.ruleForm.regionalManagerValue = res.data.city_boss;
         this.ruleForm.areaManagerValue = res.data.area_boss;
-        // this.ruleForm.skill = res.data.skill;
+        const skill = res.data.skill.split(',');
+        const new_skill = JSON.parse(`[${String(skill)}]`);//数组字符串转数组数字
+        this.ruleForm.skill = new_skill;
       });
       this.showmodel = true;
     },

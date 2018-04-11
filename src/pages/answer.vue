@@ -21,10 +21,10 @@
                                         <span style="margin-right:10px">
                                             {{props.row.reply.msg_time}}
                                         </span>
-                                        <a  href="javascript:void(0)"
+                                        <!-- <a  href="javascript:void(0)"
                                             style="vertical-align:top">
                                             删除
-                                        </a>
+                                        </a> -->
                                     </div>
                                     <div  v-else>
                                         暂无回复
@@ -52,9 +52,9 @@
                                     <a v-else href="javascript:void(0)" @click="reply(scope.row.msg_id)">
                                         回复
                                     </a>
-                                    <a href="javascript:void(0)" @click="handleDelete">
+                                    <!-- <a href="javascript:void(0)" @click="handleDelete">
                                         删除
-                                    </a>
+                                    </a> -->
                                 </template>
                             </el-table-column>
                         </el-table>

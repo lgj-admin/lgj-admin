@@ -12,7 +12,7 @@ import Home from 'pages/home' //员工管理页面
 import Index from 'pages/index'
 import Login from 'pages/login.vue' //登录页面
 import Menu from 'pages/menu' //菜单管理页面
-import Order from 'pages/order' //订单管理页面
+import Order from 'pages/order/order' //订单管理页面
 import Permission from 'pages/permission' //角色管理页面
 import Regional from 'pages/regional' //大区经理管理页面
 import Service from 'pages/service' //服务管理页面

@@ -25,7 +25,7 @@
 
 <script>
 import Panpel from "base/panpel";
-import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
+import {ApiDataModule,CODE_OK,CODE_ERR,CODE_Data} from "config/axios.js";
 
 
 export default {
@@ -47,6 +47,14 @@ export default {
   },
   methods: {
     handleSubmit() {
+      if(!this.phone){
+        this.$message({type:'warning',message:'请填写客服电话'});
+        return;
+      }
+      if(!this.info){
+        this.$message({type:'warning',message:'请填写公司信息'});
+        return;
+      }
       const formData = {};
       if(this.role_id != null){
         formData.role_id = this.role_id;
@@ -63,6 +71,16 @@ export default {
           this.$message({
             type:'success',
             message:'提交成功'
+          })
+        }else if(res.code == CODE_Data){
+          this.$message({
+            type:'warning',
+            message:'修改后再提交'
+          })
+        }else{
+          this.$message({
+            type:'warning',
+            message:res.msg
           })
         }
       })

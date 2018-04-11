@@ -112,6 +112,12 @@
 .service-item .right .el-input{
     width: auto !important;
 }
+.addOrder .el-menu--horizontal>.el-menu-item {
+  height:40px;
+  line-height: 40px;
+  padding:0 13px;
+}
+
 /*
     log.vue 样式
     by wjn

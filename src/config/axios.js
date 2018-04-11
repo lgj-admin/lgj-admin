@@ -43,6 +43,7 @@ import qs from 'qs'
 
 export const CODE_OK = 1001; //接口成功响应code
 export const CODE_ERR = 1000; //接口响应失败code
+export const CODE_Data = 1030; //接口数据操作失败code
 export const ApiDataModule = function (baseURL, params) {
 
   /**

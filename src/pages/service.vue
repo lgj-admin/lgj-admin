@@ -371,7 +371,7 @@
                 </el-form>
             </div>
         </model-box>
-        <model-box @selectSubmit="handleAddServiceItem('ruleForm')" :show.sync="manageservice" title="添加服务项目" width="60%">
+        <model-box @selectSubmit="handleAddServiceItem('ruleForm')" :show.sync="manageservice" :title="!sgp_id?'添加服务项目':'管理服务项目'" width="60%">
             <div slot="dialog-body">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
                     <el-form-item label="选择服务分类" prop="serviceCategory">

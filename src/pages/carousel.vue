@@ -4,6 +4,7 @@
             <div slot="header" class="header-content">
                 <div class="header-content-left">
                   <el-button class="search-button" @click="add()" type="primary">添加广告</el-button>
+                  <span>上传图片大小不能超过2M</span>
                 </div>
                 <div class="header-content-right">
                 </div>
@@ -50,7 +51,7 @@
         </panpel>
         <model-box :show.sync="showmodel" :title="!id?'添加轮播图':'编辑轮播图'" :showButton="false">
           <div slot="dialog-body">
-              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" v-if="showmodel">
                   <el-form-item label="上传图片:(建议尺寸)">
                       <upload @selectUpload="handleUpload" @selectRemove="handleRemove" :imgUrl.sync="imageUrl" ref="upload">
                           <div slot="upload-card" class="upload-card">
@@ -76,7 +77,7 @@
                   <el-form-item label="跳转地址" prop="ad_link">
                       <el-input v-model="ruleForm.ad_link"></el-input>
                   </el-form-item>
-                  <el-form-item label="ID" prop="goods_id">
+                  <el-form-item label="ID" prop="goods_id" v-if="ruleForm.linkType == 2">
                       <el-input v-model="ruleForm.goods_id"></el-input>
                   </el-form-item>
                   <el-form-item>
@@ -107,7 +108,11 @@ export default {
         enabled: "1",
         goods_id:null
       },
-      rules: {},
+      rules: {
+        name:[{ required: true, message: "请输入广告名称", trigger: "blur" }],
+        ad_link:[{ required: true, message: "请输入跳转地址", trigger: "blur" }],
+        goods_id:[{ required: true, message: "请输入ID", trigger: "blur" }],
+      },
       searchValue: "",
       showmodel: false,
       imageUrl: null,
@@ -136,27 +141,34 @@ export default {
           form.append("orderby", this.ruleForm.orderby);
           if(this.imgFile){
             form.append("code", this.imgFile);
+          }else{
+            this.$message({
+              type:'warning',
+              message:'请选择添加图片'
+            })
+            return;
           }
           if (this.id) {
             form.append("id", this.id);
           }
           ApiDataModule("HANDLEAD", form).then(res => {
-            this.$message({
-              type:'success',
-              message:'提交成功'
-            })
+            console.log(res);
             if (res.data.code == CODE_OK) {
+              this.showmodel = false;
+              this.$message({
+                type:'success',
+                message:'提交成功'
+              })
               ApiDataModule("ADLIST").then(res => {
                 this.adList = res.data;
               });
             }else{
               this.$message({
                 type:'warning',
-                message:res.msg
+                message:res.data.msg
               })
             }
           });
-          this.showmodel = false;
         } else {
           return false;
         }
@@ -199,6 +211,7 @@ export default {
         this.ruleForm.ad_link = res.data.ad_link;
         this.ruleForm.linkType = res.data.media_type.toString();
         this.imageUrl = res.data.ad_code;
+        this.imgFile = res.data.ad_code;
       });
     },
     handleDelete(id) {

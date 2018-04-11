@@ -56,7 +56,7 @@
         </panpel>
         <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" :title="!user_id?'添加用户':'编辑用户'">
             <div slot="dialog-body">
-                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" v-if="showmodel">
                     <el-form-item label="昵称" prop="name">
                         <el-input v-model="ruleForm.name"></el-input>
                     </el-form-item>
@@ -252,7 +252,7 @@ export default {
           });
           this.$message({
             type: "success",
-            message: "冻结成功"
+            message: "操作成功"
           });
         } else {
           this.$message({
