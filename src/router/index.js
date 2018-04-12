@@ -15,7 +15,7 @@ import Menu from 'pages/menu' //菜单管理页面
 import Order from 'pages/order/order' //订单管理页面
 import Permission from 'pages/permission' //角色管理页面
 import Regional from 'pages/regional' //大区经理管理页面
-import Service from 'pages/service' //服务管理页面
+import Service from 'pages/service/service' //服务管理页面
 import User from 'pages/user' //用户管理页面
 import Log from 'pages/log' //日志管理页面
 import NotFoundView from 'components/404.vue' //404页面
