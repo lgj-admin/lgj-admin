@@ -38,9 +38,6 @@
                           {{item}}
                       </el-menu-item>
                   </el-menu>
-		    	    	  <!-- <div class="select-time" >
-                    <el-button v-for="(item,index) in Time" :key="index">{{item}}</el-button>
-                  </div> -->
 		    	  	</el-form-item>
 		    	  	<el-form-item label="预约城市:" prop="order_reservation_city">
                   <el-select
@@ -80,10 +77,13 @@
                         </el-option>
                     </el-select>
               </el-form-item>
-              <el-form-item label="选择服务" prop="selectServiceItem">
+              <el-form-item label="选择服务" :prop="extend_cat_id == 1?'checkServiceItem':'selectServiceItem'">
                     <div class="selectproject">
-                        <div v-if="extend_cat_id != null">名称</div>
-                        <div v-if="extend_cat_id == 2">套餐价</div>
+                        <div v-if="extend_cat_id == 1">
+                            <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="CheckAllChange">名称</el-checkbox>
+                        </div>
+                        <div v-if="extend_cat_id != 1">名称</div>
+                        <div v-if="extend_cat_id == 2">单价</div>
                         <div v-if="extend_cat_id == 3">服务面积</div>
                         <div v-if="extend_cat_id == 1 || extend_cat_id == 3">套餐单价</div>
                         <div v-if="extend_cat_id != null">员工提成</div>
@@ -96,7 +96,7 @@
                             </el-radio-group>
                         </div>
                         <div>
-                            {{item.package_price}}元
+                            {{item.price}}元
                         </div>
                         <div>
                             {{item.mc_rebate}}%
@@ -104,12 +104,12 @@
                     </div>
                     <div class="selectproject" v-if="extend_cat_id == 1" v-for="(item,index) in goodsAttributesList" :key="index">
                         <div>
-                            <el-radio-group v-model="ruleForm.selectServiceItem">
-                                <el-radio v-if="extend_cat_id == 1"  :label="item.sgp_id">{{item.key_name}}</el-radio>
-                            </el-radio-group>
+                            <el-checkbox-group v-model="ruleForm.checkServiceItem" @change="handleCheckedCitiesChange">
+                                <el-checkbox :label="item.sgp_id" :value="item.sgp_id" :key="index">{{item.key_name}}</el-checkbox>
+                            </el-checkbox-group>
                         </div>
                         <div>
-                            {{item.package_price}}元
+                            {{item.price}}元
                         </div>
                         <div>
                             {{item.mc_rebate}}%
@@ -125,10 +125,15 @@
                             </el-radio-group>
                         </div>
                         <div>
-                            <input type="text" :class="`packagearea${item.sgp_id}`" style="border:1px solid #ccc;width:60px;"/>
+                            <input
+                                type="text"
+                                :class="`packagearea${item.sgp_id}`"
+                                style="border:1px solid #ccc;width:60px;"
+                                onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                            />
                         </div>
                         <div>
-                            {{item.package_price}}元
+                            {{item.price}}元
                         </div>
                         <div>
                             {{item.mc_rebate}}%
@@ -178,8 +183,11 @@ export default {
       getCategoryList: [],
       dateList: [],
       cityList: [],
+      checkAll: false,
+      isIndeterminate: false,
       ruleForm: {
-        serviceTotal:null,
+        goods_attr: [],
+        serviceTotal: null,
         order_name: null, //联系人
         order_phone: null, //联系电话
         order_account_number: null, //预约客户账号
@@ -188,14 +196,14 @@ export default {
         order_reservation_city: "", //预约城市
         order_reservation_address: "", //预约详细地址
         serviceCategory: null, //选择服务分类Value
-        selectServiceItem: null, //选择服务项目Value
-        serviceItem: null, //选择服务Value
+        serviceItem: null, //选择服务项目Value
+        selectServiceItem: null, //选择服务Value
+        checkServiceItem: [], //选择服务复选框Value
         order_reservation_remark: "" //预约备注
       },
       rules: {
         order_name: [
-          { required: true, message: "请输入联系人", trigger: "blur" },
-          { min: 3, max: 10, message: "长度在 3 到 10 个字符", trigger: "blur" }
+          { required: true, message: "请输入联系人", trigger: "blur" }
         ],
         order_phone: [
           { required: true, validator: validatePhone, trigger: "blur" }
@@ -213,10 +221,13 @@ export default {
           { required: true, message: "请选择服务分类", trigger: "change" }
         ],
         selectServiceItem: [
-          { required: true, message: "请选择服务项目", trigger: "change" }
+          { required: true, message: "请选择服务", trigger: "change" }
+        ],
+        checkServiceItem: [
+          { required: true, message: "请选择服务", trigger: "change" }
         ],
         serviceItem: [
-          { required: true, message: "请选择服务", trigger: "change" }
+          { required: true, message: "请选择服务项目", trigger: "change" }
         ],
         order_reservation_date: [
           { required: true, message: "请选择日期", trigger: "blur" }
@@ -265,9 +276,31 @@ export default {
     }
   },
   methods: {
+    //全选事件
+    CheckAllChange(e, val) {
+      console.log(e, val);
+      var newArticList = [];
+      this.goodsAttributesList.map(function(item, index) {
+        newArticList.push(item.sgp_id);
+      });
+      this.ruleForm.checkServiceItem = this.checkAll ? newArticList : [];
+      this.isIndeterminate = false;
+    },
+    //复选框事件
+    handleCheckedCitiesChange(value) {
+      console.log(value);
+      this.ruleForm.checkServiceItem = value;
+      var checkedCount = value.length;
+      this.checkAll = checkedCount === this.goodsAttributesList.length;
+      this.isIndeterminate =
+        checkedCount > 0 && checkedCount < this.goodsAttributesList.length;
+    },
     //通过分类获取商品
     handleGetServiceItem(id) {
       this.ruleForm.serviceItem = null;
+      this.ruleForm.selectServiceItem = null;
+      this.ruleForm.checkServiceItem = [];
+
       ApiDataModule("GETGOODSBYCATE", {
         cate: id
       }).then(res => {
@@ -288,43 +321,78 @@ export default {
       });
     },
     getSelectGoodsItemList() {
-      this.goodsAttributesList.map((item, index) => {
-        if (item.sgp_id == this.ruleForm.selectServiceItem) {
-          if (this.extend_cat_id == 3) {
-            let packagearea = `packagearea${item.sgp_id}`;
-            if (document.getElementsByClassName(packagearea)[0].value != "") {
-              item.count = document.getElementsByClassName(
-                packagearea
-              )[0].value;
-            } else {
-              this.$message({
-                type: "warning",
-                message: "面积不能为空"
-              });
-              return;
+      let btn = true;
+      this.ruleForm.serviceTotal = null;
+      this.selectgoodsItemList = [];
+      this.ruleForm.goods_attr = [];
+      let total = 0;
+      if (this.extend_cat_id == 1) {
+        this.goodsAttributesList.map((item,index)=>{
+          this.ruleForm.checkServiceItem.filter((item2,index2)=>{
+              if(item.sgp_id == item2){
+                this.selectgoodsItemList.push(item);
+              }
+          });
+        })
+        this.selectgoodsItemList.map((item,index)=>{
+          this.ruleForm.goods_attr.push({
+            goods_num:item.count,
+            price:item.price,
+            sgp_id:item.sgp_id,
+            key_name:item.key_name
+          })
+        })
+        console.log(this.ruleForm.goods_attr,'aaaaaaaaaaaaa')
+        this.ruleForm.goods_attr.map((item2,index2)=>{
+          total += item2.goods_num * item2.price;
+        })
+        this.ruleForm.serviceTotal = total;
+        return btn;
+      }
+      if (this.extend_cat_id != 1) {
+        this.goodsAttributesList.map((item, index) => {
+          if (item.sgp_id == this.ruleForm.selectServiceItem) {
+            if (this.extend_cat_id == 3) {
+              let packagearea = `packagearea${item.sgp_id}`;
+              if (document.getElementsByClassName(packagearea)[0].value != "") {
+                item.count = document.getElementsByClassName(
+                  packagearea
+                )[0].value;
+              } else {
+                this.$message({
+                  type: "warning",
+                  message: "面积不能为空"
+                });
+                btn = false;
+                return;
+              }
             }
+            console.log(item, "dszfdsfds");
+            this.selectgoodsItemList.push(item);
           }
-          this.selectgoodsItemList.push(item);
-          const totalArr = [];
-          let total = 0;
-
-          this.selectgoodsItemList.map((item, index) => {
-            totalArr.push({ count: item.count, price: item.package_price });
-          });
-          totalArr.map((item2, index2) => {
-            total += item2.count * item2.price;
-          });
-          console.log(total, "total");
-          this.ruleForm.serviceTotal = total;
-          console.log(this.selectgoodsItemList, "ruleForm.selectgoodsItemList");
-        }
-      });
+        });
+        this.selectgoodsItemList.map((item,index)=>{
+          this.ruleForm.goods_attr.push({
+            goods_num:item.count,
+            price:item.price,
+            sgp_id:item.sgp_id,
+            key_name:item.key_name
+          })
+        })
+        console.log(this.ruleForm.goods_attr,'bbbbbbbbbbbbbb');
+        this.ruleForm.goods_attr.map((item2,index2)=>{
+          total += item2.goods_num * item2.price;
+        })
+        this.ruleForm.serviceTotal = total;
+        return btn;
+      }
     },
     handleAddOrder(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.getSelectGoodsItemList();
-          this.add_order_switch = false;
+          if (!this.getSelectGoodsItemList()) {
+            return;
+          }
           this.$emit("selectAddOrder", this.ruleForm);
         } else {
           return false;

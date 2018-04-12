@@ -433,7 +433,12 @@
                                 <el-radio :disabled="getSgp_id_radio_Status(item.sgp_id)?true:false" v-if="extend_cat_id == 3" v-model="ruleForm.selectServiceItem" :label="item.sgp_id">{{item.key_name}}</el-radio>
                             </div>
                             <div>
-                                <input type="text" :class="`packagearea${item.sgp_id}`" style="border:1px solid #ccc;width:60px;"/>
+                                <input
+                                    type="text"
+                                    :class="`packagearea${item.sgp_id}`"
+                                    style="border:1px solid #ccc;width:60px;"
+                                    onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                />
                             </div>
                             <div>
                                 {{item.package_price}}元
@@ -891,9 +896,12 @@ export default {
           ApiDataModule("ADDCATEGORY", formData).then(res => {
             console.log(res);
             if (res.code == CODE_OK) {
+              this.$message({type:'success',message:'添加成功'})
               ApiDataModule("GETCATEGORY").then(res => {
                 this.getCategoryList = res.data;
               });
+            }else{
+              this.$message({type:'warning',message:res.msg})
             }
           });
           this.addcategory = false;
@@ -1241,6 +1249,10 @@ export default {
       let btn = true;
       this.verificationServiceNameArray = [];
       if (this.ruleForm.serviceType == 1) {
+        if(this.serviceListIcon.length<=0){
+          btn = false;
+          return;
+        }
         this.serviceListIcon.map((item, index) => {
           if (this.serviceListIcon[index].key_name == null) {
             btn = false;
@@ -1271,6 +1283,10 @@ export default {
         return btn;
       }
       if (this.ruleForm.serviceType == 2) {
+        if(this.serviceList.length<=0){
+          btn = false;
+          return;
+        }
         this.serviceList.map((item, index) => {
           if (this.serviceList[index].key_name == null) {
             btn = false;
@@ -1297,6 +1313,10 @@ export default {
         return btn;
       }
       if (this.ruleForm.serviceType == 3) {
+        if(this.serviceListArea.length<=0){
+          btn = false;
+          return;
+        }
         this.serviceListArea.map((item, index) => {
           if (this.serviceListArea[index].key_name == null) {
             btn = false;

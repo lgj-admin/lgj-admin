@@ -234,15 +234,21 @@ export default {
         formData.address = form.order_reservation_address;//详细地址
         formData.mobile = form.order_phone;//联系电话
         formData.user_note = form.order_reservation_remark;//预约备注
-        formData.goods_id = form.selectServiceItem;//服务id
+        formData.goods_id = form.serviceItem;//服务id
 
         formData.total_price = form.serviceTotal;//商品价格
-        formData.reservation_time = form.order_phone;//预约时间
-        formData.goods_attr = form.order_phone;//服务数组
+        formData.reservation_time = `${form.order_reservation_date} ${form.order_reservation_time}`;//预约时间
+        formData.goods_attr = form.goods_attr;//服务数组
 
       }
       ApiDataModule('ADDORDER',formData).then(res=>{
         console.log(res);
+        if(res.code == CODE_OK){
+          this.$message({type:'success',message:'添加成功'})
+        }else{
+          this.$message({type:'warning',message:res.msg})
+        }
+        // this.add_order_switch = false;
       })
     },
     //分配订单

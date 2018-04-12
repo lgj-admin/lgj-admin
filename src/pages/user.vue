@@ -127,7 +127,10 @@ export default {
         checkPasd: null //确认密码
       },
       rules: {
-        name: [{ required: true, message: "请输入昵称", trigger: "blur" }],
+        name: [
+          { required: true, message: "请输入昵称", trigger: "blur" },
+          { min: 1, max: 10, message: "长度在 1 到 10 个字符", trigger: "blur" }
+        ],
         phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
         pasd: [{ required: true, validator: validatePasd, trigger: "blur" }],
         checkPasd: [

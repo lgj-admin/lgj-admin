@@ -38,8 +38,9 @@ export default {
       // if (!event._constructed) {
       //   return;
       // }
-      // if (this.count) {
-      // }
+      if (this.count.count == 1) {
+        return;
+      }
       this.count.count--;
       // this.$emit("cartDecrease", event)
     }
