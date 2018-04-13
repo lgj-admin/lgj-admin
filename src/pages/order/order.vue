@@ -244,6 +244,7 @@ export default {
       ApiDataModule('ADDORDER',formData).then(res=>{
         console.log(res,'sdfsdf');
         if(res.code == CODE_OK){
+          this.add_order_switch = false;
           this.$message({type:'success',message:'添加成功'})
         }else{
           this.$message({type:'warning',message:res.msg})
@@ -339,6 +340,11 @@ export default {
       }
       ApiDataModule("DISTRIBUTIONORDER", formData).then(res => {
         if (res.code == CODE_OK) {
+          ApiDataModule("GETORDERLIST", {
+            status: this.active_index
+          }).then(res => {
+            this.orderList = res.data;
+          });
           this.$message({ type: "success", message: "分配成功" });
           this.handleManagerOrder(this.order_id);
           this.selectEmployee = false;

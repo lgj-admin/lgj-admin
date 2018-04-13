@@ -259,7 +259,7 @@ export default {
 .table-item {
   flex: 1;
   text-align: left;
-  padding: 0 40px;
+  /* padding: 0 40px; */
 }
 .body-flex i {
   font-size: 20px;

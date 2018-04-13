@@ -57,27 +57,55 @@
 		    	  	<el-form-item label="详细地址:" prop="order_reservation_address">
 		    	    	  <el-input v-model="ruleForm.order_reservation_address"></el-input>
 		    	  	</el-form-item>
-              <el-form-item label="选择服务分类" prop="serviceCategory">
-                  <el-select v-model="ruleForm.serviceCategory" placeholder="服务分类" @change="handleGetServiceItem">
-                        <el-option
-                              v-for="item in getCategoryList"
-                              :key="item.id"
-                              :label="item.name"
-                              :value="item.id">
-                        </el-option>
-                    </el-select>
+              <el-form-item label="添加服务项目" prop="serviceType">
+                  <el-radio v-model="ruleForm.serviceType" label="1">添加普通商品</el-radio>
+                  <el-radio v-model="ruleForm.serviceType" label="2">添加套餐</el-radio>
               </el-form-item>
-              <el-form-item label="选择服务项目" prop="serviceItem">
-                    <el-select v-model="ruleForm.serviceItem" placeholder="服务项目" @change="handleGetGoodsItem">
+              <el-form-item label="选择服务套餐" prop="serviceItem" v-if="ruleForm.serviceType == 1">
+                  <el-select v-model="ruleForm.serviceItem" placeholder="服务分类">
                         <el-option
-                              v-for="item in getGoodsArray"
+                              v-for="item in getServerPackageList"
                               :key="item.goods_id"
                               :label="item.goods_name"
                               :value="item.goods_id">
                         </el-option>
                     </el-select>
               </el-form-item>
-              <el-form-item label="选择服务" :prop="extend_cat_id == 1?'checkServiceItem':'selectServiceItem'">
+              <el-form-item label="选择服务分类" prop="serviceItem" v-if="ruleForm.serviceType == 1">
+                  <el-select v-model="ruleForm.serviceItem" placeholder="服务分类">
+                        <el-option
+                              v-for="item in getCategoryList"
+                              :key="item.goods_id"
+                              :label="item.goods_name"
+                              :value="item.goods_id">
+                        </el-option>
+                    </el-select>
+              </el-form-item>
+              <el-form-item label="选择服务项目" prop="serviceItem" v-if="ruleForm.serviceType == 1">
+                    <el-select v-model="ruleForm.serviceItem" placeholder="服务项目" @change="handleGetGoodsItem">
+                        <el-option
+                              v-for="item in getGoodsArray"
+                              :key="item.id"
+                              :label="item.name"
+                              :value="item.id">
+                        </el-option>
+                    </el-select>
+              </el-form-item>
+              <el-form-item>
+                  <el-select v-model="ruleForm.serviceItem" placeholder="服务项目" @change="handleGetGoodsItem">
+                      <el-option
+                            v-for="item in getGoodsArray"
+                            :key="item.goods_id"
+                            :label="item.goods_name"
+                            :value="item.goods_id">
+                      </el-option>
+                  </el-select>
+              </el-form-item>
+              <el-form-item
+                  label="选择服务"
+                  :prop="extend_cat_id == 1?'checkServiceItem':'selectServiceItem'"
+                  v-if="ruleForm.serviceType == 1"
+              >
                     <div class="selectproject">
                         <div v-if="extend_cat_id == 1">
                             <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="CheckAllChange">名称</el-checkbox>
@@ -185,7 +213,9 @@ export default {
       cityList: [],
       checkAll: false,
       isIndeterminate: false,
+      getServerPackageList:[],
       ruleForm: {
+        serviceType:'1',
         goods_attr: [],
         serviceTotal: null,
         order_name: null, //联系人
@@ -268,6 +298,11 @@ export default {
     ApiDataModule("CITYLIST").then(res => {
       console.log(res);
       this.cityList = res.data.data;
+    });
+    //服务套餐列表
+    ApiDataModule("GETSERVERPACKAGELIST").then(res => {
+      this.getServerPackageList = res.data;
+      console.log(res, "GETSERVERPACKAGELIST");
     });
     if (this.orderid) {
       console.log("存在", this.orderid);

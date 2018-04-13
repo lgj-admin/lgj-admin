@@ -5,47 +5,78 @@
             </div>
             <div slot="body">
                 <div class="body-content">
-                    <div class="body-table table">
-                        <div class="thead body-table-thead">
-                            <div class="tr">
-                                <div class="td">服务名称</div>
-                                <div class="td">评价内容</div>
-                                <div class="td">评价人</div>
-                                <div class="td">评价时间</div>
-                                <div class="td">操作</div>
-                            </div>
-                        </div>
-                        <div class="tbody">
-                            <div class="tr body-table-tr">
-                                <div class="td">日常清洗</div>
-                                <div class="td">服务不错</div>
-                                <div class="td">侯雪</div>
-                                <div class="td">2017-04-25</div>
-                                <div class="td">
-                                  <a href="javascript:void(0)" @click="showmodel = true">回复</a>
-                                  <a href="javascript:void(0)" @click="handleDelete">删除</a>
-                                </div>
-                            </div>
-                            <div class="tr body-table-tr">
-                                <div class="td">日常清洗</div>
-                                <div class="td">服务不错</div>
-                                <div class="td">侯雪</div>
-                                <div class="td">2017-04-25</div>
-                                <div class="td">
-                                  <a href="javascript:void(0)" @click="showmodel = true">回复</a>
-                                  <a href="javascript:void(0)" @click="handleDelete">删除</a>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="body-table">
+                        <el-table :data="feedback_list" style="width: 100%">
+                            <el-table-column type="expand" >
+                                <template slot-scope="props">
+                                    <div >
+                                        评价回复：
+                                        <span style="margin-right:10px">
+                                            {{props.row.parent_id[0].content}}
+                                        </span>
+                                        <span style="margin-right:10px">
+                                            {{props.row.parent_id[0].add_time}}
+                                        </span>
+                                        <a  href="javascript:void(0)"
+                                            style="vertical-align:top">
+                                            删除
+                                        </a>
+                                    </div>
+                                    <div>
+                                        暂无回复
+                                    </div>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                label="服务名称"
+                                prop="goods_name"
+                            >
+                            </el-table-column>
+                            <el-table-column
+                                label="评价内容"
+                                prop="content"
+                            >
+                            </el-table-column>
+                            <el-table-column
+                                label="评价人"
+                                prop="nickname"
+                            >
+                            </el-table-column>
+                            <el-table-column
+                                label="评价时间"
+                                prop="add_time"
+                            >
+                            </el-table-column>
+                            <el-table-column label="操作">
+                                <template slot-scope="scope">
+                                    <a style="color:#999">已回复</a>
+                                    <!-- <a href="javascript:void(0)" @click="reply(scope.row.comment_id)">
+                                        回复
+                                    </a> -->
+                                    <a href="javascript:void(0)" @click="handleDelete">
+                                        删除
+                                    </a>
+                                </template>
+                            </el-table-column>
+                        </el-table>
                     </div>
+                    <!-- <div class="body-page">
+                        <el-pagination
+                            background
+                            @current-change="handlePagination"
+                            layout="prev, pager, next"
+                            :total="total"
+                        >
+                        </el-pagination>
+                    </div> -->
                 </div>
             </div>
         </panpel>
         <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="回复评价">
             <div slot="dialog-body">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" >
-                    <el-form-item label="回复" prop="name">
-                        <el-input v-model="ruleForm.name" type="textarea" :rows=4></el-input>
+                    <el-form-item label="回复" prop="content">
+                        <el-input v-model="ruleForm.content" type="textarea" :rows=4></el-input>
                     </el-form-item>
                 </el-form>
             </div>
@@ -57,17 +88,28 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
+import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+
 export default {
   data() {
     return {
       ruleForm: {
-        name: ""
+        content: null, //内容
       },
       rules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
+        content: [{ required: true, message: "请输入回复内容", trigger: "blur" }],
       },
-      showmodel: false
+      feedback_list: [],
+      showmodel: false,
+      total:null,
+      msg_id:null,
     };
+  },
+  created(){
+    ApiDataModule('COMMENTLIST').then(res=>{
+      this.feedback_list = res.data.data;
+      console.log(res)
+    })
   },
   methods: {
     handlesubmit(formName) {

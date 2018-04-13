@@ -266,6 +266,16 @@ export const API_URL = {
     method: 'POST',
     writer: '王健男',
   },
+  COMMENTLIST: {
+    domain: ROOT_URL,
+    apiUrl: '/admin/comments/commentList',
+    author: '赵斌',
+    fetchUrl: ROOT_URL + '/admin/comments/commentList',
+    remark: '评价列表',
+    method: 'POST',
+    writer: '王健男',
+  },
+
 
   /*
   *王超接口
@@ -572,6 +582,15 @@ export const API_URL = {
     method: 'POST',
     writer: '王健男',
   },
+   DELGOODS: {
+     domain: ROOT_URL,
+     apiUrl: '/Admin/Goods/delGoods',
+     author: '刘云鹏',
+     fetchUrl: ROOT_URL + '/Admin/Goods/delGoods',
+     remark: '删除服务',
+     method: 'POST',
+     writer: '王健男',
+   },
   EDITGOODSSTATUS: {
     domain: ROOT_URL,
     apiUrl: '/Admin/Goods/editGoodsStatus',
@@ -595,10 +614,20 @@ export const API_URL = {
     apiUrl: '/Admin/Goods/getAttrByGoods',
     author: '刘云鹏',
     fetchUrl: ROOT_URL + '/Admin/Goods/getAttrByGoods',
-    remark: '根据商品获取商品属性',
+    remark: '根据商品获取商品属性 传goods_id',
     method: 'POST',
     writer: '王健男',
   },
+  GETATTRBYATTR: {
+    domain: ROOT_URL,
+    apiUrl: '/Admin/Goods/getAttrByAttr',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/Admin/Goods/getAttrByAttr',
+    remark: '根据商品获取商品属性 传sgp_id',
+    method: 'POST',
+    writer: '王健男',
+  },
+
   ADDGOODSPACKAGE: {
     domain: ROOT_URL,
     apiUrl: '/admin/Goods/addGoodsPackage',
@@ -608,12 +637,48 @@ export const API_URL = {
     method: 'FormData',
     writer: '王健男',
   },
+  EDITGOODSPACKAGE: {
+    domain: ROOT_URL,
+    apiUrl: '/admin/Goods/editGoodsPackage',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/admin/Goods/editGoodsPackage',
+    remark: '编辑服务套餐',
+    method: 'FormData',
+    writer: '王健男',
+  },
+  GETSERVERPACKAGEINFO: {
+    domain: ROOT_URL,
+    apiUrl: '/Admin/Goods/getServerPackageInfo',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/Admin/Goods/getServerPackageInfo',
+    remark: '获取服务套餐详情',
+    method: 'POST',
+    writer: '王健男',
+  },
   GETSERVERPACKAGELIST: {
     domain: ROOT_URL,
     apiUrl: '/Admin/Goods/getServerPackageList',
     author: '刘云鹏',
     fetchUrl: ROOT_URL + '/Admin/Goods/getServerPackageList',
     remark: '获取服务套餐列表',
+    method: 'POST',
+    writer: '王健男',
+  },
+  DELPACKAGE: {
+    domain: ROOT_URL,
+    apiUrl: '/admin/Goods/delPackage',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/admin/Goods/delPackage',
+    remark: '删除套餐',
+    method: 'POST',
+    writer: '王健男',
+  },
+  CHANGESALESTATUS: {
+    domain: ROOT_URL,
+    apiUrl: '/Admin/Goods/changeSaleStatus',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/Admin/Goods/changeSaleStatus',
+    remark: '修改套餐上架状态',
     method: 'POST',
     writer: '王健男',
   },
@@ -689,6 +754,7 @@ export const API_URL = {
     method: 'POST',
     writer: '王健男',
   },
+
 
 
 

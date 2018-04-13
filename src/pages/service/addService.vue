@@ -209,23 +209,25 @@ export default {
       default: () => {
         return {};
       }
+    },
+    area:{
+      type:Array,
+      default:()=>{return []}
     }
   },
   data() {
     return {
-      activeIndex: "1", //tags索引
       editorOption: editorOptions,
       dialogImageUrl: "",
       imageArr: [],
       imageUrlCategoryIcon: null, //分类图标路径
       imageUrlHomeShow: null, //首页展示图路径路径
-      area: [],
+      verificationServiceNameBtn: true,
+      verificationServiceNameArray: [],
       ruleForm: {
         content: "",
         serviceType: "1", //服务类型
-        selectServiceItem: null, //套餐里服务项目radio值
         serviceCategory: null, //选择服务分类Value
-        serviceItem: null, //选择服务Value
         categoryName: null, //服务分类名称value
         goods_name: null, //服务名称value
         goods_remark: null, //服务简介value
@@ -243,12 +245,6 @@ export default {
         ],
         serviceCategory: [
           { required: true, message: "请选择服务分类", trigger: "change" }
-        ],
-        serviceItem: [
-          { required: true, message: "请选择服务", trigger: "change" }
-        ],
-        selectServiceItem: [
-          { required: true, message: "请选择服务项目", trigger: "change" }
         ],
         checkedArea: [
           { required: true, message: "请选择服务区域", trigger: "change" }
@@ -273,11 +269,6 @@ export default {
     quillEditor
   },
   created() {
-    //城市区域
-    ApiDataModule("CITYLIST").then(res => {
-      this.area = res.data.data;
-      console.log(res);
-    });
     if (this.goodsInfo.goods_id) {
       console.log(this.goodsInfo, "asdsad");
       this.ruleForm.serviceCategory = this.goodsInfo.cat_id;
@@ -290,19 +281,12 @@ export default {
       this.imageUrlHomeShow = this.goodsInfo.original_img;
       this.ruleForm.original_type_img = this.goodsInfo.original_type_img;
       this.imageUrlCategoryIcon = this.goodsInfo.original_type_img;
-      let banner_img_url = [];
-      // this.goodsInfo.banner_img.map((item, index) => {
-      //   banner_img_url.push(item.image_url);
-      // });
-      // banner_img_url = this.goodsInfo.banner_img;
-      // this.ruleForm.banner_img = banner_img_url;
+
       this.goodsInfo.banner_img.map((item,index)=>{
         this.ruleForm.banner_img.push(item);
         this.imageArr.push(item);
       })
-      // this.imageArr = this.goodsInfo.banner_img;
       this.ruleForm.content = this.goodsInfo.goods_content;
-      console.log(banner_img_url,'banner_img_url')
     }
   },
   methods: {
@@ -740,18 +724,6 @@ export default {
   font-size: 24px;
   cursor: pointer;
 }
-.box-card-item {
-  display: flex;
-  justify-content: space-around;
-}
-.box-card-item > div {
-  flex: 1;
-  text-align: left;
-}
-.box-footer {
-  margin-top: 20px;
-  border-top: 1px solid #ccc;
-}
 .selectproject {
   display: flex;
   justify-content: space-around;
@@ -760,34 +732,5 @@ export default {
 .selectproject > div {
   flex: 1;
   text-align: left;
-}
-.serviceIcon-content {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.serviceIcon-item {
-  position: relative;
-  padding: 5px;
-}
-.serviceIcon-delete {
-  display: none;
-}
-.serviceIcon-item:hover .serviceIcon-delete {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-.serviceIcon-delete i {
-  color: #fff;
-  cursor: pointer;
-  font-size: 20px;
 }
 </style>
