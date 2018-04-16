@@ -39,9 +39,22 @@
                 </div>
             </div>
         </panpel>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" @selectClose="handleClose()" :show.sync="showmodel" :title="!id ? '添加角色':'编辑角色'" width="60%">
+        <model-box
+            @selectSubmit="handlesubmit('ruleForm')"
+            @selectClose="handleClose()"
+            :show.sync="showmodel"
+            :title="!id ? '添加角色':'编辑角色'"
+            width="60%"
+        >
           <div slot="dialog-body">
-              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" v-if="showmodel">
+              <el-form
+                  :model="ruleForm"
+                  :rules="rules"
+                  ref="ruleForm"
+                  label-width="100px"
+                  :status-icon="true"
+                  v-if="showmodel"
+              >
                   <el-form-item label="角色名称" prop="name">
                       <el-input v-model="ruleForm.name" placeholder="请输入角色名称"></el-input>
                   </el-form-item>

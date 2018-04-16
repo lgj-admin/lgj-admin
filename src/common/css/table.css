@@ -13,7 +13,7 @@
 .thead {
   display: table-header-group;
   border-bottom: 1px solid #ccc;
-  background-color: #eef1f6;
+  background-color: #d9e5f9;
   font-weight: 600;
   vertical-align: middle;
 }
@@ -27,7 +27,10 @@
   vertical-align: middle;
   border-bottom: 1px solid #ccc;
 }
+.tbody>.tr:hover{
+  background-color: #eef1f6;
 
+}
 .tbody .td {
   color: #999999;
 }

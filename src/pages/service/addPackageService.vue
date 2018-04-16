@@ -1,6 +1,12 @@
 <template>
     <div class="addPackageService">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
+        <el-form
+            :model="ruleForm"
+            :rules="rules"
+            ref="ruleForm"
+            label-width="120px"
+            :status-icon="true"
+        >
             <el-form-item label="套餐名称" prop="goods_name">
                 <el-input v-model="ruleForm.goods_name" placeholder="套餐名称"></el-input>
             </el-form-item>
@@ -36,7 +42,7 @@
                     </div>
                 </el-card>
             </el-form-item>
-            <el-form-item label="添加首页默认图(建议尺寸)" prop="original_img">
+            <el-form-item label="添加首页默认图(建议尺寸:440X360)" prop="original_img">
                 <upload
                     @selectUpload="handleUploadHomeShow"
                     @selectRemove="handleRemoveCategory('Show')"
@@ -49,7 +55,7 @@
                     </div>
                 </upload>
             </el-form-item>
-            <el-form-item label="添加服务展示图" prop="banner_img">
+            <el-form-item label="添加服务展示图(建议尺寸:750x480)" prop="banner_img">
                 <upload
                     @selectUpload="handleUpload"
                     @selectRemove="handleRemove"

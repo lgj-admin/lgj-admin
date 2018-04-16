@@ -43,7 +43,14 @@
         </panpel>
         <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" :title="!id?'添加客服':'编辑客服'">
             <div slot="dialog-body">
-                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" v-if="showmodel">
+                <el-form
+                    :model="ruleForm"
+                    :rules="rules"
+                    ref="ruleForm"
+                    label-width="30%"
+                    :status-icon="true"
+                    v-if="showmodel"
+                >
                     <!-- <el-form-item label="用户名" prop="username">
                         <el-input v-model="ruleForm.username"></el-input>
                     </el-form-item> -->
@@ -54,10 +61,10 @@
                         <el-input v-model="ruleForm.phone"></el-input>
                     </el-form-item>
                     <el-form-item v-if="!id" label="密码" prop="pasd">
-                        <el-input v-model="ruleForm.pasd"></el-input>
+                        <el-input v-model="ruleForm.pasd" type="password"></el-input>
                     </el-form-item>
                     <el-form-item v-if="!id" label="确认密码" prop="checkPasd">
-                        <el-input v-model="ruleForm.checkPasd"></el-input>
+                        <el-input v-model="ruleForm.checkPasd" type="password"></el-input>
                     </el-form-item>
                 </el-form>
             </div>
@@ -158,7 +165,6 @@ export default {
                   type: "success",
                   message: "添加成功"
                 });
-                this.$refs[formName].resetFields();
                 ApiDataModule("CUSTOMERSERVICELIST").then(res => {
                   this.customerServiceList = res.data.data;
                   this.total = res.data.total;

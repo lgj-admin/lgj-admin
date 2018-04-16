@@ -5,19 +5,36 @@
                 <span>来管家后台管理中心</span>
                 <label>LAIGUANJIA Administration Center</label>
             </div>
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="66px">
+            <el-form
+                :model="ruleForm"
+                :rules="rules"
+                ref="ruleForm"
+                label-width="66px"
+                :status-icon="true"
+            >
                 <el-form-item label="用户名" prop="name">
-                    <el-input v-model="ruleForm.name" placeholder="请输入用户名">
+                    <el-input
+                        v-model="ruleForm.name"
+                        placeholder="请输入用户名"
+                        clearable
+                        @keyup.enter.native="handlelogin('ruleForm')"
+                    >
                         <i slot="prefix" class="el-input__icon fa fa-user"></i>
                     </el-input>
                 </el-form-item>
                 <el-form-item label="密码" prop="pasd">
-                    <el-input v-model="ruleForm.pasd" placeholder="请输入密码" type="password">
+                    <el-input
+                        v-model="ruleForm.pasd"
+                        placeholder="请输入密码"
+                        type="password"
+                        clearable
+                        @keyup.enter.native="handlelogin('ruleForm')"
+                    >
                         <i slot="prefix" class="el-input__icon fa fa-thermometer-full"></i>
                     </el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="handlelogin('ruleForm')">登录</el-button>
+                    <el-button type="primary" @click="handlelogin('ruleForm')" >登录</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -53,9 +70,8 @@ export default {
           formData.phone = this.ruleForm.name;
           formData.pass  = this.ruleForm.pasd;
           ApiDataModule('ADMINLOGIN',formData).then(res=>{
-            this.submit = false;
-            console.log(res)
             if(res.code == CODE_OK){
+              this.submit = false;
               setStore('ADMININFO',res.admininfo);
               this.$message({
                 type:'success',
@@ -69,9 +85,13 @@ export default {
               })
 
             }else{
+              this.submit = false;
               this.$message({
                 type:'warning',
-                message:res.msg
+                message:res.msg,
+                onClose:()=>{
+                  this.submit = true;
+                }
               })
             }
           });

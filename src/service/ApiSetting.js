@@ -275,6 +275,24 @@ export const API_URL = {
     method: 'POST',
     writer: '王健男',
   },
+  REPLYCOMMENT: {
+    domain: ROOT_URL,
+    apiUrl: '/admin/comments/replyComment',
+    author: '赵斌',
+    fetchUrl: ROOT_URL + '/admin/comments/replyComment',
+    remark: '回复评价',
+    method: 'POST',
+    writer: '王健男',
+  },
+  DELCOMMENT: {
+    domain: ROOT_URL,
+    apiUrl: '/admin/comments/delComment',
+    author: '赵斌',
+    fetchUrl: ROOT_URL + '/admin/comments/delComment',
+    remark: '删除评论',
+    method: 'POST',
+    writer: '王健男',
+  },
 
 
   /*
@@ -751,6 +769,15 @@ export const API_URL = {
     author: '刘云鹏',
     fetchUrl: ROOT_URL + '/Admin/Order/addOrder',
     remark: '添加订单',
+    method: 'POST',
+    writer: '王健男',
+  },
+  DELORDER: {
+    domain: ROOT_URL,
+    apiUrl: '/Admin/Order/delOrder',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/Admin/Order/delOrder',
+    remark: '删除订单',
     method: 'POST',
     writer: '王健男',
   },

@@ -45,7 +45,14 @@
         </panpel>
         <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" :title="!id?'添加大区经理':'编辑大区经理'">
             <div slot="dialog-body">
-                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" v-if="showmodel">
+                <el-form
+                    :model="ruleForm"
+                    :rules="rules"
+                    ref="ruleForm"
+                    label-width="30%"
+                    :status-icon="true"
+                    v-if="showmodel"
+                >
                     <el-form-item label="手机号" prop="phone">
                         <el-input v-model="ruleForm.phone"></el-input>
                     </el-form-item>

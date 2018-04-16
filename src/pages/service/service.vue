@@ -19,6 +19,7 @@
                             @selectUpload="handleUploadFile"
                             listType="file">
                         </upload>
+                        <span v-show="activeIndex == 4">上传图标 (建议尺寸:200X200)</span>
                     </div>
                     <div class="header-content-right">
                     </div>
@@ -126,9 +127,20 @@
                 </div>
             </div>
         </panpel>
-        <model-box @selectSubmit="handleAddService('ruleForm')" :show.sync="addcategory"  :title="!categoryId?'添加分类':'编辑分类'">
+        <model-box
+            @selectSubmit="handleAddService('ruleForm')"
+            :show.sync="addcategory"
+            :title="!categoryId?'添加分类':'编辑分类'"
+        >
             <div slot="dialog-body">
-                <el-form v-if="addcategory" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
+                <el-form
+                    v-if="addcategory"
+                    :model="ruleForm"
+                    :rules="rules"
+                    ref="ruleForm"
+                    :status-icon="true"
+                    label-width="35%"
+                >
                     <el-form-item label="分类名称" prop="categoryName">
                         <el-input v-model="ruleForm.categoryName" placeholder="请输入服务分类名称"></el-input>
                     </el-form-item>
@@ -139,8 +151,7 @@
             :show.sync="addservice"
             title="添加服务"
             :showButton="false"
-            width="70%"
-        >
+            width="70%">
             <div slot="dialog-body">
                 <add-service
                     v-if="addservice"
@@ -426,60 +437,67 @@ export default {
       this.sgp_id_radio = [];
       this.ruleForm.selectServiceItem = null;
       console.log(id, "asdsad");
-      if (!this.goods_id || this.goods_id) {
-        this.selectgoodsItemList.map((item, index) => {
-          if (item.sgp_id == id) {
-            ApiDataModule("GETATTRBYATTR", {
-              id: id
-            }).then(res => {
-              console.log(res, "根据商品获取商品属性");
-              // console.log(this.selectgoodsItemList[index].goods_id, "goods_id");
-              this.extend_cat_id = res.data.info.extend_cat_id;
-              this.goodsAttributesList = res.data.list;
-              this.$nextTick(() => {
-                this.goodsAttributesList.map((item2, index2) => {
-                  if (item2.sgp_id == id) {
-                    console.log("一致");
-                    if (this.extend_cat_id != 3) {
-                      this.goodsAttributesList[
-                        index2
-                      ].count = this.selectgoodsItemList[index].count;
-                    } else {
-                      console.log("一致2");
-                      console.log(this.selectgoodsItemList[index], "一致22222");
-                      let packagearea = `packagearea${item2.sgp_id}`;
-                      document.getElementsByClassName(
-                        packagearea
-                      )[0].value = this.selectgoodsItemList[index].count;
-                      console.log("一致3");
-                    }
+      this.selectgoodsItemList.map((item, index) => {
+        if (item.sgp_id == id) {
+          ApiDataModule("GETATTRBYATTR", {
+            id: id
+          }).then(res => {
+            console.log(res, "根据商品获取商品属性");
+            // console.log(this.selectgoodsItemList[index].goods_id, "goods_id");
+            this.extend_cat_id = res.data.info.extend_cat_id;
+            this.goodsAttributesList = res.data.list;
+            this.$nextTick(() => {
+              ApiDataModule("GETGOODSBYCATE", {
+                cate: res.data.info.cat_id
+              }).then(res => {
+                console.log(res,'通过分类获取服务项目');
+                if (res.code == CODE_OK) {
+                  this.getGoodsArray = res.data;
+                }else{
+                  this.$message({
+                    type:'warning',
+                    message:'通过分类获取服务项目失败'
+                  })
+                }
+              });
+              this.goodsAttributesList.map((item2, index2) => {
+                if (item2.sgp_id == id) {
+                  console.log("一致");
+                  if (this.extend_cat_id != 3) {
+                    this.goodsAttributesList[
+                      index2
+                    ].count = this.selectgoodsItemList[index].count;
+                  } else {
+                    console.log("一致2");
+                    console.log(this.selectgoodsItemList[index], "一致22222");
+                    let packagearea = `packagearea${item2.sgp_id}`;
+                    document.getElementsByClassName(
+                      packagearea
+                    )[0].value = this.selectgoodsItemList[index].count;
+                    console.log("一致3");
                   }
-                });
-                this.selectgoodsItemList.map((item3, index) => {
-                  this.goodsAttributesList.map((item4, index2) => {
-                    if (item3.sgp_id == item4.sgp_id) {
-                      this.sgp_id_radio.push(item3.sgp_id);
-                    }
-                  });
+                }
+              });
+              this.selectgoodsItemList.map((item3, index) => {
+                this.goodsAttributesList.map((item4, index2) => {
+                  if (item3.sgp_id == item4.sgp_id) {
+                    this.sgp_id_radio.push(item3.sgp_id);
+                  }
                 });
               });
             });
-            this.ruleForm.serviceCategory = this.selectgoodsItemList[
-              index
-            ].cate_id;
-            console.log(this.selectgoodsItemList, "selectgoodsItemList");
-            this.ruleForm.serviceItem = this.selectgoodsItemList[
-              index
-            ].goods_id;
-            this.ruleForm.selectServiceItem = this.selectgoodsItemList[
-              index
-            ].sgp_id;
-            return;
-          }
-        });
-      } else {
-        console.log("管理", id);
-      }
+          });
+          this.ruleForm.serviceCategory = this.selectgoodsItemList[
+            index
+          ].cate_id;
+          console.log(this.selectgoodsItemList, "selectgoodsItemList");
+          this.ruleForm.serviceItem = this.selectgoodsItemList[index].goods_id;
+          this.ruleForm.selectServiceItem = this.selectgoodsItemList[
+            index
+          ].sgp_id;
+          return;
+        }
+      });
     },
     //删除套餐里 服务项目
     handleSelectDeleteServiceItem(index) {

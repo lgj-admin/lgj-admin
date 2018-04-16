@@ -1,6 +1,12 @@
 <template>
     <div class="addService">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
+        <el-form
+            :model="ruleForm"
+            :rules="rules"
+            ref="ruleForm"
+            label-width="120px"
+            :status-icon="true"
+        >
             <el-form-item label="选择服务分类" prop="serviceCategory">
                 <el-select v-model="ruleForm.serviceCategory" placeholder="服务分类">
                     <el-option
@@ -115,7 +121,7 @@
                     </div>
                 </div>
             </el-form-item>
-            <el-form-item label="添加首页分类图标(建议尺寸)" prop="original_type_img">
+            <el-form-item label="添加首页分类图标(建议尺寸:200X200)" prop="original_type_img">
                 <upload
                     @selectUpload="handleUploadCategoryIcon"
                     @selectRemove="handleRemoveCategory('Icon')"
@@ -128,7 +134,7 @@
                     </div>
                 </upload>
             </el-form-item>
-            <el-form-item label="添加首页展示图(建议尺寸)" prop="original_img">
+            <el-form-item label="添加首页展示图(建议尺寸:440X360)" prop="original_img">
                 <upload
                     @selectUpload="handleUploadHomeShow"
                     @selectRemove="handleRemoveCategory('Show')"
@@ -141,7 +147,7 @@
                     </div>
                 </upload>
             </el-form-item>
-            <el-form-item label="添加服务详情轮播(建议尺寸)" prop="banner_img">
+            <el-form-item label="添加服务详情轮播(建议尺寸:750x480)" prop="banner_img">
                 <upload
                     @selectUpload="handleUpload"
                     @selectRemove="handleRemove"

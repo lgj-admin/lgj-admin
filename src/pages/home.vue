@@ -101,7 +101,14 @@
         </panpel>
         <model-box @selectSubmit="handleAddemployee('ruleForm')" :show.sync="showmodel" :title="id==null ? '添加员工':'分配编辑员工'" :width="'40%'">
             <div slot="dialog-body">
-                <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="30%" v-if="showmodel">
+                <el-form
+                    ref="ruleForm"
+                    :model="ruleForm"
+                    :rules="rules"
+                    label-width="35%"
+                    :status-icon="true"
+                    v-if="showmodel"
+                >
                     <el-form-item label="姓名" prop="name">
                         <el-input v-model="ruleForm.name"></el-input>
                     </el-form-item>

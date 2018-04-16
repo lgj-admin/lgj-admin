@@ -43,7 +43,14 @@
         </panpel>
         <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加大区">
           <div slot="dialog-body">
-              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" v-if="showmodel">
+              <el-form
+                  :model="ruleForm"
+                  :rules="rules"
+                  ref="ruleForm"
+                  label-width="35%"
+                  :status-icon="true"
+                  v-if="showmodel"
+              >
                   <el-form-item label="大区名称" prop="name">
                       <el-input v-model="ruleForm.name" placeholder="请填写大区名称"></el-input>
                   </el-form-item>

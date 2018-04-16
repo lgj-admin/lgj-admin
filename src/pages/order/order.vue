@@ -10,8 +10,8 @@
 				  	<el-menu-item index="4">已完成</el-menu-item>
 				</el-menu>
 				<div class="bottom">
-					<el-input v-model="searche_input" placeholder="请输入内容" class="bottom-input1"></el-input>
-					<el-button type="primary" class="bottom-button1">搜索</el-button>
+					<el-input v-model="searche_input" placeholder="请输入联系人或订单号" class="bottom-input1" clearable></el-input>
+					<el-button type="primary" class="bottom-button1" @click="handleSearch">搜索</el-button>
 					<el-button type="primary" class="bottom-button2" @click="addOrder()">添加订单</el-button>
 				</div>
 			</div>
@@ -57,7 +57,13 @@
 			        </div>
 			    </div>
 			    <div class="body-page">
-			    	<el-pagination background layout="prev, pager, next" :total="100"></el-pagination>
+			    	<el-pagination
+                v-if="total"
+                background layout="prev, pager, next"
+                :total="total"
+                @current-change="handlePagination"
+            >
+            </el-pagination>
 			    </div>
 			</div>
 		</panpel>
@@ -202,7 +208,9 @@ export default {
       rec_id: null, //订单商品id
       staffList: [], //员工列表
       cityBossId: null, //大区经理id
-      areaBossId: null //区域经理id
+      areaBossId: null, //区域经理id
+      total:null,
+      page:1,
     };
   },
   created() {
@@ -212,12 +220,31 @@ export default {
     //初始化
     init() {
       //订单列表
-      ApiDataModule("GETORDERLIST", {
-        status: this.active_index
-      }).then(res => {
-        this.orderList = res.data;
+      const formData = {
+        status: this.active_index,
+        page:this.page,
+      }
+      if(this.searche_input){
+        formData.keyword = this.searche_input;
+      }
+      ApiDataModule("GETORDERLIST", formData).then(res => {
+        this.orderList = res.data.data;
+        this.total = res.data.total;
         console.log(res);
       });
+    },
+    handlePagination(e){
+      const formData = {
+        status: this.active_index,
+        page: e
+      };
+      ApiDataModule("GETORDERLIST", formData).then(res => {
+        this.orderList = res.data.data;
+        this.total = res.data.total;
+      });
+    },
+    handleSearch(){
+      this.init();
     },
     addOrder() {
       this.add_order_switch = true;
@@ -227,20 +254,19 @@ export default {
     handleAddOrder(form) {
       console.log(form)
       let formData = {};
-      if(form){
-        formData.user_tel = form.order_account_number;//用户账号
-        formData.consignee = form.order_name;//联系人
-        formData.city = form.order_reservation_city; //预约城市
-        formData.address = form.order_reservation_address;//详细地址
-        formData.mobile = form.order_phone;//联系电话
-        formData.user_note = form.order_reservation_remark;//预约备注
-        formData.goods_id = form.serviceItem;//服务id
+      if(!form) return;
+      formData.user_tel = form.order_account_number;//用户账号
+      formData.consignee = form.order_name;//联系人
+      formData.city = form.order_reservation_city; //预约城市
+      formData.address = form.order_reservation_address;//详细地址
+      formData.mobile = form.order_phone;//联系电话
+      formData.user_note = form.order_reservation_remark;//预约备注
+      formData.goods_id = form.serviceItem;//服务id
 
-        formData.total_price = form.serviceTotal;//商品价格
-        formData.reservation_time = `${form.order_reservation_date} ${form.order_reservation_time}`;//预约时间
-        formData.goods_attr = form.goods_attr;//服务数组
-
-      }
+      formData.total_price = form.serviceTotal;//商品价格
+      formData.reservation_time = `${form.order_reservation_date} ${form.order_reservation_time}`;//预约时间
+      formData.goods_attr = form.goods_attr;//服务数组
+      formData.goods_type = form.serviceType;//添加订单类型
       ApiDataModule('ADDORDER',formData).then(res=>{
         console.log(res,'sdfsdf');
         if(res.code == CODE_OK){
@@ -249,7 +275,6 @@ export default {
         }else{
           this.$message({type:'warning',message:res.msg})
         }
-        // this.add_order_switch = false;
       })
     },
     //分配订单
@@ -341,9 +366,11 @@ export default {
       ApiDataModule("DISTRIBUTIONORDER", formData).then(res => {
         if (res.code == CODE_OK) {
           ApiDataModule("GETORDERLIST", {
-            status: this.active_index
+            status: this.active_index,
+            page:this.page
           }).then(res => {
-            this.orderList = res.data;
+            this.orderList = res.data.data;
+            this.total = res.data.total;
           });
           this.$message({ type: "success", message: "分配成功" });
           this.handleManagerOrder(this.order_id);
@@ -356,14 +383,8 @@ export default {
       });
     },
     handleSelect(index) {
-      console.log("index", index);
       this.active_index = index;
-      ApiDataModule("GETORDERLIST", {
-        status: this.active_index
-      }).then(res => {
-        this.orderList = res.data;
-        console.log(res);
-      });
+      this.init();
     },
     //员工工作状态
     getWorkStatus(index) {
@@ -391,17 +412,19 @@ export default {
         type: "warning"
       })
         .then(() => {
-          ApiDataModule("EMPLOYEEDELETE", { id: id }).then(res => {
+          ApiDataModule("DELORDER", { id: id }).then(res => {
             console.log(res);
             if (res.code == CODE_OK) {
               this.$message({
                 type: "success",
                 message: "删除成功!"
               });
-              ApiDataModule("EMPLOYEELIST").then(res => {
-                this.employeeList = res.data.data;
+              ApiDataModule("GETORDERLIST", {
+                status: this.active_index,
+                page:this.page
+              }).then(res => {
+                this.orderList = res.data.data;
                 this.total = res.data.total;
-                this.page = res.data.current_page;
               });
             } else {
               this.$message({

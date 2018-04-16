@@ -1,6 +1,13 @@
 <template>
     <div class="addOrder">
-        <el-form ref="ruleForm" :model="ruleForm" label-width="115px" :label-position="'right'" :rules="rules">
+        <el-form
+            ref="ruleForm"
+            :model="ruleForm"
+            label-width="115px"
+            :label-position="'right'"
+            :rules="rules"
+            :status-icon="true"
+        >
 		    	  	<el-form-item label="联系人:" prop="order_name">
 		    	    	  <el-input v-model="ruleForm.order_name"></el-input>
 		    	  	</el-form-item>
@@ -57,11 +64,13 @@
 		    	  	<el-form-item label="详细地址:" prop="order_reservation_address">
 		    	    	  <el-input v-model="ruleForm.order_reservation_address"></el-input>
 		    	  	</el-form-item>
-              <el-form-item label="添加服务项目" prop="serviceType">
-                  <el-radio v-model="ruleForm.serviceType" label="1">添加普通商品</el-radio>
-                  <el-radio v-model="ruleForm.serviceType" label="2">添加套餐</el-radio>
+              <el-form-item label="添加服务项目" prop="serviceType" >
+                  <el-radio-group v-model="ruleForm.serviceType" @change="changeRadio">
+                      <el-radio label="1">添加普通商品</el-radio>
+                      <el-radio label="2">添加套餐</el-radio>
+                  </el-radio-group>
               </el-form-item>
-              <el-form-item label="选择服务套餐" prop="serviceItem" v-if="ruleForm.serviceType == 1">
+              <el-form-item label="选择服务套餐" prop="serviceItem" v-if="ruleForm.serviceType == 2">
                   <el-select v-model="ruleForm.serviceItem" placeholder="服务分类">
                         <el-option
                               v-for="item in getServerPackageList"
@@ -71,13 +80,13 @@
                         </el-option>
                     </el-select>
               </el-form-item>
-              <el-form-item label="选择服务分类" prop="serviceItem" v-if="ruleForm.serviceType == 1">
-                  <el-select v-model="ruleForm.serviceItem" placeholder="服务分类">
+              <el-form-item label="选择服务分类" prop="serviceCategory" v-if="ruleForm.serviceType == 1">
+                  <el-select v-model="ruleForm.serviceCategory" placeholder="服务分类" @change="handleGetServiceItem">
                         <el-option
                               v-for="item in getCategoryList"
-                              :key="item.goods_id"
-                              :label="item.goods_name"
-                              :value="item.goods_id">
+                              :key="item.id"
+                              :label="item.name"
+                              :value="item.id">
                         </el-option>
                     </el-select>
               </el-form-item>
@@ -85,21 +94,11 @@
                     <el-select v-model="ruleForm.serviceItem" placeholder="服务项目" @change="handleGetGoodsItem">
                         <el-option
                               v-for="item in getGoodsArray"
-                              :key="item.id"
-                              :label="item.name"
-                              :value="item.id">
+                              :key="item.goods_id"
+                              :label="item.goods_name"
+                              :value="item.goods_id">
                         </el-option>
                     </el-select>
-              </el-form-item>
-              <el-form-item>
-                  <el-select v-model="ruleForm.serviceItem" placeholder="服务项目" @change="handleGetGoodsItem">
-                      <el-option
-                            v-for="item in getGoodsArray"
-                            :key="item.goods_id"
-                            :label="item.goods_name"
-                            :value="item.goods_id">
-                      </el-option>
-                  </el-select>
               </el-form-item>
               <el-form-item
                   label="选择服务"
@@ -291,7 +290,7 @@ export default {
     });
     //服务分类列表
     ApiDataModule("GETCATEGORY").then(res => {
-      console.log(res);
+      console.log(res,'服务分类列表');
       this.getCategoryList = res.data;
     });
     //获取城市数据
@@ -339,11 +338,19 @@ export default {
       ApiDataModule("GETGOODSBYCATE", {
         cate: id
       }).then(res => {
-        console.log(res);
+        console.log(res,'服务项目');
         if (res.code == CODE_OK) {
           this.getGoodsArray = res.data;
         }
       });
+    },
+    changeRadio(){
+      this.ruleForm.serviceCategory = null;
+      this.ruleForm.serviceItem = null;
+      this.ruleForm.selectServiceItem = null;
+      this.ruleForm.checkServiceItem = [];
+      this.getGoodsArray = [];
+      this.goodsAttributesList = [];
     },
     //根据商品获取商品属性
     handleGetGoodsItem(id) {

@@ -2,6 +2,12 @@
     <div class="user">
         <panpel>
             <div slot="header" class="header-content">
+                <div class="header-content-left">
+                    <el-menu :default-active="active_index" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+                        <el-menu-item index="0">普通商品评价</el-menu-item>
+                        <el-menu-item index="1">套餐评价</el-menu-item>
+                    </el-menu>
+                </div>
             </div>
             <div slot="body">
                 <div class="body-content">
@@ -9,7 +15,7 @@
                         <el-table :data="feedback_list" style="width: 100%">
                             <el-table-column type="expand" >
                                 <template slot-scope="props">
-                                    <div >
+                                    <div v-if="props.row.parent_id.length>0"  class="reply">
                                         评价回复：
                                         <span style="margin-right:10px">
                                             {{props.row.parent_id[0].content}}
@@ -17,12 +23,12 @@
                                         <span style="margin-right:10px">
                                             {{props.row.parent_id[0].add_time}}
                                         </span>
-                                        <a  href="javascript:void(0)"
+                                        <!-- <a  href="javascript:void(0)"
                                             style="vertical-align:top">
                                             删除
-                                        </a>
+                                        </a> -->
                                     </div>
-                                    <div>
+                                    <div v-else>
                                         暂无回复
                                     </div>
                                 </template>
@@ -49,18 +55,18 @@
                             </el-table-column>
                             <el-table-column label="操作">
                                 <template slot-scope="scope">
-                                    <a style="color:#999">已回复</a>
-                                    <!-- <a href="javascript:void(0)" @click="reply(scope.row.comment_id)">
+                                    <a style="color:#999" v-if="scope.row.parent_id.length>0">已回复</a>
+                                    <a href="javascript:void(0)" @click="reply(scope.row.comment_id)" v-else>
                                         回复
-                                    </a> -->
-                                    <a href="javascript:void(0)" @click="handleDelete">
+                                    </a>
+                                    <a href="javascript:void(0)" @click="handleDelete(scope.row.comment_id)">
                                         删除
                                     </a>
                                 </template>
                             </el-table-column>
                         </el-table>
                     </div>
-                    <!-- <div class="body-page">
+                    <div class="body-page">
                         <el-pagination
                             background
                             @current-change="handlePagination"
@@ -68,7 +74,7 @@
                             :total="total"
                         >
                         </el-pagination>
-                    </div> -->
+                    </div>
                 </div>
             </div>
         </panpel>
@@ -93,6 +99,7 @@ import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
 export default {
   data() {
     return {
+      active_index:'0',
       ruleForm: {
         content: null, //内容
       },
@@ -102,37 +109,96 @@ export default {
       feedback_list: [],
       showmodel: false,
       total:null,
+      page:1,
       msg_id:null,
     };
   },
   created(){
-    ApiDataModule('COMMENTLIST').then(res=>{
-      this.feedback_list = res.data.data;
-      console.log(res)
-    })
+    this.init();
   },
   methods: {
+    init(){
+      ApiDataModule('COMMENTLIST',{
+        page:this.page,
+        is_package:this.active_index
+      }).then(res=>{
+        this.feedback_list = res.data.data;
+        this.total = res.data.total;
+        console.log(res)
+      })
+    },
+    handlePagination(e){
+      ApiDataModule('COMMENTLIST',{
+        page:e,
+        is_package:this.active_index
+      }).then(res=>{
+        this.feedback_list = res.data.data;
+        this.total = res.data.total;
+        console.log(res)
+      })
+    },
+    handleSelect(e){
+      this.active_index = e;
+      this.init();
+    },
     handlesubmit(formName) {
       console.log("bbb");
       this.$refs[formName].validate(valid => {
         if (valid) {
+          const formDta = {
+            comment_id:this.msg_id,
+            content:this.ruleForm.content
+          };
+          ApiDataModule('REPLYCOMMENT',formDta).then(res=>{
+            console.log(res);
+            if(res.code == CODE_OK){
+              this.init();
+              this.$message({
+                type:'success',
+                message:'回复成功',
+              })
+              this.showmodel = false;
+              this.msg_id = null;
+            }else{
+              this.$message({
+                type:'warning',
+                message:res.msg
+              })
+            }
+          })
           this.showmodel = false;
         } else {
           return false;
         }
       });
     },
-    handleDelete() {
+    reply(id){
+      this.showmodel = true;
+      this.msg_id = id;
+    },
+    handleDelete(id) {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(() => {
-          this.$message({
-            type: "success",
-            message: "删除成功!"
-          });
+          ApiDataModule('DELCOMMENT',{comment_id:id}).then(res=>{
+            console.log(res);
+            if(res.code == CODE_OK){
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+              ApiDataModule('COMMENTLIST',{
+                page:this.page,
+                is_package:this.active_index
+              }).then(res=>{
+                this.feedback_list = res.data.data;
+                this.total = res.data.total;
+              })
+            }
+          })
         })
         .catch(() => {
           this.$message({
@@ -171,6 +237,9 @@ export default {
 .body-page {
   text-align: right;
   padding: 10px 0;
+}
+.reply{
+  line-height: 20px;
 }
 </style>
 

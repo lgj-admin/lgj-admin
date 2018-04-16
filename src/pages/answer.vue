@@ -13,7 +13,7 @@
                         <el-table :data="feedback_list" style="width: 100%">
                             <el-table-column type="expand" >
                                 <template slot-scope="props">
-                                    <div  v-if="props.row.reply !=null">
+                                    <div  v-if="props.row.reply !=null" class="reply">
                                         客服回复：
                                         <span style="margin-right:10px">
                                             {{props.row.reply.msg_content}}
@@ -107,13 +107,16 @@ export default {
     };
   },
   created(){
-    ApiDataModule('FEEDBACKLIST').then(res=>{
-      console.log(res);
-      this.feedback_list = res.feedback_list.data;
-      this.total = res.feedback_list.total;
-    })
+    this.init();
   },
   methods: {
+    init(){
+      ApiDataModule('FEEDBACKLIST').then(res=>{
+        console.log(res);
+        this.feedback_list = res.feedback_list.data;
+        this.total = res.feedback_list.total;
+      })
+    },
     //处理分页
     handlePagination(page) {
       const formData = {
@@ -136,15 +139,13 @@ export default {
           ApiDataModule('REPLYFEEDBACK',formDta).then(res=>{
             console.log(res);
             if(res.code == CODE_OK){
-
+              this.init();
               this.$message({
                 type:'success',
-                message:'回复成功',
-                onClose:()=>{
-                  this.showmodel = false;
-                  this.msg_id = null;
-                }
+                message:'回复成功'
               })
+              this.showmodel = false;
+              this.msg_id = null;
             }else{
               this.$message({
                 type:'warning',
@@ -213,6 +214,9 @@ export default {
 .body-page {
   text-align: right;
   padding: 10px 0;
+}
+.reply{
+  line-height: 20px;
 }
 </style>
 

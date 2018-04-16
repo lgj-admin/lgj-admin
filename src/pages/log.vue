@@ -71,7 +71,7 @@ export default {
   },
   created() {
     //日志列表
-    ApiDataModule('LOGSLIST').then(res=>{
+    ApiDataModule('LOGSLIST',{page:this.page}).then(res=>{
       this.logs_list = res.logs_list.data;
       this.total = res.logs_list.total;
       console.log(res)
@@ -108,7 +108,7 @@ export default {
                 type: 'success',
                 message: '删除成功!',
                 onClose:()=>{
-                  ApiDataModule('LOGSLIST').then(res=>{
+                  ApiDataModule('LOGSLIST',{page:this.page}).then(res=>{
                     this.logs_list = res.logs_list.data;
                     this.total = res.logs_list.total;
                   })

@@ -32,9 +32,20 @@
                 </div>
             </div>
         </panpel>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="addauthority" :title="!id?'添加权限':'编辑权限'">
+        <model-box
+            @selectSubmit="handlesubmit('ruleForm')"
+            :show.sync="addauthority"
+            :title="!id?'添加权限':'编辑权限'"
+        >
             <div slot="dialog-body">
-                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" v-if="addauthority">
+                <el-form
+                    :model="ruleForm"
+                    :rules="rules"
+                    ref="ruleForm"
+                    label-width="35%"
+                    :status-icon="true"
+                    v-if="addauthority"
+                >
                     <el-form-item label="权限名称" prop="name">
                         <el-input v-model="ruleForm.name" placeholder="请输入权限名称"></el-input>
                     </el-form-item>

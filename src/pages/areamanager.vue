@@ -55,7 +55,14 @@
         </panpel>
         <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" :title="!id?'添加区域经理':'编辑区域经理'">
             <div slot="dialog-body">
-                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" v-if="showmodel">
+                <el-form
+                    :model="ruleForm"
+                    :rules="rules"
+                    ref="ruleForm"
+                    label-width="30%"
+                    :status-icon="true"
+                    v-if="showmodel"
+                >
                     <el-form-item label="姓名" prop="name">
                         <el-input v-model="ruleForm.name"></el-input>
                     </el-form-item>
@@ -200,7 +207,9 @@ export default {
     },
     //搜索
     handleSearch() {
-      const formData = {};
+      const formData = {
+        page:1
+      };
       if (this.searchValueName) {
         formData.name = this.searchValueName;
       }

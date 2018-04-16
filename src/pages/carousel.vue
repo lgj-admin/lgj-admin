@@ -4,7 +4,7 @@
             <div slot="header" class="header-content">
                 <div class="header-content-left">
                   <el-button class="search-button" @click="add()" type="primary">添加广告</el-button>
-                  <span>上传图片大小不能超过2M</span>
+                  <span>上传图片大小不能超过2M (建议尺寸：750x300)</span>
                 </div>
                 <div class="header-content-right">
                 </div>
@@ -51,7 +51,7 @@
         </panpel>
         <model-box :show.sync="showmodel" :title="!id?'添加轮播图':'编辑轮播图'" :showButton="false">
           <div slot="dialog-body">
-              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" v-if="showmodel">
+              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="35%" v-if="showmodel">
                   <el-form-item label="上传图片:(建议尺寸)">
                       <upload @selectUpload="handleUpload" @selectRemove="handleRemove" :imgUrl.sync="imageUrl" ref="upload">
                           <div slot="upload-card" class="upload-card">

@@ -56,7 +56,14 @@
         </panpel>
         <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" :title="!user_id?'添加用户':'编辑用户'">
             <div slot="dialog-body">
-                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" v-if="showmodel">
+                <el-form
+                    :model="ruleForm"
+                    :rules="rules"
+                    ref="ruleForm"
+                    label-width="30%"
+                    :status-icon="true"
+                    v-if="showmodel"
+                >
                     <el-form-item label="昵称" prop="name">
                         <el-input v-model="ruleForm.name"></el-input>
                     </el-form-item>
@@ -64,10 +71,10 @@
                         <el-input v-model="ruleForm.phone"></el-input>
                     </el-form-item>
                     <el-form-item label="密码" prop="pasd" v-if="!user_id">
-                        <el-input v-model="ruleForm.pasd"></el-input>
+                        <el-input v-model="ruleForm.pasd" type="password"></el-input>
                     </el-form-item>
                     <el-form-item label="确认密码" prop="checkPasd" v-if="!user_id">
-                        <el-input v-model="ruleForm.checkPasd"></el-input>
+                        <el-input v-model="ruleForm.checkPasd" type="password"></el-input>
                     </el-form-item>
                 </el-form>
             </div>
@@ -199,7 +206,7 @@ export default {
       const formData = {
         nickname: this.searchNameValue,
         mobile: this.searchTelValue,
-        page: this.page
+        page: 1
       };
       ApiDataModule("USERSEARCH", formData).then(res => {
         this.userList = res.data.data;
