@@ -24,7 +24,8 @@
 import VHeader from "components/vHeader";
 import SideMenu from "components/sideMenu";
 import VFooter from "components/vFooter";
-import { mapGetters } from "vuex";
+import { mapGetters ,mapMutations} from "vuex";
+
 
 export default {
   name: "index",
@@ -34,10 +35,6 @@ export default {
     };
   },
   created(){
-    console.log('aaa')
-  },
-  methods:{
-
   },
   components: {
     VHeader,
@@ -48,9 +45,6 @@ export default {
     ...mapGetters([
       'currentMenu'
     ])
-  },
-  method:{
-
   }
 };
 </script>

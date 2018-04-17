@@ -5,7 +5,14 @@
                 <router-link :to="'/user'">来管家后台管理</router-link>
             </div>
             <nav>
-                <div class="nav-padding nav-name"><span v-html="admininfo.user_name"></span></div>
+                <div class="nav-padding nav-name">
+                    <transition name="move">
+                        <div class="news_tip" v-if="newsCount">
+                            <span class="news_count inner">{{newsCount}}</span>
+                        </div>
+                    </transition>
+                    <span v-html="admininfo.user_name"></span>
+                </div>
                 <a class="nav-padding nav-out" @click="handleSiginOut">退出</a>
             </nav>
         </div>
@@ -15,6 +22,7 @@
 <script>
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
 import { getStore,removeStore } from "config/utils";
+import {mapMutations ,mapGetters} from 'vuex'
 
 
 export default {
@@ -25,9 +33,33 @@ export default {
         user_name:''
       },
       submit:true,
+      timer:null
     };
   },
+  computed:{
+    ...mapGetters([
+      'newsCount'
+    ])
+  },
+  created(){
+    if(getStore('ADMININFO')){
+      this.admininfo = JSON.parse(getStore('ADMININFO'));
+      ApiDataModule('FEEDBACKCOUNT').then(res=>{
+        console.log(res);
+        this.get_newsCount(res.count);
+      })
+      this.timer = setInterval(()=>{
+        ApiDataModule('FEEDBACKCOUNT').then(res=>{
+          console.log(res);
+          this.get_newsCount(res.count);
+        })
+      },3600000)
+    }
+  },
   methods:{
+    ...mapMutations({
+      get_newsCount: "GET_NEWSCOUNT"
+    }),
     handleSiginOut(){
       if(!this.submit) return
       this.$confirm("此操作将退出系统, 是否继续?", "提示", {
@@ -48,8 +80,9 @@ export default {
                     path:'/login'
                   })
                 }
-              })
+              });
               removeStore('ADMININFO');
+              clearInterval(this.timer);
             }else{
               this.$message({
                 type:'warning',
@@ -66,11 +99,7 @@ export default {
         });
     }
   },
-  created(){
-    if(getStore('ADMININFO')){
-      this.admininfo = JSON.parse(getStore('ADMININFO'));
-    }
-  }
+
 };
 </script>
 
@@ -103,6 +132,42 @@ nav .nav-padding{
 nav .nav-out{
   padding-right:20px;
   cursor:pointer;
+}
+.news_tip{
+  position: relative;
+  display: inline-block;
+  padding:5px 5px;
+  margin-right: 5px;;
+  border-radius: 50%;
+  background-color: red;
+  vertical-align: middle;
+  color:#fff;
+  transition: all 0.4s linear;
+}
+.news_count{
+  position: absolute;
+  top:-20px;
+  right:-5px;
+  font-size:10px;
+}
+.inner {
+  transition: all 0.4s linear;
+  transform: rotate(0);
+}
+.move-transition {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+.move-leave-active,
+.move-enter-active {
+  opacity: 0;
+  transform: translate3d(24px, 0, 0);
+}
+.move-leave-active .inner {
+  transform: rotate(360deg);
+}
+.move-enter-active .inner {
+  transform: rotate(360deg);
 }
 </style>
 

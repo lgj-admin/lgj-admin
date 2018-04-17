@@ -89,6 +89,7 @@ import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { isMobil } from "config/utils";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+import {mapMutations ,mapGetters} from 'vuex'
 
 
 export default {
@@ -104,21 +105,30 @@ export default {
       feedback_list: [],
       msg_id:null,
       total:null,
+      page:1,
     };
+  },
+  computed:{
+    ...mapGetters(['newsCount'])
   },
   created(){
     this.init();
   },
   methods: {
     init(){
-      ApiDataModule('FEEDBACKLIST').then(res=>{
+      ApiDataModule('FEEDBACKLIST',{page:this.page}).then(res=>{
         console.log(res);
         this.feedback_list = res.feedback_list.data;
         this.total = res.feedback_list.total;
       })
     },
+    ...mapMutations({
+      modify_newsCount:"MODIFY_NEWSCOUNT",
+      get_newsCount:"GET_NEWSCOUNT",
+    }),
     //处理分页
     handlePagination(page) {
+      this.page = page;
       const formData = {
         page: page
       };
@@ -143,9 +153,12 @@ export default {
               this.$message({
                 type:'success',
                 message:'回复成功'
-              })
+              });
+              this.ruleForm.content = null;
               this.showmodel = false;
               this.msg_id = null;
+              console.log(this.newsCount,'this.newsCount')
+              this.modify_newsCount(this.newsCount);
             }else{
               this.$message({
                 type:'warning',
@@ -163,6 +176,10 @@ export default {
       this.showmodel = true;
       this.msg_id = id;
       console.log(this.msg_id);
+      ApiDataModule('FEEDBACKCOUNT').then(res=>{
+        console.log(res);
+        this.get_newsCount(res.count);
+      })
     },
     //删除
     handleDelete() {
@@ -218,5 +235,6 @@ export default {
 .reply{
   line-height: 20px;
 }
+
 </style>
 

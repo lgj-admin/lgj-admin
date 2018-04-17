@@ -131,7 +131,7 @@ export default {
     handlesubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          const permissionStr = this.ruleForm.permissionArr.join(",");
+          const permissionStr = Array.from(new Set(this.ruleForm.permissionArr));
           const admininfo = JSON.parse(getStore('ADMININFO'));
           const formData = {
             name: this.ruleForm.name,
@@ -193,6 +193,7 @@ export default {
       ApiDataModule("ADMININFO", {
         id: id
       }).then(res => {
+        console.log(res)
         if (res.code == CODE_OK) {
           this.ruleForm.name = res.data.role_name;
           this.ruleForm.desc = res.data.role_desc;
@@ -201,7 +202,12 @@ export default {
               this.$refs.tree.setChecked(item, true);
             });
           }
-          this.ruleForm.permissionArr = res.data.act_list;
+          console.log(this.$refs.tree.getCheckedNodes(),'qqqq');
+          this.ruleForm.permissionArr = []
+          this.$refs.tree.getCheckedNodes().map((item,index)=>{
+
+            this.ruleForm.permissionArr.push(item.id)
+          })
         }
       });
     },

@@ -33,7 +33,7 @@
                                 <div class="td">{{getMediaType(item.media_type)}}</div>
                                 <div class="td">
                                   <a href="javascript:void(0)" @click="handleEdit(item.ad_id)">编辑</a>
-                                  <!-- <a href="javascript:void(0)" @click="handleDelete(item.ad_id)">删除</a> -->
+                                  <a href="javascript:void(0)" @click="handleDelete(item.ad_id)">删除</a>
                                 </div>
                             </div>
                         </div>
@@ -122,12 +122,15 @@ export default {
     };
   },
   created() {
-    ApiDataModule("ADLIST").then(res => {
-      console.log(res);
-      this.adList = res.data;
-    });
+    this.init();
   },
   methods: {
+    init(){
+      ApiDataModule("ADLIST").then(res => {
+        console.log(res);
+        this.adList = res.data;
+      });
+    },
     handlesubmit(formName) {
       console.log("bbb");
       this.$refs[formName].validate(valid => {
@@ -159,9 +162,7 @@ export default {
                 type:'success',
                 message:'提交成功'
               })
-              ApiDataModule("ADLIST").then(res => {
-                this.adList = res.data;
-              });
+              this.init();
             }else{
               this.$message({
                 type:'warning',
@@ -221,10 +222,21 @@ export default {
         type: "warning"
       })
         .then(() => {
-          this.$message({
-            type: "success",
-            message: "删除成功!"
-          });
+          ApiDataModule('ADDEL',{id:id}).then(res=>{
+            console.log(res);
+            if(res.code == CODE_OK){
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+              this.init();
+            }else{
+              this.$message({
+                type: "warning",
+                message: res.msg
+              });
+            }
+          })
         })
         .catch(() => {
           this.$message({

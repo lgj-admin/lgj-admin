@@ -54,20 +54,20 @@ export const ApiDataModule = function (baseURL, params) {
    */
 
   if (API_URL[baseURL].method === 'POST') {
-    var obj = {
-      role_id: '123'
-    };
+    // var obj = {
+    //   role_id: '123'
+    // };
     var param = {};
-    if (params) {
-      param = Object.assign(params, obj);
-    } else {
-      param = Object.assign({}, obj);
-    }
+    // if (params) {
+    //   param = Object.assign(params, obj);
+    // } else {
+    //   param = Object.assign({}, obj);
+    // }
     return new Promise((resolve, reject) => {
       axios({
           method: 'post',
           url: API_URL[baseURL].fetchUrl,
-          data: qs.stringify(param),
+          data: qs.stringify(params),
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           },

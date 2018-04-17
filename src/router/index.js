@@ -20,6 +20,10 @@ import User from 'pages/user' //用户管理页面
 import Log from 'pages/log' //日志管理页面
 import NotFoundView from 'components/404.vue' //404页面
 import { getStore } from "config/utils";
+import { menuList } from "../mock/dataBase";
+import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+
+
 
 Vue.use(Router)
 
@@ -111,10 +115,31 @@ const routerConfig = [{
 const routers = new Router({
   routes: routerConfig,
 })
-console.log('ADMININFO222', getStore('ADMININFO'));
 
 routers.beforeEach((route, redirect, next) => {
-  if (route.path !== '/login' && getStore('ADMININFO')==null) {
+  let a = menuList.map((item,index)=>{
+    console.log(item)
+    let admininfo = JSON.parse(getStore('ADMININFO'));
+    let status = false;
+    if(item.children.length>0){
+      item.children.map((item2,index2)=>{
+        if (item2.href == route.path) {
+          alert(route.path);
+          ApiDataModule('GETAUTH', { role_id: admininfo.role_id }).then(res => {
+            if (res.indexOf(item2.code, 0) > 0) {
+              status = true;
+            }
+          })
+        }
+      })
+      return status;
+    }
+    if (item.href == route.path){
+      alert(route.path)
+    }
+  })
+  console.log(a,'asfdasd')
+  if (route.path !== '/login' && getStore('ADMININFO') == null && a) {
     next({
       path: '/login',
     })

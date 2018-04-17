@@ -20,8 +20,10 @@
 <script>
 import subMenu from "./subMenu.vue";
 import { getCurrentMenu } from "config/utils";
-import { mapMutations } from "vuex";
+import { mapMutations,mapState } from "vuex";
 import { menuList } from "../mock/dataBase";
+import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+
 
 export default {
   props: {
@@ -40,9 +42,14 @@ export default {
     handleSelect(key, keyPath) {
       const currentMenu = getCurrentMenu(key, this.menuList);
       this.getCurrentMenu(currentMenu);
+      ApiDataModule('FEEDBACKCOUNT').then(res=>{
+        this.get_newsCount(res.count);
+        console.log('123',res.count)
+      })
     },
     ...mapMutations({
-      getCurrentMenu: "GET_CURRENTMENU"
+      getCurrentMenu: "GET_CURRENTMENU",
+      get_newsCount: "GET_NEWSCOUNT"
     }),
     handleOpen() {
 
@@ -52,6 +59,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['newsCount']),
     onRoutes() {
       return this.$route.path;
     },
@@ -138,4 +146,5 @@ export default {
 .sidebar {
   min-height: 450px;
 }
+
 </style>

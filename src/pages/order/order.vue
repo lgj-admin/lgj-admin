@@ -10,7 +10,7 @@
 				  	<el-menu-item index="4">已完成</el-menu-item>
 				</el-menu>
 				<div class="bottom">
-					<el-input v-model="searche_input" placeholder="请输入联系人或订单号" class="bottom-input1" clearable></el-input>
+					<el-input v-model="searche_input" placeholder="请输入预约人或订单号" class="bottom-input1" clearable></el-input>
 					<el-button type="primary" class="bottom-button1" @click="handleSearch">搜索</el-button>
 					<el-button type="primary" class="bottom-button2" @click="addOrder()">添加订单</el-button>
 				</div>
