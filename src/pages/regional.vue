@@ -10,7 +10,7 @@
             </div>
             <div slot="body">
                 <div class="body-content">
-                    <div class="body-table table">
+                    <div class="body-table table" v-loading="loading">
                         <div class="thead body-table-thead">
                             <div class="tr">
                                 <div class="td">手机号</div>
@@ -36,6 +36,7 @@
                             background
                             layout="prev, pager, next"
                             :total="total"
+                            :current-page="page"
                             @current-change="handlePage"
                         >
                         </el-pagination>
@@ -145,15 +146,13 @@ export default {
       selectregional: [],
       branchManagerList: [], //大区经理列表
       total: null,
-      id: null //大区经理id
+      page:1,
+      id: null, //大区经理id
+      loading:true,
     };
   },
   created() {
-    ApiDataModule("BRANCHMANAGERLIST", {}).then(res => {
-      console.log(res);
-      this.branchManagerList = res.data.data;
-      this.total = res.data.total;
-    });
+    this.init();
     ApiDataModule("CITYLIST", {}).then(res => {
       if (res.code == CODE_OK) {
         this.selectregional = res.data.data;
@@ -164,18 +163,27 @@ export default {
     ...mapGetters(['codeList'])
   },
   methods: {
+    init(){
+      this.loading = true;
+      //大区经理列表
+      ApiDataModule("BRANCHMANAGERLIST", {page:this.page}).then(res => {
+        console.log(res);
+        if(res.code == CODE_OK){
+          this.loading = false;
+          this.branchManagerList = res.data.data;
+          this.total = res.data.total;
+        }else{
+          this.loading = false;
+          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+        }
+      });
+    },
     handleCode(data){
       return codeStatus(this.codeList,data);
     },
     handlePage(e) {
-      ApiDataModule("BRANCHMANAGERLIST", {
-        page: e
-      }).then(res => {
-        if (res.code == CODE_OK) {
-          this.branchManagerList = res.data.data;
-          this.total = res.data.total;
-        }
-      });
+      this.page = e;
+      this.init();
     },
     handlesubmit(formName) {
       this.$refs[formName].validate(valid => {
@@ -192,12 +200,7 @@ export default {
               console.log(res);
               if (res.code == CODE_OK) {
                 this.showmodel = false;
-                ApiDataModule("BRANCHMANAGERLIST").then(res => {
-                  if (res.code == CODE_OK) {
-                    this.branchManagerList = res.data.data;
-                    this.total = res.data.total;
-                  }
-                });
+                this.init();
                 this.$refs[formName].resetFields();
                 return;
               } else if (res.code == CODE_ERR) {
@@ -213,12 +216,7 @@ export default {
             ApiDataModule("BRANCHMANAGERDOEDIT", formData).then(res => {
               if (res.code == CODE_OK) {
                 console.log(res);
-                ApiDataModule("BRANCHMANAGERLIST").then(res => {
-                  if (res.code == CODE_OK) {
-                    this.branchManagerList = res.data.data;
-                    this.total = res.data.total;
-                  }
-                });
+                this.init();
               } else if (res.code == CODE_ERR) {
                 this.$message({
                   type: "warning",
@@ -269,12 +267,7 @@ export default {
                 type: "success",
                 message: "删除成功"
               });
-              ApiDataModule("BRANCHMANAGERLIST").then(res => {
-                if (res.code == CODE_OK) {
-                  this.branchManagerList = res.data.data;
-                  this.total = res.data.total;
-                }
-              });
+              this.init();
             } else if (res.code == CODE_ERR) {
               this.$message({
                 type: "warning",

@@ -45,7 +45,7 @@
             </div>
             <div slot="body">
                 <div class="body-content">
-                    <div class="body-table table">
+                    <div class="body-table table" v-loading="loading">
                         <div class="thead body-table-thead">
                             <div class="tr">
                                 <div class="td">姓名</div>
@@ -92,6 +92,7 @@
                             background
                             layout="prev, pager, next"
                             :total="total"
+                            :current-page="page"
                             @current-change="handlePagination"
                         >
                         </el-pagination>
@@ -216,16 +217,11 @@ export default {
       regionalManager: [], //大区经理列表
       areaManager: [], //区域经理列表
       goodsList:[],//服务技能列表
+      loading:true,
     };
   },
   created() {
-    //员工列表
-    ApiDataModule("EMPLOYEELIST").then(res => {
-      console.log(res, "list");
-      this.employeeList = res.data.data;
-      this.total = res.data.total;
-      this.page = res.data.current_page;
-    });
+    this.init();
     //大区经理
     ApiDataModule("LEADERLIST", {
       type: 1
@@ -249,13 +245,10 @@ export default {
     ...mapGetters(['codeList'])
   },
   methods: {
-    handleCode(data){
-      return codeStatus(this.codeList,data);
-    },
-    //分页
-    handlePagination(e) {
+    init(){
+      this.loading = true;
       const formData = {
-        page: e
+        page: this.page
       };
       if (this.searchValueName) {
         formData.name = this.searchValueName;
@@ -269,11 +262,27 @@ export default {
       if (this.searchValueManager) {
         formData.area_boss = this.searchValueManager;
       }
-      ApiDataModule("EMPLOYEELIST", formData).then(res => {
-        this.employeeList = res.data.data;
-        this.total = res.data.total;
-        this.page = res.data.current_page;
+      //员工列表
+      ApiDataModule("EMPLOYEELIST",formData).then(res => {
+        console.log(res, "list");
+        if(res.code == CODE_OK){
+          this.loading = false;
+          this.employeeList = res.data.data;
+          this.total = res.data.total;
+          this.page = res.data.current_page;
+        }else{
+          this.loading = false;
+          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+        }
       });
+    },
+    handleCode(data){
+      return codeStatus(this.codeList,data);
+    },
+    //分页
+    handlePagination(e) {
+      this.page = e;
+      this.init();
     },
     //添加员工
     handleAddemployee(formName) {
@@ -297,11 +306,7 @@ export default {
                   type: "success",
                   message: "添加成功"
                 });
-                ApiDataModule("EMPLOYEELIST").then(res => {
-                  this.employeeList = res.data.data;
-                  this.total = res.data.total;
-                  this.page = res.data.current_page;
-                });
+                this.init();
               } else {
                 this.$message({
                   type: "warning",
@@ -323,11 +328,7 @@ export default {
                   type: "success",
                   message: "编辑成功"
                 });
-                ApiDataModule("EMPLOYEELIST").then(res => {
-                  this.employeeList = res.data.data;
-                  this.total = res.data.total;
-                  this.page = res.data.current_page;
-                });
+                this.init();
               } else {
                 this.$message({
                   type: "warning",
@@ -343,28 +344,8 @@ export default {
     },
     //搜索
     handleSearch() {
-      const formData = {
-        page: 1
-      };
       this.page = 1;
-      if (this.searchValueName) {
-        formData.name = this.searchValueName;
-      }
-      if (this.searchValueTel) {
-        formData.tel = this.searchValueTel;
-      }
-      if (this.searchValueSkill) {
-        formData.skill = this.searchValueSkill;
-      }
-      if (this.searchValueManager) {
-        formData.area_boss = this.searchValueManager;
-      }
-      ApiDataModule("EMPLOYEELIST", formData).then(res => {
-        console.log(res);
-        this.employeeList = res.data.data;
-        this.total = res.data.total;
-        this.page = res.data.current_page;
-      });
+      this.init();
     },
     add() {
       this.id = null;
@@ -406,11 +387,7 @@ export default {
                 type: "success",
                 message: "删除成功!"
               });
-              ApiDataModule("EMPLOYEELIST").then(res => {
-                this.employeeList = res.data.data;
-                this.total = res.data.total;
-                this.page = res.data.current_page;
-              });
+              this.init();
             } else {
               this.$message({
                 type: "warning",

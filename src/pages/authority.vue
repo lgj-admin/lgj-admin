@@ -9,7 +9,7 @@
             </div>
             <div slot="body">
                 <div class="body-content">
-                    <div class="body-table table">
+                    <div class="body-table table" v-loading="loading">
                         <div class="thead body-table-thead">
                             <div class="tr">
                                 <div class="td">权限名称</div>
@@ -117,16 +117,11 @@ export default {
       id: null ,//权限id
       getController:[],//权限码第一级数据
       getAction:[],//权限码第二级数据
+      loading:true,
     };
   },
   created() {
-    //权限列表
-    ApiDataModule("SYSTEMAUTHLIST").then(res => {
-      console.log(res);
-      if (res.code == CODE_OK) {
-        this.systemAuthList = res.data;
-      }
-    });
+    this.init();
     //权限分组数据
     ApiDataModule("AUTHGROUP").then(res => {
       console.log(res);
@@ -145,6 +140,20 @@ export default {
     ...mapGetters(['codeList'])
   },
   methods: {
+    init(){
+      this.loading = true;
+      //权限列表
+      ApiDataModule("SYSTEMAUTHLIST").then(res => {
+        console.log(res);
+        if (res.code == CODE_OK) {
+          this.loading = false;
+          this.systemAuthList = res.data;
+        }else{
+          this.loading = false;
+          this.$message({type:'warning',message:`${res.code}数据接收异常`});
+        }
+      });
+    },
     handleCode(data){
       return codeStatus(this.codeList,data);
     },
@@ -176,11 +185,7 @@ export default {
           ApiDataModule("HANDLESYSTEMAUTH", formData).then(res => {
             if (res.code == CODE_OK) {
               this.addauthority = false;
-              ApiDataModule("SYSTEMAUTHLIST").then(res => {
-                if (res.code == CODE_OK) {
-                  this.systemAuthList = res.data;
-                }
-              });
+              this.init();
             }else{
               this.$message({
                 type:'warning',

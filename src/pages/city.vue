@@ -10,7 +10,7 @@
             </div>
             <div slot="body">
                 <div class="body-content">
-                    <div class="body-table table">
+                    <div class="body-table table" v-loading="loading">
                         <div class="thead body-table-thead">
                             <div class="tr">
                                 <div class="td">大区名称</div>
@@ -34,6 +34,7 @@
                             background
                             layout="prev, pager, next"
                             :total="total"
+                            :current-page="page"
                             @current-change="handlePage"
                         >
                         </el-pagination>
@@ -41,7 +42,7 @@
                 </div>
             </div>
         </panpel>
-        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" title="添加大区">
+        <model-box @selectSubmit="handlesubmit('ruleForm')" :show.sync="showmodel" :title="id?'编辑大区':'添加大区'">
           <div slot="dialog-body">
               <el-form
                   :model="ruleForm"
@@ -87,34 +88,39 @@ export default {
       showmodel: false,
       cityList: [], //大区列表
       id: null, //大区id
-      total: null //分页列表条数
+      total: null, //分页列表条数
+      page:1,
+      loading:true,
     };
   },
   created() {
-    ApiDataModule("CITYLIST", {}).then(res => {
-      if (res.code == CODE_OK) {
-        this.cityList = res.data.data;
-        this.total = res.data.total;
-        console.log(res)
-      }
-    });
+    this.init();
   },
   computed:{
     ...mapGetters(['codeList','newsCount'])
   },
   methods: {
+    init(){
+      this.loading = true;
+      ApiDataModule("CITYLIST", {page:this.page}).then(res => {
+        if (res.code == CODE_OK) {
+          this.loading = false;
+          this.cityList = res.data.data;
+          this.total = res.data.total;
+          console.log(res)
+        }else{
+          this.loading = false;
+          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+        }
+      });
+    },
     handleCode(data){
       return codeStatus(this.codeList,data);
     },
+    //处理分页
     handlePage(e) {
-      ApiDataModule("CITYLIST", {
-        page: e
-      }).then(res => {
-        if (res.code == CODE_OK) {
-          this.cityList = res.data.data;
-          this.total = res.data.total;
-        }
-      });
+      this.page = e;
+      this.init();
     },
     handlesubmit(formName) {
       this.$refs[formName].validate(valid => {
@@ -126,12 +132,7 @@ export default {
             }).then(res => {
               if (res.code == CODE_OK) {
                 this.showmodel = false;
-                ApiDataModule("CITYLIST", {}).then(res => {
-                  if (res.code == CODE_OK) {
-                    this.cityList = res.data.data;
-                    this.total = res.data.total;
-                  }
-                });
+                this.init();
                 return;
               } else if (res.code == CODE_ERR) {
                 this.$message({
@@ -149,12 +150,7 @@ export default {
             }).then(res => {
               if (res.code == CODE_OK) {
                 this.showmodel = false;
-                ApiDataModule("CITYLIST", {}).then(res => {
-                  if (res.code == CODE_OK) {
-                    this.cityList = res.data.data;
-                    this.total = res.data.total;
-                  }
-                });
+                this.init();
                 return;
               } else if (res.code == CODE_ERR) {
                 this.$message({
@@ -204,12 +200,7 @@ export default {
                 type: "success",
                 message: "删除成功!"
               });
-              ApiDataModule("CITYLIST", {}).then(res => {
-                if (res.code == CODE_OK) {
-                  this.cityList = res.data.data;
-                  this.total = res.data.total;
-                }
-              });
+              this.init();
             }
           });
         })

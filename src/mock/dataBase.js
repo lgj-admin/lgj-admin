@@ -153,7 +153,7 @@ export const menuList = [
     id: 18,
     href: "/log",
     name: "日志管理",
-    icon: "fa fa-commenting",
+    icon: "fa fa-newspaper-o",
     code:'System@logsList',
     children:[]
   },
@@ -161,7 +161,7 @@ export const menuList = [
     id: 19,
     href: "/answer",
     name: "客服问答",
-    icon: "fa fa-comments-o",
+    icon: "fa fa-commenting",
     code:'System@feedbackList',
     children:[]
   },

@@ -10,7 +10,7 @@
             </div>
             <div slot="body">
                 <div class="body-content">
-                    <div class="body-table table">
+                    <div class="body-table table" v-loading="loading">
                         <div class="thead body-table-thead">
                             <div class="tr">
                                 <div class="td">姓名</div>
@@ -32,6 +32,7 @@
                     <div class="body-page">
                         <el-pagination
                             background
+                            :current-page="page"
                             @current-change="handlePagination"
                             layout="prev, pager, next"
                             :total="total"
@@ -136,20 +137,33 @@ export default {
       showmodel: false,
       customerServiceList: [], //客服列表
       total: null,
-      id: null
+      id: null,
+      page:1,
+      loading:true,
     };
   },
   created() {
-    ApiDataModule("CUSTOMERSERVICELIST").then(res => {
-      console.log(res);
-      this.customerServiceList = res.data.data;
-      this.total = res.data.total;
-    });
+    this.init();
   },
   computed:{
     ...mapGetters(['codeList'])
   },
   methods: {
+    init(){
+      this.loading = true;
+      //客服列表
+      ApiDataModule("CUSTOMERSERVICELIST",{page:this.page}).then(res => {
+        console.log(res);
+        if(res.code == CODE_OK){
+          this.loading = false;
+          this.customerServiceList = res.data.data;
+          this.total = res.data.total;
+        }else{
+          this.loading = false;
+          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+        }
+      });
+    },
     handleCode(data){
       return codeStatus(this.codeList,data);
     },
@@ -172,10 +186,7 @@ export default {
                   type: "success",
                   message: "添加成功"
                 });
-                ApiDataModule("CUSTOMERSERVICELIST").then(res => {
-                  this.customerServiceList = res.data.data;
-                  this.total = res.data.total;
-                });
+                this.init();
               } else {
                 this.$message({
                   type: "warning",
@@ -191,10 +202,7 @@ export default {
                   type: "success",
                   message: "编辑成功"
                 });
-                ApiDataModule("CUSTOMERSERVICELIST").then(res => {
-                  this.customerServiceList = res.data.data;
-                  this.total = res.data.total;
-                });
+                this.init();
               } else {
                 this.$message({
                   type: "warning",
@@ -216,12 +224,8 @@ export default {
     },
     //处理分页
     handlePagination(e) {
-      ApiDataModule("CUSTOMERSERVICELIST", {
-        page: e
-      }).then(res => {
-        this.customerServiceList = res.data.data;
-        this.total = res.data.total;
-      });
+      this.page = e;
+      this.init();
     },
     //添加客服
     add() {
@@ -254,10 +258,7 @@ export default {
           }).then(res => {
             console.log(res);
             if (res.code == CODE_OK) {
-              ApiDataModule("CUSTOMERSERVICELIST").then(res => {
-                this.customerServiceList = res.data.data;
-                this.total = res.data.total;
-              });
+              this.init();
             }
           });
           this.$message({

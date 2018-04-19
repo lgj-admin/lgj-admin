@@ -18,7 +18,7 @@
             </div>
             <div slot="body">
                 <div class="body-content">
-                    <div class="body-table table">
+                    <div class="body-table table" v-loading="loading">
                         <div class="thead body-table-thead">
                             <div class="tr">
                                 <div class="td">日志内容</div>
@@ -41,6 +41,7 @@
                     <div class="body-page">
                         <el-pagination
                             background
+                            :current-page="page"
                             @current-change="handlePagination"
                             layout="prev, pager, next"
                             :total="total"
@@ -72,33 +73,37 @@ export default {
       logDelTimeValue:'',
       total:null,
       code_status:false,
+      loading:true,
     };
   },
   computed:{
     ...mapGetters(['codeList'])
   },
   created() {
-    //日志列表
-    ApiDataModule('LOGSLIST',{page:this.page}).then(res=>{
-      this.logs_list = res.logs_list.data;
-      this.total = res.logs_list.total;
-      console.log(res)
-    })
-    this.code_status = codeStatus(this.codeList,'System@logsDel')
+    this.init();
   },
   methods: {
+    init(){
+      this.loading = true;
+      //日志列表
+      ApiDataModule('LOGSLIST',{page:this.page}).then(res=>{
+        if(res.code == CODE_OK){
+          this.loading = false;
+          this.logs_list = res.logs_list.data;
+          this.total = res.logs_list.total;
+        }else{
+          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+        }
+        console.log(res)
+      });
+    },
     handleCode(data){
       return codeStatus(this.codeList,data);
     },
     //处理分页
     handlePagination(page) {
-      const formData = {
-        page: page
-      };
-      ApiDataModule('LOGSLIST',formData).then(res=>{
-        this.logs_list = res.logs_list.data;
-        this.total = res.logs_list.total;
-      })
+      this.page = page;
+      this.init();
     },
     handleDelete() {
       if(this.logDelTimeValue.length<=0) return;
@@ -120,12 +125,15 @@ export default {
                 type: 'success',
                 message: '删除成功!',
                 onClose:()=>{
-                  ApiDataModule('LOGSLIST',{page:this.page}).then(res=>{
-                    this.logs_list = res.logs_list.data;
-                    this.total = res.logs_list.total;
-                  })
+                  this.init();
                 }
               });
+              this.logDelTimeValue = '';
+            }else{
+              this.$message({
+                type:'warning',
+                message:res.msg
+              })
             }
             console.log(res);
           })

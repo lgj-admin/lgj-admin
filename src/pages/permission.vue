@@ -10,7 +10,7 @@
             </div>
             <div slot="body">
                 <div class="body-content">
-                    <div class="body-table table">
+                    <div class="body-table table" v-loading="loading">
                         <div class="thead body-table-thead">
                             <div class="tr">
                                 <div class="td">角色名称</div>
@@ -112,15 +112,12 @@ export default {
         label: "name",
         children: "auth"
       },
-      admininfo:{}
+      admininfo:{},
+      loading:true,
     };
   },
   created() {
-    //角色列表
-    ApiDataModule("ADMINROLE").then(res => {
-      console.log(res);
-      this.adminRole = res.data;
-    });
+    this.init();
     //所有权限组合数据
     ApiDataModule("SYSTEMAUTHARRAY").then(res => {
       console.log(res);
@@ -136,6 +133,20 @@ export default {
     ...mapMutations({
       get_codeList:'GET_CODELIST'
     }),
+    init(){
+      this.loading = true;
+      //角色列表
+      ApiDataModule("ADMINROLE").then(res => {
+        console.log(res);
+        if(res.code == CODE_OK){
+          this.loading = false;
+          this.adminRole = res.data;
+        }else{
+          this.loading = false;
+          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+        }
+      });
+    },
     handleCode(data){
       return codeStatus(this.codeList,data);
     },
@@ -162,9 +173,7 @@ export default {
                 type:'success',
                 message:'操作成功'
               })
-              ApiDataModule("ADMINROLE").then(res => {
-                this.adminRole = res.data;
-              });
+              this.init();
               ApiDataModule('GETAUTH',{role_id:this.admininfo.role_id}).then(res=>{
                 this.get_codeList(res)
               })

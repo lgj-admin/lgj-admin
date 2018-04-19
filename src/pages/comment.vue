@@ -12,7 +12,7 @@
             <div slot="body">
                 <div class="body-content">
                     <div class="body-table">
-                        <el-table :data="feedback_list" style="width: 100%">
+                        <el-table v-loading="loading" :data="feedback_list" style="width: 100%">
                             <el-table-column type="expand" >
                                 <template slot-scope="props">
                                     <div v-if="props.row.parent_id.length>0"  class="reply">
@@ -70,6 +70,7 @@
                     <div class="body-page">
                         <el-pagination
                             background
+                            :current-page="page"
                             @current-change="handlePagination"
                             layout="prev, pager, next"
                             :total="total"
@@ -116,6 +117,7 @@ export default {
       total:null,
       page:1,
       msg_id:null,
+      loading:true,
     };
   },
   created(){
@@ -126,13 +128,19 @@ export default {
   },
   methods: {
     init(currentPage,activeIndex){
+      this.loading = true;
       ApiDataModule('COMMENTLIST',{
         page:currentPage,
         is_package:activeIndex
       }).then(res=>{
         console.log(res)
-        this.feedback_list = res.data.data;
-        this.total = res.data.total;
+        if(res.code == CODE_OK){
+          this.loading = false;
+          this.feedback_list = res.data.data;
+          this.total = res.data.total;
+        }else{
+          this.$message({type:'warning',message:'数据接收异常'})
+        }
       })
     },
     handleCode(data){
@@ -143,6 +151,7 @@ export default {
     },
     handleSelect(e){
       this.active_index = e;
+      this.page = 1;
       this.init(this.page,e);
     },
     handlesubmit(formName) {

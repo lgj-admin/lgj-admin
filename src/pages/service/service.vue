@@ -46,7 +46,7 @@
             <div slot="body">
                 <div class="body-content">
                     <div  v-if="activeIndex == 1">
-                        <div class="body-table table">
+                        <div class="body-table table" v-loading="loading">
                             <div class="thead body-table-thead">
                                 <div class="tr">
                                     <div class="td">分类名称</div>
@@ -69,7 +69,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="body-table table" v-if="activeIndex == 2">
+                    <div class="body-table table" v-if="activeIndex == 2" v-loading="loading">
                         <div class="thead body-table-thead">
                             <div class="tr">
                                 <div class="td">服务名称</div>
@@ -119,7 +119,7 @@
                             <div class="tr"><div class="td">暂无数据</div></div>
                         </div>
                     </div>
-                    <div class="body-table table" v-if="activeIndex == 3">
+                    <div class="body-table table" v-if="activeIndex == 3" v-loading="loading">
                         <div class="thead body-table-thead">
                             <div class="tr">
                                 <div class="td">服务名称</div>
@@ -188,7 +188,7 @@
         </model-box>
         <model-box
             :show.sync="addservice"
-            title="添加服务"
+            :title="!goods_id?'添加服务':'编辑服务'"
             :showButton="false"
             width="70%">
             <div slot="dialog-body">
@@ -209,7 +209,7 @@
         <model-box
             :showButton="false"
             :show.sync="addlifepackage"
-            title="添加生活套餐"
+            :title="!goods_id?'添加生活套餐':'编辑生活套餐'"
             width="60%"
         >
             <div slot="dialog-body">
@@ -417,32 +417,35 @@ export default {
       sgp_id: null, //套餐里服务项目属性id
       sgp_id_radio: [], //套餐里服务项目属性id 用于判断是否被选
       goods_id: null, //服务列表 服务id
-      goodsInfo: {} //服务信息
+      goodsInfo: {}, //服务信息
+      loading:true,
     };
   },
   created() {
+    //城市区域
+    ApiDataModule("CITYLIST").then(res => {
+      this.area = res.data.data;
+      console.log(res);
+    });
     this.init();
   },
   computed:{
     ...mapGetters(['codeList'])
   },
   methods: {
-    init() {
+    async init() {
+      this.loading = true;
       //服务分类列表
-      ApiDataModule("GETCATEGORY").then(res => {
+      await ApiDataModule("GETCATEGORY").then(res => {
         console.log(res);
         this.getCategoryList = res.data;
       });
-      //城市区域
-      ApiDataModule("CITYLIST").then(res => {
-        this.area = res.data.data;
-        console.log(res);
-      });
       //图标列表
-      ApiDataModule("ICONLIST").then(res => {
+      await ApiDataModule("ICONLIST").then(res => {
         console.log(res);
         this.iconList = res.data;
       });
+      this.loading = false;
     },
     handleCode(data){
       return codeStatus(this.codeList,data);
@@ -450,22 +453,31 @@ export default {
     //el-menu
     handleSelect(e) {
       this.activeIndex = e;
-      if (e == 2) {
+      if(e==2){
+        this.loading = true;
         //服务列表
         ApiDataModule("GETGOODSLIST").then(res => {
           console.log(res, "getGoodsList");
-          this.getGoodsList = res.data;
+          if(res.code == CODE_OK){
+            this.loading = false;
+            this.getGoodsList = res.data;
+          }else{
+            this.loading = false;
+            this.$message({type:'warning',message:`${res.code}数据接收异常`})
+          }
         });
         return;
       }
-      if (e == 3) {
+      if(e==3){
+        this.loading = true;
         //服务套餐列表
         ApiDataModule("GETSERVERPACKAGELIST").then(res => {
+          this.loading = false;
           this.getServerPackageList = res.data;
-          console.log(res, "GETSERVERPACKAGELIST");
         });
         return;
       }
+      this.init();
     },
     //生活套餐 添加服务项目
     handleSelectAddServiceItem() {
@@ -695,9 +707,7 @@ export default {
             console.log(res);
             if (res.code == CODE_OK) {
               this.$message({ type: "success", message: "添加成功" });
-              ApiDataModule("GETCATEGORY").then(res => {
-                this.getCategoryList = res.data;
-              });
+              this.init();
             } else {
               this.$message({ type: "warning", message: res.msg });
             }
@@ -744,7 +754,11 @@ export default {
             this.addservice = false;
             //服务列表
             ApiDataModule("GETGOODSLIST").then(res => {
-              this.getGoodsList = res.data;
+              if(res.code == CODE_OK){
+                this.getGoodsList = res.data;
+              }else{
+                this.$message({type:'warning',message:`${res.code}数据接收异常`})
+              }
             });
             this.$message({ type: "success", message: "编辑成功" });
           } else {
@@ -761,7 +775,11 @@ export default {
             this.addservice = false;
             //服务列表
             ApiDataModule("GETGOODSLIST").then(res => {
-              this.getGoodsList = res.data;
+              if(res.code == CODE_OK){
+                this.getGoodsList = res.data;
+              }else{
+                this.$message({type:'warning',message:`${res.code}数据接收异常`})
+              }
             });
             this.$message({
               type: "success",
@@ -1015,9 +1033,7 @@ export default {
             type: "success",
             message: "上传成功"
           });
-          ApiDataModule("ICONLIST").then(res => {
-            this.iconList = res.data;
-          });
+          this.init();
         }
       });
     },
@@ -1112,9 +1128,7 @@ export default {
                   type: "success",
                   message: "操作成功"
                 });
-                ApiDataModule("GETGOODSLIST").then(res => {
-                  this.getGoodsList = res.data;
-                });
+                this.init();
               } else {
                 this.$message({
                   type: "warning",
@@ -1179,9 +1193,7 @@ export default {
                   type: "success",
                   message: "删除成功!"
                 });
-                ApiDataModule("GETCATEGORY").then(res => {
-                  this.getCategoryList = res.data;
-                });
+                this.init();
               } else {
                 this.$message({
                   type: "warning",
@@ -1200,9 +1212,7 @@ export default {
                   message: "删除成功"
                 });
                 //图标列表
-                ApiDataModule("ICONLIST").then(res => {
-                  this.iconList = res.data;
-                });
+                this.init();
               } else {
                 this.$message({
                   type: "warning",
@@ -1223,7 +1233,11 @@ export default {
                 });
                 //服务列表
                 ApiDataModule("GETGOODSLIST").then(res => {
-                  this.getGoodsList = res.data;
+                  if(res.code == CODE_OK){
+                    this.getGoodsList = res.data;
+                  }else{
+                    this.$message({type:'warning',message:`${res.code}数据接收异常`})
+                  }
                 });
               } else {
                 this.$message({

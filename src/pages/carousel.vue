@@ -11,7 +11,7 @@
             </div>
             <div slot="body">
                 <div class="body-content">
-                    <div class="body-table table">
+                    <div class="body-table table" v-loading="loading">
                         <div class="thead body-table-thead">
                             <div class="tr">
                                 <div class="td">id</div>
@@ -120,7 +120,8 @@ export default {
       imageUrl: null,
       adList: [], //轮播列表数据
       id: null, //轮播id
-      imgFile: null
+      imgFile: null,
+      loading:true,
     };
   },
   created() {
@@ -131,9 +132,16 @@ export default {
   },
   methods: {
     init(){
+      this.loading = true;
       ApiDataModule("ADLIST").then(res => {
         console.log(res);
-        this.adList = res.data;
+        if(res.code == CODE_OK){
+          this.loading = false;
+          this.adList = res.data;
+        }else{
+          this.loading = true;
+          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+        }
       });
     },
     handleCode(data){

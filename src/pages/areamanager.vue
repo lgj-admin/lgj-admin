@@ -19,7 +19,7 @@
             </div>
             <div slot="body">
                 <div class="body-content">
-                    <div class="body-table table">
+                    <div class="body-table table" v-loading="loading">
                         <div class="thead body-table-thead">
                             <div class="tr">
                                 <div class="td">姓名</div>
@@ -45,6 +45,8 @@
                     <div class="body-page">
                         <el-pagination
                             background
+                            :current-page="page"
+                            @current-change="handlePagination"
                             layout="prev, pager, next"
                             :total="total"
                         >
@@ -130,16 +132,12 @@ export default {
       areaManagerList: [], //区域经理列表
       total: null,
       page: 1, //当前页数
-      id: null //区域经理id
+      id: null ,//区域经理id
+      loading:true,
     };
   },
   created() {
-    ApiDataModule("AREAMANAGERLIST").then(res => {
-      console.log(res, "aaa");
-      this.areaManagerList = res.data.data;
-      this.total = res.data.total;
-      this.page = res.data.current_page;
-    });
+    this.init();
     ApiDataModule("LEADERLIST", {
       type: 1
     }).then(res => {
@@ -151,8 +149,38 @@ export default {
     ...mapGetters(['codeList'])
   },
   methods: {
+    init(){
+      this.loading = true;
+      //区域经理列表
+      const formData = {
+        page:this.page,
+      }
+      if (this.searchValueName) {
+        formData.name = this.searchValueName;
+      }
+      if (this.searchValueTel) {
+        formData.tel = this.searchValueTel;
+      }
+      ApiDataModule("AREAMANAGERLIST",formData).then(res => {
+        console.log(res, "aaa");
+        if(res.code == CODE_OK){
+          this.loading = false;
+          this.areaManagerList = res.data.data;
+          this.total = res.data.total;
+          this.page = res.data.current_page;
+        }else{
+          this.loading = false;
+          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+        }
+      });
+    },
     handleCode(data){
       return codeStatus(this.codeList,data);
+    },
+    //处理分页
+    handlePagination(e){
+      this.page = e;
+      this.init();
     },
     //提交
     handlesubmit(formName) {
@@ -173,11 +201,7 @@ export default {
                   type: "success",
                   message: "添加成功"
                 });
-                ApiDataModule("AREAMANAGERLIST").then(res => {
-                  this.areaManagerList = res.data.data;
-                  this.total = res.data.total;
-                  this.page = res.data.current_page;
-                });
+                this.init();
               } else {
                 this.$message({
                   type: "warning",
@@ -195,11 +219,7 @@ export default {
                   type: "success",
                   message: "编辑成功"
                 });
-                ApiDataModule("AREAMANAGERLIST").then(res => {
-                  this.areaManagerList = res.data.data;
-                  this.total = res.data.total;
-                  this.page = res.data.current_page;
-                });
+                this.init();
               } else {
                 this.$message({
                   type: "warning",
@@ -215,23 +235,8 @@ export default {
     },
     //搜索
     handleSearch() {
-      const formData = {
-        page:1
-      };
-      if (this.searchValueName) {
-        formData.name = this.searchValueName;
-      }
-      if (this.searchValueTel) {
-        formData.tel = this.searchValueTel;
-      }
-      ApiDataModule("AREAMANAGERLIST", formData).then(res => {
-        console.log(res);
-        if (res.code == CODE_OK) {
-          this.areaManagerList = res.data.data;
-          this.total = res.data.total;
-          this.page = res.data.current_page;
-        }
-      });
+      this.page = 1;
+      this.init();
     },
     //添加
     add() {
@@ -268,11 +273,7 @@ export default {
                 type: "success",
                 message: "删除成功!"
               });
-              ApiDataModule("AREAMANAGERLIST").then(res => {
-                this.areaManagerList = res.data.data;
-                this.total = res.data.total;
-                this.page = res.data.current_page;
-              });
+              this.init();
             } else {
               this.$message({
                 type: "warning",

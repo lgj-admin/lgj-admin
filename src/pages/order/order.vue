@@ -16,7 +16,7 @@
 				</div>
 			</div>
 			<div slot="body" class="body">
-			    <div class="body-table table">
+			    <div class="body-table table" v-loading="loading">
 			        <div class="thead body-table-thead">
 			            <div class="tr">
 			                <div class="td">订单编号</div>
@@ -69,6 +69,7 @@
                 v-if="total"
                 background layout="prev, pager, next"
                 :total="total"
+                :current-page="page"
                 @current-change="handlePagination"
             >
             </el-pagination>
@@ -80,7 +81,11 @@
             <add-order v-if="add_order_switch" @selectAddOrder="handleAddOrder" :orderid="id"></add-order>
 		  	</div>
 		</model-box>
-		<model-box :show.sync="allot_order_switch" title="分配订单" :width="'40%'" :showButton="false">
+		<model-box
+        :show.sync="allot_order_switch"
+        :title="active_index == '0' || active_index == '1'?'分配订单':'管理订单'"
+        :width="'40%'"
+        :showButton="false">
 			<div slot="dialog-body">
           <el-form ref="form" :model="ruleForm" label-width="115px" :label-position="'right'">
               <el-form-item label="订单编号:">
@@ -221,6 +226,7 @@ export default {
       areaBossId: null, //区域经理id
       total:null,
       page:1,
+      loading:true,
     };
   },
   created() {
@@ -233,6 +239,7 @@ export default {
     //初始化
     init() {
       //订单列表
+      this.loading = true;
       const formData = {
         status: this.active_index,
         page:this.page,
@@ -241,23 +248,23 @@ export default {
         formData.keyword = this.searche_input;
       }
       ApiDataModule("GETORDERLIST", formData).then(res => {
-        this.orderList = res.data.data;
-        this.total = res.data.total;
+        if(res.code == CODE_OK){
+          this.loading = false;
+          this.orderList = res.data.data;
+          this.total = res.data.total;
+        }else{
+          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+        }
         console.log(res);
       });
     },
     handleCode(data){
       return codeStatus(this.codeList,data);
     },
+    //处理分页
     handlePagination(e){
-      const formData = {
-        status: this.active_index,
-        page: e
-      };
-      ApiDataModule("GETORDERLIST", formData).then(res => {
-        this.orderList = res.data.data;
-        this.total = res.data.total;
-      });
+      this.page = e;
+      this.init();
     },
     handleSearch(){
       this.init();
@@ -381,13 +388,7 @@ export default {
       }
       ApiDataModule("DISTRIBUTIONORDER", formData).then(res => {
         if (res.code == CODE_OK) {
-          ApiDataModule("GETORDERLIST", {
-            status: this.active_index,
-            page:this.page
-          }).then(res => {
-            this.orderList = res.data.data;
-            this.total = res.data.total;
-          });
+          this.init();
           this.$message({ type: "success", message: "分配成功" });
           this.handleManagerOrder(this.order_id);
           this.selectEmployee = false;
@@ -400,6 +401,7 @@ export default {
     },
     handleSelect(index) {
       this.active_index = index;
+      this.page = 1;
       this.init();
     },
     //员工工作状态
@@ -435,13 +437,7 @@ export default {
                 type: "success",
                 message: "删除成功!"
               });
-              ApiDataModule("GETORDERLIST", {
-                status: this.active_index,
-                page:this.page
-              }).then(res => {
-                this.orderList = res.data.data;
-                this.total = res.data.total;
-              });
+              this.init();
             } else {
               this.$message({
                 type: "warning",

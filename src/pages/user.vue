@@ -19,7 +19,7 @@
             </div>
             <div slot="body">
                 <div class="body-content">
-                    <div class="body-table table">
+                    <div class="body-table table" v-loading="loading">
                         <div class="thead body-table-thead">
                             <div class="tr">
                                 <div class="td">昵称</div>
@@ -45,6 +45,7 @@
                     <div class="body-page">
                         <el-pagination
                             background
+                            :current-page="page"
                             @current-change="handlePagination"
                             layout="prev, pager, next"
                             :total="total"
@@ -151,21 +152,40 @@ export default {
       userList: [],
       total: null,
       page: 1,
-      user_id: null //用户id
+      user_id: null ,//用户id
+      loading:true,
     };
   },
   created() {
-    ApiDataModule("USERSEARCH").then(res => {
-      console.log(res);
-      this.userList = res.data.data;
-      this.total = res.data.total;
-      this.page = res.data.current_page;
-    });
+    this.init();
   },
   computed: {
     ...mapGetters(["codeList", "newsCount"])
   },
   methods: {
+    init(){
+      this.loading= true;
+      const formData = {
+        page: this.page
+      };
+      if(this.searchNameValue){
+        formData.nickname = this.searchNameValue
+      }
+      if(this.searchTelValue){
+        formData.mobile = this.searchTelValue
+      }
+      ApiDataModule("USERSEARCH",formData).then(res => {
+        console.log(res);
+        if(res.code == CODE_OK){
+          this.loading = false;
+          this.userList = res.data.data;
+          this.total = res.data.total;
+          this.page = res.data.current_page;
+        }else{
+          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+        }
+      });
+    },
     handleCode(data) {
       return codeStatus(this.codeList, data);
     },
@@ -190,11 +210,7 @@ export default {
                 type: "success",
                 message: "提交成功"
               });
-              ApiDataModule("USERSEARCH").then(res => {
-                this.userList = res.data.data;
-                this.total = res.data.total;
-                this.page = res.data.current_page;
-              });
+              this.init();
             } else {
               this.$message({
                 type: "warning",
@@ -210,30 +226,13 @@ export default {
     },
     //搜索
     handleSearch() {
-      const formData = {
-        nickname: this.searchNameValue,
-        mobile: this.searchTelValue,
-        page: 1
-      };
-      ApiDataModule("USERSEARCH", formData).then(res => {
-        this.userList = res.data.data;
-        this.total = res.data.total;
-        this.page = res.data.current_page;
-      });
+      this.page = 1;
+      this.init();
     },
     //处理分页
     handlePagination(page) {
-      console.log(page);
-      const formData = {
-        nickname: this.searchNameValue,
-        mobile: this.searchTelValue,
-        page: page
-      };
-      ApiDataModule("USERSEARCH", formData).then(res => {
-        this.userList = res.data.data;
-        this.total = res.data.total;
-        this.page = res.data.current_page;
-      });
+      this.page = page;
+      this.init();
     },
     add() {
       this.showmodel = true;
@@ -254,11 +253,6 @@ export default {
           const formData = {
             user_id: id
           };
-          const formData2 = {
-            nickname: this.searchNameValue,
-            mobile: this.searchTelValue,
-            page: this.page
-          };
 
           if (is_lock == 0) {
             formData.is_lock = 1;
@@ -268,11 +262,7 @@ export default {
           ApiDataModule("USERLOCK", formData).then(res => {
             console.log(res);
             if (res.code == CODE_OK) {
-              ApiDataModule("USERSEARCH", formData2).then(res => {
-                this.userList = res.data.data;
-                this.total = res.data.total;
-                this.page = res.data.current_page;
-              });
+              this.init();
               this.$message({
                 type: "success",
                 message: "操作成功"

@@ -7,9 +7,9 @@
             <nav>
                 <div class="nav-padding nav-name">
                     <transition name="move">
-                        <div class="news_tip" v-if="newsCount && handleCode('System@feedbackList')" @click="jump()">
+                        <i class="news_tip fa fa-commenting" v-if="newsCount && handleCode('System@feedbackList')" @click="jump()">
                             <span class="news_count inner">{{newsCount}}</span>
-                        </div>
+                        </i>
                     </transition>
                     <span v-html="admininfo.user_name"></span>
                 </div>
@@ -146,20 +146,24 @@ nav .nav-out{
 .news_tip{
   position: relative;
   display: inline-block;
-  padding:5px 5px;
   margin-right: 5px;;
+  /* padding:5px 5px;
   border-radius: 50%;
-  background-color: red;
+  background-color: red; */
   vertical-align: middle;
-  color:#fff;
+  color:red;
   transition: all 0.4s linear;
   cursor: pointer;
 }
+.news_tip:hover{
+  color:#fff;
+}
 .news_count{
   position: absolute;
-  top:-20px;
+  top:-4px;
   right:-5px;
   font-size:10px;
+  color:#fff;
 }
 .inner {
   transition: all 0.4s linear;

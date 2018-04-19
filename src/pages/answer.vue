@@ -10,7 +10,7 @@
             <div slot="body">
                 <div class="body-content">
                     <div class="body-table">
-                        <el-table :data="feedback_list" style="width: 100%">
+                        <el-table v-loading="loading" :data="feedback_list" style="width: 100%">
                             <el-table-column type="expand" >
                                 <template slot-scope="props">
                                     <div  v-if="props.row.reply !=null" class="reply">
@@ -63,6 +63,7 @@
                     <div class="body-page">
                         <el-pagination
                             background
+                            :current-page="page"
                             @current-change="handlePagination"
                             layout="prev, pager, next"
                             :total="total"
@@ -107,6 +108,7 @@ export default {
       msg_id:null,
       total:null,
       page:1,
+      loading:true,
     };
   },
   created(){
@@ -117,9 +119,15 @@ export default {
   },
   methods: {
     init(currentPage){
+      this.loading = true;
       ApiDataModule('FEEDBACKLIST',{page:currentPage}).then(res=>{
-        this.feedback_list = res.feedback_list.data;
-        this.total = res.feedback_list.total;
+        if(res.code == CODE_OK){
+          this.loading = false;
+          this.feedback_list = res.feedback_list.data;
+          this.total = res.feedback_list.total;
+        }else{
+          this.$message({type:'warning',message:'数据接收异常'})
+        }
       })
     },
     handleCode(data){
