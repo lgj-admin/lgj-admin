@@ -3,7 +3,7 @@
         <panpel>
             <div slot="header" class="header-content">
                 <div class="header-content-left">
-                    <el-button @click="add()" type="primary">添加大区</el-button>
+                    <el-button v-if="handleCode('System@cityAdd')" @click="add()" type="primary">添加大区</el-button>
                 </div>
                 <div class="header-content-right">
                 </div>
@@ -23,8 +23,8 @@
                                 <div class="td">{{item.area_name}}</div>
                                 <div class="td">{{item.city}}</div>
                                 <div class="td">
-                                    <a href="javascript:void(0)" @click="handleEdit(item.id)">编辑</a>
-                                    <a href="javascript:void(0)" @click="handleDelete(item.id)">删除</a>
+                                    <a href="javascript:void(0)" v-if="handleCode('System@cityDoEidt')" @click="handleEdit(item.id)">编辑</a>
+                                    <a href="javascript:void(0)" v-if="handleCode('System@cityDelete')" @click="handleDelete(item.id)">删除</a>
                                 </div>
                             </div>
                         </div>
@@ -68,6 +68,9 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
+import {mapGetters} from 'vuex'
+import {codeStatus} from "config/utils";
+
 
 
 export default {
@@ -96,7 +99,13 @@ export default {
       }
     });
   },
+  computed:{
+    ...mapGetters(['codeList','newsCount'])
+  },
   methods: {
+    handleCode(data){
+      return codeStatus(this.codeList,data);
+    },
     handlePage(e) {
       ApiDataModule("CITYLIST", {
         page: e
@@ -180,7 +189,7 @@ export default {
       });
     },
     handleDelete(id) {
-      this.$confirm("此操作将永久删除大区, 是否继续?", "提示", {
+      this.$confirm("此操作将永久删除该大区, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"

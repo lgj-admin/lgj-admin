@@ -12,7 +12,7 @@
 				<div class="bottom">
 					<el-input v-model="searche_input" placeholder="请输入预约人或订单号" class="bottom-input1" clearable></el-input>
 					<el-button type="primary" class="bottom-button1" @click="handleSearch">搜索</el-button>
-					<el-button type="primary" class="bottom-button2" @click="addOrder()">添加订单</el-button>
+					<el-button type="primary" class="bottom-button2" v-if="handleCode('Order@addOrder')" @click="addOrder()">添加订单</el-button>
 				</div>
 			</div>
 			<div slot="body" class="body">
@@ -49,9 +49,17 @@
                       </div>
 			                <div class="td" v-if="active_index == '4'">{{item.finish_time}}</div>
 			                <div class="td">
-			                	<a href="javascript:void(0)" @click="handleManagerOrder(item.order_id)" v-if="active_index == '1' || active_index=='0'">分配订单</a>
-			                	<a href="javascript:void(0)" @click="handleManagerOrder(item.order_id)" v-if="active_index == '2' || active_index=='3'">管理</a>
-			                	<a href="javascript:void(0)" @click="handleDelete(item.order_id)">删除</a>
+			                	<a href="javascript:void(0)"
+                          @click="handleManagerOrder(item.order_id)"
+                          v-if="active_index == '1' || active_index=='0' && handleCode('Order@distributionOrderToStaff')">
+                          分配订单
+                        </a>
+			                	<a href="javascript:void(0)"
+                          @click="handleManagerOrder(item.order_id)"
+                          v-if="active_index == '2' || active_index=='3' && handleCode('Order@distributionOrderToStaff')">
+                          管理
+                        </a>
+			                	<a href="javascript:void(0)" v-if="handleCode('Order@delOrder')" @click="handleDelete(item.order_id)">删除</a>
 			                </div>
 			            </div>
 			        </div>
@@ -175,6 +183,8 @@ import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
 import addOrder from "./addOrder";
+import {codeStatus} from "config/utils";
+import {mapGetters} from 'vuex'
 
 
 
@@ -216,6 +226,9 @@ export default {
   created() {
     this.init();
   },
+  computed:{
+    ...mapGetters(['codeList'])
+  },
   methods: {
     //初始化
     init() {
@@ -232,6 +245,9 @@ export default {
         this.total = res.data.total;
         console.log(res);
       });
+    },
+    handleCode(data){
+      return codeStatus(this.codeList,data);
     },
     handlePagination(e){
       const formData = {

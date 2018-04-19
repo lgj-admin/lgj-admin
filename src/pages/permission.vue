@@ -3,7 +3,7 @@
         <panpel>
             <div slot="header" class="header-content">
                 <div class="header-content-left">
-                    <el-button @click="add()" type="primary">添加</el-button>
+                    <!-- <el-button @click="add()" type="primary">添加</el-button> -->
                 </div>
                 <div class="header-content-right">
                 </div>
@@ -23,7 +23,8 @@
                                 <div class="td">{{item.role_name}}</div>
                                 <div class="td">{{item.role_desc}}</div>
                                 <div class="td">
-                                    <a href="javascript:void(0)" @click="handleEdit(item.role_id)">编辑</a>
+                                    <a href="javascript:void(0)" @click="handleEdit(item.role_id)" v-if="handleCode('System@handleAdminRole')">编辑</a>
+                                    <span v-else>无</span>
                                 </div>
                             </div>
                         </div>
@@ -84,7 +85,8 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
-import { getStore } from "config/utils";
+import { getStore ,codeStatus} from "config/utils";
+import {mapMutations,mapGetters} from 'vuex'
 
 
 export default {
@@ -109,7 +111,8 @@ export default {
       defaultProps: {
         label: "name",
         children: "auth"
-      }
+      },
+      admininfo:{}
     };
   },
   created() {
@@ -126,18 +129,27 @@ export default {
       }
     });
   },
+  computed:{
+    ...mapGetters(['codeList'])
+  },
   methods: {
+    ...mapMutations({
+      get_codeList:'GET_CODELIST'
+    }),
+    handleCode(data){
+      return codeStatus(this.codeList,data);
+    },
     //提交
     handlesubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           const permissionStr = Array.from(new Set(this.ruleForm.permissionArr));
-          const admininfo = JSON.parse(getStore('ADMININFO'));
+          this.admininfo = JSON.parse(getStore('ADMININFO'));
           const formData = {
             name: this.ruleForm.name,
             desc: this.ruleForm.desc,
             act: permissionStr,
-            adminid:admininfo.admin_id
+            adminid:this.admininfo.admin_id
           };
           if (this.id) {
             formData.id = this.id;
@@ -153,6 +165,9 @@ export default {
               ApiDataModule("ADMINROLE").then(res => {
                 this.adminRole = res.data;
               });
+              ApiDataModule('GETAUTH',{role_id:this.admininfo.role_id}).then(res=>{
+                this.get_codeList(res)
+              })
             }else{
               this.$message({
                 type:'warning',

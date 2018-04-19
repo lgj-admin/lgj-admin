@@ -12,6 +12,9 @@ const matutaions = {
     newsCount--;
     state.newsCount = newsCount;
   },
+  [types.GET_CODELIST](state, codeList) {
+    state.codeList = codeList;
+  },
 }
 
 export default matutaions

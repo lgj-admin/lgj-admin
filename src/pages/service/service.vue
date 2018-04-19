@@ -10,16 +10,34 @@
                 </el-menu>
                 <div class="bottom">
                     <div class="header-content-left">
-                        <el-button v-show="activeIndex == 1" @click="handleAddMethods('addServiceCategory')" type="primary">添加分类</el-button>
-                        <el-button v-show="activeIndex == 2" @click="handleAddMethods('addService')" type="primary">添加服务</el-button>
-                        <el-button v-show="activeIndex == 3" @click="handleAddMethods('addpackage')" type="primary">添加生活套餐</el-button>
+                        <el-button
+                            v-if="handleCode('Goods@addCategory')"
+                            v-show="activeIndex == 1"
+                            @click="handleAddMethods('addServiceCategory')"
+                            type="primary">
+                            添加分类
+                        </el-button>
+                        <el-button
+                            v-if="handleCode('Goods@addGoods')"
+                            v-show="activeIndex == 2"
+                            @click="handleAddMethods('addService')"
+                            type="primary">
+                            添加服务
+                        </el-button>
+                        <el-button
+                            v-show="activeIndex == 3"
+                            v-if="handleCode('Goods@addGoodsPackage')"
+                            @click="handleAddMethods('addpackage')"
+                            type="primary">
+                            添加生活套餐
+                        </el-button>
                         <!-- <el-button  @click="addlifepackage = true" type="primary">上传服务图标</el-button> -->
                         <upload
                             v-show="activeIndex == 4"
                             @selectUpload="handleUploadFile"
                             listType="file">
                         </upload>
-                        <span v-show="activeIndex == 4">上传图标 (建议尺寸:200X200)</span>
+                        <span v-show="activeIndex == 4" style="color:red">上传图标 (建议尺寸:200X200)</span>
                     </div>
                     <div class="header-content-right">
                     </div>
@@ -40,7 +58,12 @@
                                     <div class="td">{{item.name}}</div>
                                     <div class="td">
                                       <a href="javascript:void(0)" @click="handleEditServiceItem(item.id,'editServiceCategory')">编辑</a>
-                                      <a href="javascript:void(0)" @click="handleDelete(item.id,'getCategoryList')">删除</a>
+                                      <a
+                                        href="javascript:void(0)"
+                                        v-if="handleCode('Goods@delCategory')"
+                                        @click="handleDelete(item.id,'getCategoryList')">
+                                        删除
+                                      </a>
                                     </div>
                                 </div>
                             </div>
@@ -60,7 +83,7 @@
                                 <div class="td">操作</div>
                             </div>
                         </div>
-                        <div class="tbody">
+                        <div class="tbody" v-if="handleCode('Goods@getGoodsList')">
                             <div class="tr body-table-tr" v-for="(item,index) in getGoodsList" :key="index">
                                 <div class="td">{{item.goods_name}}</div>
                                 <div class="td">{{item.cat_name}}</div>
@@ -77,10 +100,23 @@
                                 </div>
                                 <!-- <div class="td">1</div> -->
                                 <div class="td">
-                                  <a href="javascript:void(0)" @click="handleEditServiceItem(item.goods_id,'getGoodsInfo')">编辑</a>
-                                  <a href="javascript:void(0)" @click="handleDelete(item.goods_id,'deleteService')">删除</a>
+                                  <a
+                                    href="javascript:void(0)"
+                                    v-if="handleCode('Goods@editGoods')"
+                                    @click="handleEditServiceItem(item.goods_id,'getGoodsInfo')">
+                                    编辑
+                                  </a>
+                                  <a
+                                    href="javascript:void(0)"
+                                    v-if="handleCode('Goods@delGoods')"
+                                    @click="handleDelete(item.goods_id,'deleteService')">
+                                    删除
+                                  </a>
                                 </div>
                             </div>
+                        </div>
+                        <div class="tbody" v-if="!handleCode('Goods@getGoodsList')">
+                            <div class="tr"><div class="td">暂无数据</div></div>
                         </div>
                     </div>
                     <div class="body-table table" v-if="activeIndex == 3">
@@ -93,7 +129,7 @@
                                 <div class="td">操作</div>
                             </div>
                         </div>
-                        <div class="tbody">
+                        <div class="tbody" v-if="handleCode('Goods@getServerPackageList')">
                             <div class="tr body-table-tr" v-for="(item,index) in getServerPackageList" :key="index">
                                 <div class="td">{{item.goods_name}}</div>
                                 <div class="td">{{item.market_price}}</div>
@@ -102,10 +138,13 @@
                                   <a href="javascript:void(0)">{{judgmentStatus(item.is_on_sale,'is_on_sale')}}</a>
                                 </div>
                                 <div class="td">
-                                  <a href="javascript:void(0)" @click="handleEditServiceItem(item.goods_id,'editPackageService')">编辑</a>
-                                  <a href="javascript:void(0)" @click="handleDelete(item.goods_id,'deletePackage')">删除</a>
+                                  <a href="javascript:void(0)" v-if="handleCode('Goods@editGoodsPackage')" @click="handleEditServiceItem(item.goods_id,'editPackageService')">编辑</a>
+                                  <a href="javascript:void(0)" v-if="handleCode('Goods@delPackage')" @click="handleDelete(item.goods_id,'deletePackage')">删除</a>
                                 </div>
                             </div>
+                        </div>
+                        <div class="tbody" v-if="!handleCode('Goods@getServerPackageList')">
+                            <div class="tr"><div class="td">暂无数据</div></div>
                         </div>
                     </div>
                     <div class="serviceIcon-content">
@@ -295,6 +334,8 @@ import CartContral from "components/cartcontral";
 import AddService from "./addService";
 import AddPackageService from "./addPackageService";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+import {codeStatus} from "config/utils";
+import {mapGetters} from 'vuex'
 
 export default {
   data() {
@@ -382,6 +423,9 @@ export default {
   created() {
     this.init();
   },
+  computed:{
+    ...mapGetters(['codeList'])
+  },
   methods: {
     init() {
       //服务分类列表
@@ -399,6 +443,9 @@ export default {
         console.log(res);
         this.iconList = res.data;
       });
+    },
+    handleCode(data){
+      return codeStatus(this.codeList,data);
     },
     //el-menu
     handleSelect(e) {
@@ -1010,6 +1057,14 @@ export default {
     },
     //改变列表状态
     changeStatus(id, status, type, cate) {
+      if(!this.handleCode('Goods@editGoodsStatus')){
+        this.$message({
+          type:'warning',
+          message:'无权限更改状态'
+        })
+        return;
+      }
+
       this.$confirm("此操作将改变列表状态, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",

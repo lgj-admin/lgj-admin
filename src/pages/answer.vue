@@ -17,7 +17,8 @@
                                         客服回复：
                                         <span style="margin-right:10px">
                                             {{props.row.reply.msg_content}}
-                                        </span>
+                                        </span><br>
+                                        回复时间：
                                         <span style="margin-right:10px">
                                             {{props.row.reply.msg_time}}
                                         </span>
@@ -87,7 +88,7 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
-import { isMobil } from "config/utils";
+import { isMobil,codeStatus} from "config/utils";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
 import {mapMutations ,mapGetters} from 'vuex'
 
@@ -108,19 +109,21 @@ export default {
       page:1,
     };
   },
-  computed:{
-    ...mapGetters(['newsCount'])
-  },
   created(){
-    this.init();
+    this.init(this.page);
+  },
+  computed:{
+    ...mapGetters(['codeList','newsCount'])
   },
   methods: {
-    init(){
-      ApiDataModule('FEEDBACKLIST',{page:this.page}).then(res=>{
-        console.log(res);
+    init(currentPage){
+      ApiDataModule('FEEDBACKLIST',{page:currentPage}).then(res=>{
         this.feedback_list = res.feedback_list.data;
         this.total = res.feedback_list.total;
       })
+    },
+    handleCode(data){
+      return codeStatus(this.codeList,data);
     },
     ...mapMutations({
       modify_newsCount:"MODIFY_NEWSCOUNT",
@@ -129,14 +132,7 @@ export default {
     //处理分页
     handlePagination(page) {
       this.page = page;
-      const formData = {
-        page: page
-      };
-      ApiDataModule('FEEDBACKLIST',formData).then(res=>{
-        console.log(res);
-        this.feedback_list = res.feedback_list.data;
-        this.total = res.feedback_list.total;
-      })
+      this.init(page);
     },
     //提交
     handlesubmit(formName) {
@@ -149,7 +145,7 @@ export default {
           ApiDataModule('REPLYFEEDBACK',formDta).then(res=>{
             console.log(res);
             if(res.code == CODE_OK){
-              this.init();
+              this.init(this.page);
               this.$message({
                 type:'success',
                 message:'回复成功'
@@ -157,7 +153,6 @@ export default {
               this.ruleForm.content = null;
               this.showmodel = false;
               this.msg_id = null;
-              console.log(this.newsCount,'this.newsCount')
               this.modify_newsCount(this.newsCount);
             }else{
               this.$message({
@@ -173,9 +168,15 @@ export default {
     },
     //回复
     reply(id) {
+      if(!this.handleCode('System@replyFeedback')){
+        this.$message({
+          type:'warning',
+          message:'无权限操作'
+        })
+        return;
+      }
       this.showmodel = true;
       this.msg_id = id;
-      console.log(this.msg_id);
       ApiDataModule('FEEDBACKCOUNT').then(res=>{
         console.log(res);
         this.get_newsCount(res.count);

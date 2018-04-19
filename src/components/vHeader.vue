@@ -7,7 +7,7 @@
             <nav>
                 <div class="nav-padding nav-name">
                     <transition name="move">
-                        <div class="news_tip" v-if="newsCount">
+                        <div class="news_tip" v-if="newsCount && handleCode('System@feedbackList')" @click="jump()">
                             <span class="news_count inner">{{newsCount}}</span>
                         </div>
                     </transition>
@@ -23,6 +23,7 @@
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
 import { getStore,removeStore } from "config/utils";
 import {mapMutations ,mapGetters} from 'vuex'
+import {codeStatus} from "config/utils";
 
 
 export default {
@@ -38,7 +39,8 @@ export default {
   },
   computed:{
     ...mapGetters([
-      'newsCount'
+      'newsCount',
+      'codeList'
     ])
   },
   created(){
@@ -60,6 +62,14 @@ export default {
     ...mapMutations({
       get_newsCount: "GET_NEWSCOUNT"
     }),
+    handleCode(data){
+      return codeStatus(this.codeList,data);
+    },
+    jump(){
+      this.$router.push({
+        path:'answer'
+      })
+    },
     handleSiginOut(){
       if(!this.submit) return
       this.$confirm("此操作将退出系统, 是否继续?", "提示", {
@@ -143,6 +153,7 @@ nav .nav-out{
   vertical-align: middle;
   color:#fff;
   transition: all 0.4s linear;
+  cursor: pointer;
 }
 .news_count{
   position: absolute;

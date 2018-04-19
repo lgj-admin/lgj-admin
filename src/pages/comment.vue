@@ -19,7 +19,8 @@
                                         评价回复：
                                         <span style="margin-right:10px">
                                             {{props.row.parent_id[0].content}}
-                                        </span>
+                                        </span><br>
+                                        回复时间：
                                         <span style="margin-right:10px">
                                             {{props.row.parent_id[0].add_time}}
                                         </span>
@@ -59,7 +60,7 @@
                                     <a href="javascript:void(0)" @click="reply(scope.row.comment_id)" v-else>
                                         回复
                                     </a>
-                                    <a href="javascript:void(0)" @click="handleDelete(scope.row.comment_id)">
+                                    <a v-if="handleCode('Comments@delComment')" href="javascript:void(0)" @click="handleDelete(scope.row.comment_id)">
                                         删除
                                     </a>
                                 </template>
@@ -95,6 +96,10 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+import {mapGetters} from 'vuex'
+import {codeStatus} from "config/utils";
+
+
 
 export default {
   data() {
@@ -114,32 +119,31 @@ export default {
     };
   },
   created(){
-    this.init();
+    this.init(this.page,this.active_index);
+  },
+  computed:{
+    ...mapGetters(['codeList'])
   },
   methods: {
-    init(){
+    init(currentPage,activeIndex){
       ApiDataModule('COMMENTLIST',{
-        page:this.page,
-        is_package:this.active_index
+        page:currentPage,
+        is_package:activeIndex
       }).then(res=>{
+        console.log(res)
         this.feedback_list = res.data.data;
         this.total = res.data.total;
-        console.log(res)
       })
     },
+    handleCode(data){
+      return codeStatus(this.codeList,data);
+    },
     handlePagination(e){
-      ApiDataModule('COMMENTLIST',{
-        page:e,
-        is_package:this.active_index
-      }).then(res=>{
-        this.feedback_list = res.data.data;
-        this.total = res.data.total;
-        console.log(res)
-      })
+      this.init(e,this.active_index);
     },
     handleSelect(e){
       this.active_index = e;
-      this.init();
+      this.init(this.page,e);
     },
     handlesubmit(formName) {
       console.log("bbb");
@@ -147,12 +151,13 @@ export default {
         if (valid) {
           const formDta = {
             comment_id:this.msg_id,
-            content:this.ruleForm.content
+            content:this.ruleForm.content,
+            is_package:this.active_index
           };
           ApiDataModule('REPLYCOMMENT',formDta).then(res=>{
             console.log(res);
             if(res.code == CODE_OK){
-              this.init();
+              this.init(this.page,this.active_index);
               this.$message({
                 type:'success',
                 message:'回复成功',
@@ -173,11 +178,18 @@ export default {
       });
     },
     reply(id){
+      if(!this.handleCode('Comments@replyComment')){
+        this.$message({
+          type:'warning',
+          message:'无权限操作'
+        })
+        return;
+      }
       this.showmodel = true;
       this.msg_id = id;
     },
     handleDelete(id) {
-      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+      this.$confirm("此操作将永久删除该评论, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
@@ -190,13 +202,7 @@ export default {
                 type: "success",
                 message: "删除成功!"
               });
-              ApiDataModule('COMMENTLIST',{
-                page:this.page,
-                is_package:this.active_index
-              }).then(res=>{
-                this.feedback_list = res.data.data;
-                this.total = res.data.total;
-              })
+              this.init(this.page,this.active_index);
             }
           })
         })

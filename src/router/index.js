@@ -19,7 +19,7 @@ import Service from 'pages/service/service' //服务管理页面
 import User from 'pages/user' //用户管理页面
 import Log from 'pages/log' //日志管理页面
 import NotFoundView from 'components/404.vue' //404页面
-import { getStore } from "config/utils";
+import { getStore, removeStore} from "config/utils";
 import { menuList } from "../mock/dataBase";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
 
@@ -28,8 +28,8 @@ import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
 Vue.use(Router)
 
 const routerConfig = [{
-    path: '',
-    redirect: '/user'
+  path: '',
+  redirect: '/service'
   },
   {
     path: '/login',
@@ -116,30 +116,51 @@ const routers = new Router({
   routes: routerConfig,
 })
 
-routers.beforeEach((route, redirect, next) => {
-  let a = menuList.map((item,index)=>{
-    console.log(item)
-    let admininfo = JSON.parse(getStore('ADMININFO'));
-    let status = false;
-    if(item.children.length>0){
-      item.children.map((item2,index2)=>{
-        if (item2.href == route.path) {
-          alert(route.path);
-          ApiDataModule('GETAUTH', { role_id: admininfo.role_id }).then(res => {
-            if (res.indexOf(item2.code, 0) > 0) {
-              status = true;
-            }
-          })
+// 状态码守卫
+
+async function handleCode(route) {
+  let codeArray3 = new Array();
+  let admininfo = JSON.parse(getStore('ADMININFO'));
+  let codeArray2 = [];
+  let filterStatus2 = menuList.map((item, index) => {
+    if (item.children.length > 0) {
+      const filterStatus = item.children.filter((item2,index2)=>{
+        if (item2.href == route){
+          codeArray2.push(item2)
         }
       })
-      return status;
-    }
-    if (item.href == route.path){
-      alert(route.path)
+    } else {
+      if (item.href == route) {
+        codeArray2.push(item)
+      }
     }
   })
-  console.log(a,'asfdasd')
-  if (route.path !== '/login' && getStore('ADMININFO') == null && a) {
+
+  await ApiDataModule('GETAUTH', { role_id: admininfo.role_id }).then(res => {
+    if (codeArray2.length>0){
+      codeArray3.push(res.indexOf(codeArray2[0].code, 0));
+    }else{
+      codeArray3.push(0);
+    }
+  })
+  return await new Promise((resolve, reject) => {
+    resolve(codeArray3);
+  })
+}
+
+routers.beforeEach((route, redirect, next) => {
+  if (route.path !== '/login' && getStore('ADMININFO') != null){
+    const routeStatus = handleCode(route.path);
+    routeStatus.then(res=>{
+        if (res[0]==-1) {
+          removeStore('ADMININFO');
+          next({
+            path: '/login',
+          })
+        }
+    })
+  }
+  if (route.path !== '/login' && getStore('ADMININFO') == null) {
     next({
       path: '/login',
     })

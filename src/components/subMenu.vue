@@ -16,8 +16,7 @@ import subMenu from "./subMenu.vue";
 import { menuList } from "../mock/dataBase";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
 import { getStore,removeStore } from "config/utils";
-
-
+import {mapMutations,mapGetters} from 'vuex'
 
 
 export default {
@@ -32,13 +31,18 @@ export default {
     return {
       item: this.param,
       admininfo:{},
-      codeList:[]
     };
   },
+  computed:{
+    ...mapGetters(['codeList'])
+  },
   methods:{
+    ...mapMutations({
+      get_codeList:'GET_CODELIST'
+    }),
     codeStatus(data){
       let status = false;
-      if(this.codeList.indexOf(data,0)>0){
+      if(this.codeList.indexOf(data,0)>=0){
         status = true;
       }
       return status;
@@ -49,7 +53,7 @@ export default {
       this.admininfo = JSON.parse(getStore('ADMININFO'));
     }
     ApiDataModule('GETAUTH',{role_id:this.admininfo.role_id}).then(res=>{
-      this.codeList = res;
+      this.get_codeList(res);
     })
   },
   components: {

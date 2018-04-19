@@ -24,7 +24,8 @@
                                 <div class="td">{{item.right}}</div>
                                 <div class="td">{{item.group}}</div>
                                 <div class="td">
-                                    <a href="javascript:void(0)" class="table-item" @click="handleEdit(item.id)">编辑</a>
+                                    <a href="javascript:void(0)" class="table-item" @click="handleEdit(item.id)" v-if="handleCode('System@handleSystemAuth')">编辑</a>
+                                    <span v-else>无</span>
                                 </div>
                             </div>
                         </div>
@@ -89,7 +90,8 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
-import { getStore } from "config/utils";
+import { getStore ,codeStatus} from "config/utils";
+import {mapGetters} from 'vuex'
 
 
 export default {
@@ -139,7 +141,13 @@ export default {
       }
     })
   },
+  computed:{
+    ...mapGetters(['codeList'])
+  },
   methods: {
+    handleCode(data){
+      return codeStatus(this.codeList,data);
+    },
     handleSelectGroup(e){
       console.log(e);
       this.ruleForm.code2 = null;

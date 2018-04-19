@@ -14,7 +14,7 @@
                   <el-button @click="handleSearch" class="search-button" type="primary">搜索</el-button>
                 </div>
                 <div class="header-content-right">
-                    <el-button @click="add()" type="primary">添加</el-button>
+                    <el-button v-if="handleCode('Staff@areaManagerAdd')" @click="add()" type="primary">添加</el-button>
                 </div>
             </div>
             <div slot="body">
@@ -36,8 +36,8 @@
                                 <div class="td">{{item.area_name}}——{{item.city}}</div>
                                 <div class="td">{{item.user_name}} {{item.phone}}</div>
                                 <div class="td">
-                                    <a href="javascript:void(0)" @click="handleEdit(item.id)">编辑</a>
-                                    <a href="javascript:void(0)" @click="handleDelete(item.id)">删除</a>
+                                    <a href="javascript:void(0)" v-if="handleCode('Staff@areaManagerDoEdit')" @click="handleEdit(item.id)">编辑</a>
+                                    <a href="javascript:void(0)" v-if="handleCode('Staff@areaManagerDelete')" @click="handleDelete(item.id)">删除</a>
                                 </div>
                             </div>
                         </div>
@@ -89,8 +89,10 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
-import { isMobil } from "config/utils";
+import { isMobil,codeStatus} from "config/utils";
 import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
+import {mapGetters} from 'vuex'
+
 
 
 export default {
@@ -145,7 +147,13 @@ export default {
       this.selectregional = res.data;
     });
   },
+  computed:{
+    ...mapGetters(['codeList'])
+  },
   methods: {
+    handleCode(data){
+      return codeStatus(this.codeList,data);
+    },
     //提交
     handlesubmit(formName) {
       this.$refs[formName].validate(valid => {
@@ -247,7 +255,7 @@ export default {
     },
     //删除
     handleDelete(id) {
-      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+      this.$confirm("此操作将永久删除该区域经理, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"

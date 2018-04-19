@@ -13,8 +13,8 @@
                         <h3>公司信息设置</h3>
                         <el-input v-model="info" type="textarea" :rows=8></el-input>
                     </div>
-                    <div class="body-button">
-                        <el-button @click="handleSubmit" type="primary">提交</el-button>
+                    <div class="body-button" >
+                        <el-button v-if="handleCode('System@handleConfig')"  @click="handleSubmit" type="primary">提交</el-button>
                     </div>
                 </div>
             </div>
@@ -26,6 +26,10 @@
 <script>
 import Panpel from "base/panpel";
 import {ApiDataModule,CODE_OK,CODE_ERR,CODE_Data} from "config/axios.js";
+import { codeStatus } from "config/utils";
+import {mapGetters} from 'vuex'
+
+
 
 
 export default {
@@ -45,7 +49,13 @@ export default {
       }
     })
   },
+  computed:{
+    ...mapGetters(['codeList'])
+  },
   methods: {
+    handleCode(data){
+      return codeStatus(this.codeList,data);
+    },
     handleSubmit() {
       if(!this.phone){
         this.$message({type:'warning',message:'请填写客服电话'});

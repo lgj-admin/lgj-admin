@@ -14,7 +14,7 @@
                   <el-button @click="handleSearch" class="search-button" type="primary">搜索</el-button>
                 </div>
                 <div class="header-content-right">
-                    <el-button @click="add" type="primary">添加</el-button>
+                    <el-button v-if="handleCode('User@userAddEdit')" @click="add" type="primary">添加</el-button>
                 </div>
             </div>
             <div slot="body">
@@ -36,8 +36,8 @@
                                 <div class="td">{{item.reg_time}}</div>
                                 <div class="td">{{item.unionid}}</div>
                                 <div class="td">
-                                    <a href="javascript:void(0)" @click="handleFreeze(item.user_id,item.is_lock)">{{freezeStatus(item.is_lock)}}</a>
-                                    <a href="javascript:void(0)" @click="handleEdit(item.user_id)">编辑</a>
+                                    <a href="javascript:void(0)" v-if="handleCode('User@userLock')" @click="handleFreeze(item.user_id,item.is_lock)">{{freezeStatus(item.is_lock)}}</a>
+                                    <a href="javascript:void(0)" v-if="handleCode('User@userAddEdit')" @click="handleEdit(item.user_id)">编辑</a>
                                 </div>
                             </div>
                         </div>
@@ -86,8 +86,9 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
-import { isMobil,judgmentVal } from "config/utils";
+import { isMobil, judgmentVal, codeStatus } from "config/utils";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+import { mapGetters } from "vuex";
 
 export default {
   data() {
@@ -109,8 +110,8 @@ export default {
       } else {
         if (!judgmentVal(this.ruleForm.pasd)) {
           callback(new Error("密码必须为6-20位字母或数字"));
-        }else{
-          if(this.ruleForm.checkPasd != null){
+        } else {
+          if (this.ruleForm.checkPasd != null) {
             this.$refs.ruleForm.validateField("checkPasd");
           }
         }
@@ -161,7 +162,13 @@ export default {
       this.page = res.data.current_page;
     });
   },
+  computed: {
+    ...mapGetters(["codeList", "newsCount"])
+  },
   methods: {
+    handleCode(data) {
+      return codeStatus(this.codeList, data);
+    },
     //提交
     handlesubmit(formName) {
       this.$refs[formName].validate(valid => {
@@ -180,9 +187,9 @@ export default {
             if (res.code == CODE_OK) {
               this.showmodel = false;
               this.$message({
-                type:'success',
-                message:'提交成功'
-              })
+                type: "success",
+                message: "提交成功"
+              });
               ApiDataModule("USERSEARCH").then(res => {
                 this.userList = res.data.data;
                 this.total = res.data.total;
@@ -238,39 +245,52 @@ export default {
     },
     //冻结操作
     handleFreeze(id, is_lock) {
-      const formData = {
-        user_id: id
-      };
-      const formData2 = {
-        nickname: this.searchNameValue,
-        mobile: this.searchTelValue,
-        page: this.page
-      };
+      this.$confirm("此操作将冻结该用户, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          const formData = {
+            user_id: id
+          };
+          const formData2 = {
+            nickname: this.searchNameValue,
+            mobile: this.searchTelValue,
+            page: this.page
+          };
 
-      if (is_lock == 0) {
-        formData.is_lock = 1;
-      } else if (is_lock == 1) {
-        formData.is_lock = 0;
-      }
-      ApiDataModule("USERLOCK", formData).then(res => {
-        console.log(res);
-        if (res.code == CODE_OK) {
-          ApiDataModule("USERSEARCH", formData2).then(res => {
-            this.userList = res.data.data;
-            this.total = res.data.total;
-            this.page = res.data.current_page;
+          if (is_lock == 0) {
+            formData.is_lock = 1;
+          } else if (is_lock == 1) {
+            formData.is_lock = 0;
+          }
+          ApiDataModule("USERLOCK", formData).then(res => {
+            console.log(res);
+            if (res.code == CODE_OK) {
+              ApiDataModule("USERSEARCH", formData2).then(res => {
+                this.userList = res.data.data;
+                this.total = res.data.total;
+                this.page = res.data.current_page;
+              });
+              this.$message({
+                type: "success",
+                message: "操作成功"
+              });
+            } else {
+              this.$message({
+                type: "warning",
+                message: res.msg
+              });
+            }
           });
+        })
+        .catch(() => {
           this.$message({
-            type: "success",
-            message: "操作成功"
+            type: "info",
+            message: "已取消"
           });
-        } else {
-          this.$message({
-            type: "warning",
-            message: res.msg
-          });
-        }
-      });
+        });
     },
     //冻结状态
     freezeStatus(status) {

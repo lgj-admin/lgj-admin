@@ -2,7 +2,7 @@
     <div class="log">
         <panpel>
             <div slot="header" class="header-content">
-                <div>
+                <div v-if="handleCode('System@logsDel')">
 
                     <el-date-picker
                         v-model="logDelTimeValue"
@@ -58,6 +58,10 @@
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+import {mapMutations,mapGetters} from 'vuex'
+import { codeStatus } from "config/utils";
+
+
 
 export default {
   data() {
@@ -67,7 +71,11 @@ export default {
       logs_list:[],
       logDelTimeValue:'',
       total:null,
+      code_status:false,
     };
+  },
+  computed:{
+    ...mapGetters(['codeList'])
   },
   created() {
     //日志列表
@@ -76,8 +84,12 @@ export default {
       this.total = res.logs_list.total;
       console.log(res)
     })
+    this.code_status = codeStatus(this.codeList,'System@logsDel')
   },
   methods: {
+    handleCode(data){
+      return codeStatus(this.codeList,data);
+    },
     //处理分页
     handlePagination(page) {
       const formData = {

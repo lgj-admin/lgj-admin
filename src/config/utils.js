@@ -26,14 +26,14 @@ export function getCurrentMenu(location, arrayMenu) {
   return null;
 }
 /**
- * 存储localStorage
+ * 存储sessionStorage
  */
 export const setStore = (name, content) => {
   if (!name) return;
   if (typeof content !== 'string') {
     content = JSON.stringify(content);
   }
-  window.localStorage.setItem(name, content);
+  window.sessionStorage.setItem(name, content);
 }
 
 /**
@@ -41,7 +41,7 @@ export const setStore = (name, content) => {
  */
 export const getStore = name => {
   if (!name) return;
-  return window.localStorage.getItem(name);
+  return window.sessionStorage.getItem(name);
 }
 
 /**
@@ -49,7 +49,19 @@ export const getStore = name => {
  */
 export const removeStore = name => {
   if (!name) return;
-  window.localStorage.removeItem(name);
+  window.sessionStorage.removeItem(name);
+}
+/**
+ * 处理状态码
+ */
+export const codeStatus = (codeList,data) => {
+  let status = false;
+  if (!data) return;
+  if (!codeList) return;
+  if (codeList.indexOf(data, 0) >= 0) {
+    status = true;
+  }
+  return status;
 }
 /**
  * 获取时间戳

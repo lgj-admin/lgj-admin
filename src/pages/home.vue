@@ -35,7 +35,7 @@
                         <el-button @click="handleSearch" class="search-button" type="primary">搜索</el-button>
                     </div>
                     <div class="header-content-right">
-                        <el-button @click="add()" type="primary">添加</el-button>
+                        <el-button v-if="handleCode('Staff@employeeAddEdit')" @click="add()" type="primary">添加</el-button>
                     </div>
                 </div>
                 <!-- <div class="bottom" v-show="activeIndex == 1">
@@ -81,8 +81,8 @@
                                     {{item.area_name}}——{{item.city}}
                                 </div>
                                 <div class="td">
-                                    <a  href="javascript:void(0)" @click="handleEdit(item.id)">分配编辑</a>
-                                    <a href="javascript:void(0)" @click="handleDelete(item.id)">删除</a>
+                                    <a  href="javascript:void(0)" v-if="handleCode('Staff@employeeAddEdit')" @click="handleEdit(item.id)">分配编辑</a>
+                                    <a href="javascript:void(0)" v-if="handleCode('Staff@employeeDelete')" @click="handleDelete(item.id)">删除</a>
                                 </div>
                             </div>
                         </div>
@@ -151,8 +151,10 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
-import { isMobil } from "config/utils";
+import { isMobil,codeStatus } from "config/utils";
 import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
+import {mapGetters} from 'vuex'
+
 
 export default {
   data() {
@@ -243,7 +245,13 @@ export default {
       this.goodsList = res.data;
     })
   },
+  computed:{
+    ...mapGetters(['codeList'])
+  },
   methods: {
+    handleCode(data){
+      return codeStatus(this.codeList,data);
+    },
     //分页
     handlePagination(e) {
       const formData = {
@@ -385,7 +393,7 @@ export default {
     },
     //删除
     handleDelete(id) {
-      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+      this.$confirm("此操作将永久删除该员工, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"

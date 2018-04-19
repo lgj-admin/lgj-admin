@@ -3,8 +3,8 @@
         <panpel>
             <div slot="header" class="header-content">
                 <div class="header-content-left">
-                  <el-button class="search-button" @click="add()" type="primary">添加广告</el-button>
-                  <span>上传图片大小不能超过2M (建议尺寸：750x300)</span>
+                  <el-button v-if="handleCode('System@handleAd')" class="search-button" @click="add()" type="primary">添加广告</el-button>
+                  <span style="color:red">上传图片大小不能超过2M (建议尺寸：750x300)</span>
                 </div>
                 <div class="header-content-right">
                 </div>
@@ -32,8 +32,8 @@
                                 <div class="td">{{item.orderby}}</div>
                                 <div class="td">{{getMediaType(item.media_type)}}</div>
                                 <div class="td">
-                                  <a href="javascript:void(0)" @click="handleEdit(item.ad_id)">编辑</a>
-                                  <a href="javascript:void(0)" @click="handleDelete(item.ad_id)">删除</a>
+                                  <a href="javascript:void(0)" v-if="handleCode('System@handleAd')" @click="handleEdit(item.ad_id)">编辑</a>
+                                  <a href="javascript:void(0)" v-if="handleCode('System@adDel')" @click="handleDelete(item.ad_id)">删除</a>
                                 </div>
                             </div>
                         </div>
@@ -96,6 +96,8 @@ import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
 import Upload from "components/upload";
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+import {codeStatus} from "config/utils";
+import {mapGetters} from 'vuex'
 
 export default {
   data() {
@@ -124,12 +126,18 @@ export default {
   created() {
     this.init();
   },
+  computed:{
+    ...mapGetters(['codeList'])
+  },
   methods: {
     init(){
       ApiDataModule("ADLIST").then(res => {
         console.log(res);
         this.adList = res.data;
       });
+    },
+    handleCode(data){
+      return codeStatus(this.codeList,data);
     },
     handlesubmit(formName) {
       console.log("bbb");
@@ -216,7 +224,7 @@ export default {
       });
     },
     handleDelete(id) {
-      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+      this.$confirm("此操作将永久删除该图片, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"

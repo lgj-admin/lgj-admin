@@ -22,7 +22,7 @@ export const menuList = [
         href: "/authority",
         name: "权限管理",
         icon: "fa fa-certificate",
-        code:'	System@systemAuthList',
+        code:'System@systemAuthList',
         children:[]
       },
       // {
@@ -65,7 +65,7 @@ export const menuList = [
         href: "/city",
         name: "城市区域",
         icon: "fa fa-cc",
-        code:'sdfdsf',
+        code:'System@cityList',
         children:[]
       },
     ]
@@ -83,7 +83,7 @@ export const menuList = [
         href: "/regional",
         name: "大区经理",
         icon: "fa fa-address-card",
-        code:'sdfsdf',
+        code:'Admin@branchManagerList',
         children:[]
       },
       {
@@ -92,7 +92,7 @@ export const menuList = [
         href: "/customer",
         name: "客服",
         icon: "fa fa-users",
-        code:'sdfsd',
+        code:'Admin@customerServiceList',
         children:[]
       },
     ]
@@ -110,7 +110,7 @@ export const menuList = [
         href: "/area",
         name: "区域经理",
         icon: "fa fa-id-card-o",
-        code:'sdfdsf',
+        code:'Staff@areaManagerList',
         children:[]
       },
       {
@@ -119,7 +119,7 @@ export const menuList = [
         href: "/home",
         name: "员工",
         icon: "fa fa-user-plus",
-        code:'sdfsdf',
+        code:'Staff@employeeList',
         children:[]
       },
       {
@@ -128,7 +128,7 @@ export const menuList = [
         href: "/user",
         name: "用户",
         icon: "fa fa-user",
-        code:'sfsdf',
+        code:'User@userSearch',
         children:[]
       },
     ]
@@ -146,7 +146,7 @@ export const menuList = [
     href: "/comment",
     name: "评价管理",
     icon: "fa fa-comment",
-    code:'sdfdsf',
+    code:'Comments@commentList',
     children:[]
   },
   {

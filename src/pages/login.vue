@@ -79,7 +79,7 @@ export default {
                 onClose:()=>{
                   this.submit = true;
                   this.$router.push({
-                    path:'/user'
+                    path:'/service'
                   })
                 }
               })
