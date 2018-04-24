@@ -62,12 +62,12 @@
 </template>
 
 <script type="text/babel">
-import Emitter from "element-ui/src/mixins/emitter";
-import Locale from "element-ui/src/mixins/locale";
-import ElSelectMenu from "element-ui/packages/select/src/select-dropdown.vue";
-import Clickoutside from "element-ui/src/utils/clickoutside";
-import { addClass, removeClass, hasClass } from "element-ui/src/utils/dom";
-import {addResizeListener,removeResizeListener} from "element-ui/src/utils/resize-event";
+// import Emitter from "element-ui/src/mixins/emitter";
+// import Locale from "element-ui/src/mixins/locale";
+// import ElSelectMenu from "element-ui/packages/select/src/select-dropdown.vue";
+// import Clickoutside from "element-ui/src/utils/clickoutside";
+// import { addClass, removeClass, hasClass } from "element-ui/src/utils/dom";
+// import {addResizeListener,removeResizeListener} from "element-ui/src/utils/resize-event";
 import treeter from "components/treeter";
 
 const sizeMap = {

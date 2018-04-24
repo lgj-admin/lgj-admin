@@ -508,8 +508,8 @@
   </panpel>
 </template>
 <script type="text/babel">
-import selectTree from "components/selectTree.vue";
-import merge from "element-ui/src/utils/merge";
+// import selectTree from "components/selectTree.vue";
+// import merge from "element-ui/src/utils/merge";
 import Panpel from "base/panpel";
 import {menuList} from '../mock/dataBase';
 import ModelBox from "components/modelBox";
@@ -517,7 +517,7 @@ import ModelBox from "components/modelBox";
 
 export default {
   components: {
-    "el-select-tree": selectTree,
+    // "el-select-tree": selectTree,
     Panpel,
     ModelBox
   },

@@ -182,7 +182,6 @@
  					            <div class="td" style="text-align: left;">{{item.tel}}</div>
  					            <div class="td" style="text-align: left;">{{getWorkStatus(item.work_status)}}</div>
  					        </div>
-
  					    </div>
  					</div>
     </model-box>

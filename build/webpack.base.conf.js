@@ -2,12 +2,19 @@
 const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
+const os = require('os')
 const vueLoaderConfig = require('./vue-loader.conf')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
+var HappyPack = require('happypack');
+var happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
+
+Object.assign(vueLoaderConfig.loaders, {
+  js: 'happypack/loader?id=happy-babel-vue',
+})
 
 
 module.exports = {
@@ -23,9 +30,13 @@ module.exports = {
       : config.dev.assetsPublicPath
   },
   resolve: {
-    // root: path.resolve('src/node_modules'),
+    modules: [
+      resolve('src'),
+      resolve('node_modules')
+    ],
     extensions: ['.js', '.vue', '.json'],
     alias: {
+      'vue$': 'vue/dist/vue.min.js',
       '@': resolve('src'),
       'components':resolve('src/components'),
       'pages':resolve('src/pages'),
@@ -35,20 +46,25 @@ module.exports = {
     }
   },
   module: {
+    noParse: /node_modules\/(element-ui\.js)/,
     rules: [
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-        options: vueLoaderConfig
+        include: [resolve('src')],
+        options: vueLoaderConfig,
+        exclude: /node_modules\/(?!(autotrack|dom-utils))|vendor\.dll\.js/
       },
       {
-        test: /\.js$/,
-        loader: 'babel-loader',
+        test: /\.js[x]?$/,
+        loader: 'babel-loader?cacheDirectory=true',
         include: [
           resolve('src'),
           resolve('test'),
           resolve('node_modules/webpack-dev-server/client')
-        ]
+        ],
+        exclude: path.resolve(__dirname,'node_modules'),
+        loader: 'happypack/loader?id=happybabel'
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -76,6 +92,22 @@ module.exports = {
       }
     ]
   },
+  plugins: [
+    new HappyPack({
+      id: 'happybabel',
+      loaders: ['babel-loader?cacheDirectory=true'],
+      threadPool: happyThreadPool,
+      cache: true,
+      verbose: true
+    }),
+    new HappyPack({
+      id: 'happy-babel-vue',
+      loaders: ['babel-loader?cacheDirectory=true'],
+      threadPool: happyThreadPool,
+      cache: true,
+      verbose: true
+    }),
+  ],
   node: {
     // prevent webpack from injecting useless setImmediate polyfill because Vue
     // source contains it (although only uses it if it's native).
