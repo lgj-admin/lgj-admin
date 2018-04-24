@@ -82,7 +82,7 @@
                                 </div>
                                 <div class="td">
                                     <a  href="javascript:void(0)" v-if="handleCode('Staff@employeeAddEdit')" @click="handleEdit(item.id)">分配编辑</a>
-                                    <a href="javascript:void(0)" v-if="handleCode('Staff@employeeDelete')" @click="handleDelete(item.id)">删除</a>
+                                    <a href="javascript:void(0)" v-if="handleCode('Staff@employeeDelete')" @click="handleDelete(item.id,item.status)">{{item.status == 0?'删除':'恢复'}}</a>
                                 </div>
                             </div>
                         </div>
@@ -270,10 +270,9 @@ export default {
           this.employeeList = res.data.data;
           this.total = res.data.total;
           this.page = res.data.current_page;
-        }else{
-          this.loading = false;
-          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+          return;
         }
+        this.$message({type:'warning',message:`${res.code}数据接收异常`})
       });
     },
     handleCode(data){
@@ -307,36 +306,37 @@ export default {
                   message: "添加成功"
                 });
                 this.init();
-              } else {
-                this.$message({
-                  type: "warning",
-                  message: res.msg
-                });
+                return;
               }
+              this.$message({
+                type: "warning",
+                message: res.msg
+              });
             });
-          } else {
-            //编辑
-            console.log('asdasd')
-            formData.type = 2;
-            formData.id = this.id;
-            ApiDataModule("EMPLOYEEADDEDIT", formData).then(res => {
-              console.log(res);
-              if (res.code == CODE_OK) {
-                this.$refs[formName].resetFields();
-                this.showmodel = false;
-                this.$message({
-                  type: "success",
-                  message: "编辑成功"
-                });
-                this.init();
-              } else {
-                this.$message({
-                  type: "warning",
-                  message: res.msg
-                });
-              }
-            });
+            return;
           }
+          //编辑
+          console.log('编辑')
+          formData.type = 2;
+          formData.id = this.id;
+          ApiDataModule("EMPLOYEEADDEDIT", formData).then(res => {
+            console.log(res);
+            if (res.code == CODE_OK) {
+              this.$refs[formName].resetFields();
+              this.showmodel = false;
+              this.$message({
+                type: "success",
+                message: "编辑成功"
+              });
+              this.init();
+              return;
+            }
+            this.$message({
+              type: "warning",
+              message: res.msg
+            });
+          });
+          return;
         } else {
           return false;
         }
@@ -373,33 +373,43 @@ export default {
       this.showmodel = true;
     },
     //删除
-    handleDelete(id) {
-      this.$confirm("此操作将永久删除该员工, 是否继续?", "提示", {
+    handleDelete(id,status) {
+      this.$confirm(`此操作将${status == 0?'删除':'恢复'}该员工是否继续`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(() => {
-          ApiDataModule("EMPLOYEEDELETE", { id: id }).then(res => {
+          const formData = {
+            id:id
+          };
+          if(status == 0){
+            formData.status = 1;
+          }
+          if(status == 1){
+            formData.status = 0;
+          }
+          ApiDataModule("EMPLOYEEDELETE", formData).then(res => {
             console.log(res);
             if (res.code == CODE_OK) {
               this.$message({
                 type: "success",
-                message: "删除成功!"
+                message: "操作成功!"
               });
               this.init();
-            } else {
-              this.$message({
-                type: "warning",
-                message: res.msg
-              });
+              return;
             }
+            this.$message({
+              type: "warning",
+              message: res.msg
+            });
           });
+          return;
         })
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消删除"
+            message: "已取消"
           });
         });
     }

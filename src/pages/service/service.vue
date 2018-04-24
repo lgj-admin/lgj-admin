@@ -461,10 +461,10 @@ export default {
           if(res.code == CODE_OK){
             this.loading = false;
             this.getGoodsList = res.data;
-          }else{
-            this.loading = false;
-            this.$message({type:'warning',message:`${res.code}数据接收异常`})
+            return;
           }
+          this.loading = false;
+          this.$message({type:'warning',message:`${res.code}数据接收异常`})
         });
         return;
       }

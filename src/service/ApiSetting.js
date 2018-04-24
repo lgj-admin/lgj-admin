@@ -808,6 +808,15 @@ export const API_URL = {
     method: 'POST',
     writer: '王健男',
   },
+  CHANGEORDERSTATUS: {
+    domain: ROOT_URL,
+    apiUrl: '/Admin/Order/changeOrderStatus',
+    author: '刘云鹏',
+    fetchUrl: ROOT_URL + '/Admin/Order/changeOrderStatus',
+    remark: '改变订单状态',
+    method: 'POST',
+    writer: '王健男',
+  },
 
 
 

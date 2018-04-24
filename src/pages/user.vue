@@ -181,9 +181,9 @@ export default {
           this.userList = res.data.data;
           this.total = res.data.total;
           this.page = res.data.current_page;
-        }else{
-          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+          return;
         }
+        this.$message({type:'warning',message:`${res.code}数据接收异常`})
       });
     },
     handleCode(data) {
@@ -211,12 +211,12 @@ export default {
                 message: "提交成功"
               });
               this.init();
-            } else {
-              this.$message({
-                type: "warning",
-                message: res.msg
-              });
+              return;
             }
+            this.$message({
+              type: "warning",
+              message: res.msg
+            });
             console.log(res);
           });
         } else {

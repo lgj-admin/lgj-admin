@@ -89,8 +89,8 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
-import { isMobil,codeStatus} from "config/utils";
-import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
+import { isMobil,codeStatus,removeStore} from "config/utils";
+import { ApiDataModule, CODE_OK, CODE_ERR ,CODE_Login} from "config/axios.js";
 import {mapMutations ,mapGetters} from 'vuex'
 
 
@@ -125,9 +125,17 @@ export default {
           this.loading = false;
           this.feedback_list = res.feedback_list.data;
           this.total = res.feedback_list.total;
-        }else{
-          this.$message({type:'warning',message:'数据接收异常'})
+          return;
         }
+        if(res.code == CODE_Login){
+          this.loading = false;
+          this.$message({type:'warning',message:"未登录，请先登录"});
+          removeStore('ADMININFO');
+          this.$router.push({path:'/login'})
+          return;
+        }
+        this.loading = false;
+        this.$message({type:'warning',message:'数据接收异常'})
       })
     },
     handleCode(data){
@@ -162,12 +170,12 @@ export default {
               this.showmodel = false;
               this.msg_id = null;
               this.modify_newsCount(this.newsCount);
-            }else{
-              this.$message({
-                type:'warning',
-                message:res.msg
-              })
+              return;
             }
+            this.$message({
+              type:'warning',
+              message:res.msg
+            })
           })
         } else {
           return false;

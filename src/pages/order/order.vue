@@ -10,9 +10,9 @@
 				  	<el-menu-item index="4">已完成</el-menu-item>
 				</el-menu>
 				<div class="bottom">
-					<el-input v-model="searche_input" placeholder="请输入预约人或订单号" class="bottom-input1" clearable></el-input>
-					<el-button type="primary" class="bottom-button1" @click="handleSearch">搜索</el-button>
-					<el-button type="primary" class="bottom-button2" v-if="handleCode('Order@addOrder')" @click="addOrder()">添加订单</el-button>
+            <el-input v-model="searche_input" placeholder="请输入预约人或订单号" class="bottom-input1" clearable></el-input>
+            <el-button type="primary" class="bottom-button1" @click="handleSearch">搜索</el-button>
+            <el-button type="primary" class="bottom-button2" v-if="handleCode('Order@addOrder')" @click="addOrder()">添加订单</el-button>
 				</div>
 			</div>
 			<div slot="body" class="body">
@@ -20,11 +20,13 @@
 			        <div class="thead body-table-thead">
 			            <div class="tr">
 			                <div class="td">订单编号</div>
+			                <div class="td">用户账号</div>
 			                <div class="td">预约人</div>
 			                <div class="td">预约时间</div>
 			                <div class="td">预约内容</div>
 			                <div class="td">预约地点</div>
 			                <div class="td" v-if="active_index == '1'">分配状态</div>
+			                <div class="td" v-if="active_index == '2' || active_index == '3'">改变订单状态</div>
 			                <div class="td" v-if="active_index == '2' || active_index == '3' || active_index == '4'">服务员工</div>
 			                <div class="td" v-if="active_index == '4'">完成时间</div>
 			                <div class="td">操作</div>
@@ -33,6 +35,7 @@
 			        <div class="tbody">
 			            <div class="tr body-table-tr" v-for="(item,index) of orderList" :key="index">
 			                <div class="td">{{item.order_sn}}</div>
+			                <div class="td">{{item.mobile}}</div>
 			                <div class="td">{{item.consignee}}</div>
 			                <div class="td">{{item.reservation_time}}</div>
 			                <div class="td">
@@ -42,6 +45,9 @@
                       </div>
 			                <div class="td">{{item.address}}</div>
 			                <div class="td" v-if="active_index == '1'">{{allocateStatus(item.area_boss_id)}}</div>
+			                <div class="td" v-if="active_index == '2' || active_index == '3'">
+                          <a href="javascript:void(0)" @click="changeOrderStatus(item.order_id)">改变</a>
+                      </div>
 			                <div class="td" v-if="active_index == '2' || active_index == '3' || active_index == '4'">
                           <div v-for="(item3,index3) in item.goods_list" :key="index3" style="padding:4px 2px;">
                               {{item3.staff_name}}
@@ -248,14 +254,15 @@ export default {
         formData.keyword = this.searche_input;
       }
       ApiDataModule("GETORDERLIST", formData).then(res => {
+        console.log(res);
         if(res.code == CODE_OK){
           this.loading = false;
           this.orderList = res.data.data;
           this.total = res.data.total;
-        }else{
-          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+          return;
         }
-        console.log(res);
+        this.loading = false;
+        this.$message({type:'warning',message:`${res.code}数据接收异常`})
       });
     },
     handleCode(data){
@@ -295,9 +302,9 @@ export default {
         if(res.code == CODE_OK){
           this.add_order_switch = false;
           this.$message({type:'success',message:'添加成功'})
-        }else{
-          this.$message({type:'warning',message:res.msg})
+          return;
         }
+        this.$message({type:'warning',message:res.msg})
       })
     },
     //分配订单
@@ -387,16 +394,16 @@ export default {
         formData.staff_id = this.selectRadioValue;
       }
       ApiDataModule("DISTRIBUTIONORDER", formData).then(res => {
+        console.log(res);
         if (res.code == CODE_OK) {
           this.init();
           this.$message({ type: "success", message: "分配成功" });
           this.handleManagerOrder(this.order_id);
           this.selectEmployee = false;
           this.selectRadioValue = null;
-        } else {
-          this.$message({ type: "warning", message: res.msg });
+          return;
         }
-        console.log(res);
+        this.$message({ type: "warning", message: res.msg });
       });
     },
     handleSelect(index) {
@@ -422,6 +429,41 @@ export default {
         return "已分配到区域经理";
       }
     },
+    //改变订单状态
+    changeOrderStatus(id){
+
+      this.$confirm("此操作将改变该订单状态, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          const formData = {
+            id:id,
+          }
+          if(this.active_index == 2){
+            formData.status = 3;
+          }
+          if(this.active_index == 3){
+            formData.status = 4;
+          }
+          ApiDataModule('CHANGEORDERSTATUS',formData).then(res=>{
+            console.log(res);
+            if(res.code == CODE_OK){
+              this.$message({type:'success',message:'操作成功'})
+              this.init();
+            }else{
+              this.$message({type:'warning',message:res.msg})
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消"
+          });
+        });
+    },
     //删除
     handleDelete(id) {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
@@ -438,12 +480,12 @@ export default {
                 message: "删除成功!"
               });
               this.init();
-            } else {
-              this.$message({
-                type: "warning",
-                message: res.msg
-              });
+              return;
             }
+            this.$message({
+              type: "warning",
+              message: res.msg
+            });
           });
         })
         .catch(() => {

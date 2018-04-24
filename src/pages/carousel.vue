@@ -81,7 +81,7 @@
                       <el-input v-model="ruleForm.goods_id"></el-input>
                   </el-form-item>
                   <el-form-item>
-                      <el-button @click="handlesubmit('ruleForm')">添加</el-button>
+                      <el-button @click="handlesubmit('ruleForm')">{{!id?'添加':'编辑'}}</el-button>
                       <el-button @click="showmodel = false">返回列表</el-button>
                   </el-form-item>
               </el-form>
@@ -138,10 +138,10 @@ export default {
         if(res.code == CODE_OK){
           this.loading = false;
           this.adList = res.data;
-        }else{
-          this.loading = true;
-          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+          return;
         }
+        this.loading = true;
+        this.$message({type:'warning',message:`${res.code}数据接收异常`})
       });
     },
     handleCode(data){
@@ -158,15 +158,14 @@ export default {
           form.append("type", this.ruleForm.linkType);
           form.append("enabled", this.ruleForm.enabled);
           form.append("orderby", this.ruleForm.orderby);
-          if(this.imgFile){
-            form.append("code", this.imgFile);
-          }else{
+          if(!this.imgFile){
             this.$message({
               type:'warning',
               message:'请选择添加图片'
             })
             return;
           }
+          form.append("code", this.imgFile);
           if (this.id) {
             form.append("id", this.id);
           }
@@ -179,12 +178,12 @@ export default {
                 message:'提交成功'
               })
               this.init();
-            }else{
-              this.$message({
-                type:'warning',
-                message:res.data.msg
-              })
+              return;
             }
+            this.$message({
+              type:'warning',
+              message:res.data.msg
+            })
           });
         } else {
           return false;
@@ -246,12 +245,12 @@ export default {
                 message: "删除成功!"
               });
               this.init();
-            }else{
-              this.$message({
-                type: "warning",
-                message: res.msg
-              });
+              return;
             }
+            this.$message({
+              type: "warning",
+              message: res.msg
+            });
           })
         })
         .catch(() => {
@@ -266,24 +265,22 @@ export default {
       let status = "";
       if (type == 1) {
         status = "是";
-        return status;
       }
       if (type == 2) {
         status = "否";
-        return status;
       }
+      return status;
     },
     //跳转类型
     getMediaType(type) {
       let status = "";
       if (type == 1) {
         status = "跳转活动";
-        return status;
       }
       if (type == 2) {
         status = "跳转商品";
-        return status;
       }
+      return status;
     }
   },
   components: {

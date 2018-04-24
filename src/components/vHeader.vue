@@ -7,9 +7,11 @@
             <nav>
                 <div class="nav-padding nav-name">
                     <transition name="move">
-                        <i class="news_tip fa fa-commenting" v-if="newsCount && handleCode('System@feedbackList')" @click="jump()">
+                        <div class="news-wrapper">
+                            <i class="news_tip fa fa-commenting" v-if="newsCount && handleCode('System@feedbackList')" @click="jump()">
+                            </i>
                             <span class="news_count inner">{{newsCount}}</span>
-                        </i>
+                        </div>
                     </transition>
                     <span v-html="admininfo.user_name"></span>
                 </div>
@@ -20,10 +22,9 @@
 </template>
 
 <script>
-import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
-import { getStore,removeStore } from "config/utils";
+import { ApiDataModule, CODE_OK, CODE_ERR ,CODE_Login} from "config/axios.js";
+import { getStore,removeStore,codeStatus } from "config/utils";
 import {mapMutations ,mapGetters} from 'vuex'
-import {codeStatus} from "config/utils";
 
 
 export default {
@@ -57,6 +58,15 @@ export default {
         })
       },3600000)
     }
+    ApiDataModule('FEEDBACKLIST').then(res=>{
+      console.log(res,'1111111');
+      if(res.code == CODE_Login){
+        this.$message({type:'warning',message:"未登录，请先登录"});
+        removeStore('ADMININFO');
+        this.$router.push({path:'/login'})
+        return;
+      }
+    })
   },
   methods:{
     ...mapMutations({
@@ -143,27 +153,39 @@ nav .nav-out{
   padding-right:20px;
   cursor:pointer;
 }
-.news_tip{
+.news-wrapper{
   position: relative;
   display: inline-block;
-  margin-right: 5px;;
+}
+.news_tip{
+  display: inline-block;
+  margin-right: 10px;;
   /* padding:5px 5px;
   border-radius: 50%;
   background-color: red; */
   vertical-align: middle;
-  color:red;
+  color:#16a085;
   transition: all 0.4s linear;
+  font-size: 16px;
   cursor: pointer;
+  z-index:10;
 }
 .news_tip:hover{
   color:#fff;
 }
 .news_count{
   position: absolute;
-  top:-4px;
-  right:-5px;
+  top:4px;
+  right:-2px;
+  width:16px;
+  height:16px;
+  line-height: 16px;
+  text-align: center;
   font-size:10px;
   color:#fff;
+  background-color: red;
+  border-radius: 50%;
+  z-index: 999;
 }
 .inner {
   transition: all 0.4s linear;

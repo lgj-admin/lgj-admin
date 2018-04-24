@@ -87,14 +87,14 @@ export default {
       this.loading = true;
       //日志列表
       ApiDataModule('LOGSLIST',{page:this.page}).then(res=>{
+        console.log(res)
         if(res.code == CODE_OK){
           this.loading = false;
           this.logs_list = res.logs_list.data;
           this.total = res.logs_list.total;
-        }else{
-          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+          return;
         }
-        console.log(res)
+        this.$message({type:'warning',message:`${res.code}数据接收异常`})
       });
     },
     handleCode(data){
@@ -120,6 +120,7 @@ export default {
             end:end,
           };
           ApiDataModule('LOGSDEL',formData).then(res=>{
+            console.log(res);
             if(res.code == CODE_OK){
               this.$message({
                 type: 'success',
@@ -129,13 +130,12 @@ export default {
                 }
               });
               this.logDelTimeValue = '';
-            }else{
-              this.$message({
-                type:'warning',
-                message:res.msg
-              })
+              return;
             }
-            console.log(res);
+            this.$message({
+              type:'warning',
+              message:res.msg
+            })
           })
 
         }).catch(() => {

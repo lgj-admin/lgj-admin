@@ -107,11 +107,11 @@ export default {
           this.loading = false;
           this.cityList = res.data.data;
           this.total = res.data.total;
-          console.log(res)
-        }else{
-          this.loading = false;
-          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+          console.log(res);
+          return;
         }
+        this.loading = false;
+        this.$message({type:'warning',message:`${res.code}数据接收异常`})
       });
     },
     handleCode(data){

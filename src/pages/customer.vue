@@ -24,7 +24,9 @@
                                 <div class="td">{{item.phone}}</div>
                                 <div class="td">
                                     <a href="javascript:void(0)" v-if="handleCode('Admin@customerServiceDoEdit')" @click="handleEdit(item.admin_id)">编辑</a>
-                                    <a href="javascript:void(0)" v-if="handleCode('Admin@customerServiceDelete')" @click="handleDelete(item.admin_id)">删除</a>
+                                    <a href="javascript:void(0)" v-if="handleCode('Admin@customerServiceDelete')" @click="handleDelete(item.admin_id,item.status)">
+                                        {{item.status == 0?'删除':'恢复'}}
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -158,10 +160,10 @@ export default {
           this.loading = false;
           this.customerServiceList = res.data.data;
           this.total = res.data.total;
-        }else{
-          this.loading = false;
-          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+          return;
         }
+        this.loading = false;
+        this.$message({type:'warning',message:`${res.code}数据接收异常`})
       });
     },
     handleCode(data){
@@ -187,30 +189,33 @@ export default {
                   message: "添加成功"
                 });
                 this.init();
-              } else {
-                this.$message({
-                  type: "warning",
-                  message: res.msg
-                });
+                return;
               }
+              this.$message({
+                type: "warning",
+                message: res.msg
+              });
             });
-          } else {
-            formData.id = this.id;
-            ApiDataModule("CUSTOMERSERVICEDOEDIT", formData).then(res => {
-              if (res.code == CODE_OK) {
-                this.$message({
-                  type: "success",
-                  message: "编辑成功"
-                });
-                this.init();
-              } else {
-                this.$message({
-                  type: "warning",
-                  message: res.msg
-                });
-              }
-            });
+            return;
           }
+          //编辑
+          console.log('编辑')
+          formData.id = this.id;
+          ApiDataModule("CUSTOMERSERVICEDOEDIT", formData).then(res => {
+            if (res.code == CODE_OK) {
+              this.$message({
+                type: "success",
+                message: "编辑成功"
+              });
+              this.init();
+              return;
+            }
+            this.$message({
+              type: "warning",
+              message: res.msg
+            });
+          });
+          return;
         } else {
           return false;
         }
@@ -246,30 +251,38 @@ export default {
       });
     },
     //删除
-    handleDelete(id) {
-      this.$confirm("此操作将永久删除该客服, 是否继续?", "提示", {
+    handleDelete(id,status) {
+      this.$confirm(`此操作将${status == 0?'删除':'恢复'}该客服, 是否继续?`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(() => {
-          ApiDataModule("CUSTOMERSERVICEDELETE", {
-            id: id
-          }).then(res => {
+          const formData = {
+            id:id
+          }
+          if(status == 0){
+            formData.status = 1;
+          }
+          if(status == 1){
+            formData.status = 0;
+          }
+          ApiDataModule("CUSTOMERSERVICEDELETE",formData).then(res => {
             console.log(res);
             if (res.code == CODE_OK) {
+              this.$message({
+                type: "success",
+                message: "操作成功!"
+              });
               this.init();
+              return;
             }
-          });
-          this.$message({
-            type: "success",
-            message: "删除成功!"
           });
         })
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消删除"
+            message: "已取消"
           });
         });
     }

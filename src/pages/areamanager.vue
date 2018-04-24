@@ -37,7 +37,9 @@
                                 <div class="td">{{item.user_name}} {{item.phone}}</div>
                                 <div class="td">
                                     <a href="javascript:void(0)" v-if="handleCode('Staff@areaManagerDoEdit')" @click="handleEdit(item.id)">编辑</a>
-                                    <a href="javascript:void(0)" v-if="handleCode('Staff@areaManagerDelete')" @click="handleDelete(item.id)">删除</a>
+                                    <a href="javascript:void(0)" v-if="handleCode('Staff@areaManagerDelete')" @click="handleDelete(item.id,item.status)">
+                                        {{item.status == 0?'删除':'恢复'}}
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -168,10 +170,10 @@ export default {
           this.areaManagerList = res.data.data;
           this.total = res.data.total;
           this.page = res.data.current_page;
-        }else{
-          this.loading = false;
-          this.$message({type:'warning',message:`${res.code}数据接收异常`})
+          return;
         }
+        this.loading = false;
+        this.$message({type:'warning',message:`${res.code}数据接收异常`})
       });
     },
     handleCode(data){
@@ -202,32 +204,34 @@ export default {
                   message: "添加成功"
                 });
                 this.init();
-              } else {
-                this.$message({
-                  type: "warning",
-                  message: res.msg
-                });
+                return;
               }
+              this.$message({
+                type: "warning",
+                message: res.msg
+              });
             });
-          } else {
-            //编辑操作
-            formData.id = this.id;
-            ApiDataModule("AREAMANAGERDOEDIT", formData).then(res => {
-              console.log(res);
-              if (res.code == CODE_OK) {
-                this.$message({
-                  type: "success",
-                  message: "编辑成功"
-                });
-                this.init();
-              } else {
-                this.$message({
-                  type: "warning",
-                  message: res.msg
-                });
-              }
-            });
+            return;
           }
+          //编辑操作
+          console.log('编辑')
+          formData.id = this.id;
+          ApiDataModule("AREAMANAGERDOEDIT", formData).then(res => {
+            console.log(res);
+            if (res.code == CODE_OK) {
+              this.$message({
+                type: "success",
+                message: "编辑成功"
+              });
+              this.init();
+              return;
+            }
+            this.$message({
+              type: "warning",
+              message: res.msg
+            });
+          });
+          return;
         } else {
           return false;
         }
@@ -259,19 +263,28 @@ export default {
       this.showmodel = true;
     },
     //删除
-    handleDelete(id) {
-      this.$confirm("此操作将永久删除该区域经理, 是否继续?", "提示", {
+    handleDelete(id,status) {
+      this.$confirm(`此操作将${status == 0?'删除':'恢复'}该区域经理, 是否继续?`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(() => {
-          ApiDataModule("AREAMANAGERDELETE", { id: id }).then(res => {
+          const formData = {
+            id:id
+          };
+          if(status == 0){
+            formData.status = 1;
+          }
+          if(status == 1){
+            formData.status = 0;
+          }
+          ApiDataModule("AREAMANAGERDELETE", formData).then(res => {
             console.log(res);
             if (res.code == CODE_OK) {
               this.$message({
                 type: "success",
-                message: "删除成功!"
+                message: "操作成功!"
               });
               this.init();
             } else {
@@ -285,7 +298,7 @@ export default {
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消删除"
+            message: "已取消"
           });
         });
     }

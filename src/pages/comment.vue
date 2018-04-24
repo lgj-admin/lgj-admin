@@ -138,9 +138,9 @@ export default {
           this.loading = false;
           this.feedback_list = res.data.data;
           this.total = res.data.total;
-        }else{
-          this.$message({type:'warning',message:'数据接收异常'})
+          return;
         }
+        this.$message({type:'warning',message:'数据接收异常'})
       })
     },
     handleCode(data){
@@ -167,20 +167,20 @@ export default {
             console.log(res);
             if(res.code == CODE_OK){
               this.init(this.page,this.active_index);
+              this.ruleForm.content = null;
               this.$message({
                 type:'success',
                 message:'回复成功',
               })
               this.showmodel = false;
               this.msg_id = null;
-            }else{
-              this.$message({
-                type:'warning',
-                message:res.msg
-              })
+              return;
             }
+            this.$message({
+              type:'warning',
+              message:res.msg
+            })
           })
-          this.showmodel = false;
         } else {
           return false;
         }

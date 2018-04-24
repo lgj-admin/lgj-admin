@@ -303,11 +303,6 @@ export default {
       this.getServerPackageList = res.data;
       console.log(res, "GETSERVERPACKAGELIST");
     });
-    if (this.orderid) {
-      console.log("存在", this.orderid);
-    } else {
-      console.log("不存在", this.orderid);
-    }
   },
   methods: {
     //全选事件
@@ -396,18 +391,15 @@ export default {
           if (item.sgp_id == this.ruleForm.selectServiceItem) {
             if (this.extend_cat_id == 3) {
               let packagearea = `packagearea${item.sgp_id}`;
-              if (document.getElementsByClassName(packagearea)[0].value != "") {
-                item.count = document.getElementsByClassName(
-                  packagearea
-                )[0].value;
-              } else {
+              if (document.getElementsByClassName(packagearea)[0].value == "") {
                 this.$message({
                   type: "warning",
                   message: "面积不能为空"
                 });
                 btn = false;
-                return;
+                return btn;
               }
+              item.count = document.getElementsByClassName(packagearea)[0].value;
             }
             console.log(item, "dszfdsfds");
             this.selectgoodsItemList.push(item);
