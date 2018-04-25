@@ -25,6 +25,7 @@ import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
 
 
 
+
 Vue.use(Router)
 
 const routerConfig = [{
