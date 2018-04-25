@@ -26,7 +26,7 @@
 			                <div class="td">预约内容</div>
 			                <div class="td">预约地点</div>
 			                <div class="td" v-if="active_index == '1'">分配状态</div>
-			                <div class="td" v-if="active_index == '2' || active_index == '3'">改变订单状态</div>
+			                <div class="td" v-if="active_index == '2' || active_index == '3'">修改订单状态</div>
 			                <div class="td" v-if="active_index == '2' || active_index == '3' || active_index == '4'">服务员工</div>
 			                <div class="td" v-if="active_index == '4'">完成时间</div>
 			                <div class="td">操作</div>
@@ -45,8 +45,11 @@
                       </div>
 			                <div class="td">{{item.address}}</div>
 			                <div class="td" v-if="active_index == '1'">{{allocateStatus(item.area_boss_id)}}</div>
-			                <div class="td" v-if="active_index == '2' || active_index == '3'">
-                          <a href="javascript:void(0)" @click="changeOrderStatus(item.order_id)">改变</a>
+			                <div class="td" v-if="active_index == '2'">
+                          <a href="javascript:void(0)" @click="changeOrderStatus(item.order_id)">修改到服务中</a>
+                      </div>
+                      <div class="td" v-if="active_index == '3'">
+                          <a href="javascript:void(0)" @click="changeOrderStatus(item.order_id)">修改到已完成</a>
                       </div>
 			                <div class="td" v-if="active_index == '2' || active_index == '3' || active_index == '4'">
                           <div v-for="(item3,index3) in item.goods_list" :key="index3" style="padding:4px 2px;">
@@ -430,8 +433,14 @@ export default {
     },
     //改变订单状态
     changeOrderStatus(id){
-
-      this.$confirm("此操作将改变该订单状态, 是否继续?", "提示", {
+      let desc = '';
+      if(this.active_index ==2){
+        desc = '服务中'
+      }
+      if(this.active_index ==3){
+        desc = '已完成'
+      }
+      this.$confirm(`此操作将修改该订单状态到${desc}, 是否继续?`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
