@@ -1,5 +1,4 @@
 export const ROOT_URL = 'http://lovelaiguanjia.com';
-// const ROOT_URL = 'http://cio.ueepub.cn';
 
 export const API_URL = {
   /*

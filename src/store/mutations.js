@@ -15,6 +15,9 @@ const matutaions = {
   [types.GET_CODELIST](state, codeList) {
     state.codeList = codeList;
   },
+  [types.GET_ADMININFO](state, adminInfo) {
+    state.adminInfo = adminInfo;
+  },
 }
 
 export default matutaions

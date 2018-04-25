@@ -79,7 +79,7 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
-import { isMobil ,codeStatus} from "config/utils";
+import { isMobil ,codeStatus,setStore,removeStore} from "config/utils";
 import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
 import {mapMutations ,mapGetters} from 'vuex'
 
@@ -182,7 +182,6 @@ export default {
             formData.password = this.ruleForm.pasd;
             formData.password2 = this.ruleForm.checkPasd;
             ApiDataModule("CUSTOMERSERVICEADD", formData).then(res => {
-              console.log(res);
               if (res.code == CODE_OK) {
                 this.$message({
                   type: "success",
@@ -202,7 +201,10 @@ export default {
           console.log('编辑')
           formData.id = this.id;
           ApiDataModule("CUSTOMERSERVICEDOEDIT", formData).then(res => {
+            console.log(res);
             if (res.code == CODE_OK) {
+              removeStore('ADMININFO');
+              setStore('ADMININFO',res.admininfo);
               this.$message({
                 type: "success",
                 message: "编辑成功"

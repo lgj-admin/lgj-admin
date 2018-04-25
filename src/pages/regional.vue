@@ -88,7 +88,7 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
-import { isMobil ,codeStatus} from "config/utils";
+import { isMobil ,codeStatus,setStore,removeStore} from "config/utils";
 import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
 import {mapMutations ,mapGetters} from 'vuex'
 
@@ -217,6 +217,8 @@ export default {
             formData.id = this.id;
             ApiDataModule("BRANCHMANAGERDOEDIT", formData).then(res => {
               if (res.code == CODE_OK) {
+                removeStore('ADMININFO');
+                setStore('ADMININFO',res.admininfo);
                 this.showmodel = false;
                 console.log(res);
                 this.init();

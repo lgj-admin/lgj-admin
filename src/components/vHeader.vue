@@ -39,10 +39,12 @@ export default {
   computed:{
     ...mapGetters([
       'newsCount',
-      'codeList'
+      'codeList',
+      'adminInfo'
     ])
   },
   created(){
+    console.log(getStore('ADMININFO'));
     if(getStore('ADMININFO')){
       this.admininfo = JSON.parse(getStore('ADMININFO'));
       ApiDataModule('FEEDBACKCOUNT').then(res=>{
