@@ -74,11 +74,14 @@
                       <el-radio v-model="ruleForm.enabled" label="1">是</el-radio>
                       <el-radio v-model="ruleForm.enabled" label="2">否</el-radio>
                   </el-form-item>
-                  <el-form-item label="跳转地址" prop="ad_link">
+                  <el-form-item label="跳转地址" prop="ad_link" v-show="ruleForm.linkType == 1">
                       <el-input v-model="ruleForm.ad_link"></el-input>
                   </el-form-item>
-                  <el-form-item label="ID" prop="goods_id" v-if="ruleForm.linkType == 2">
+                  <el-form-item label="ID" prop="goods_id" v-show="ruleForm.linkType == 2">
                       <el-input v-model="ruleForm.goods_id"></el-input>
+                      <el-tooltip class="item" effect="dark" content="ID为服务内容列表id" placement="top-end">
+                          <i class="fa fa-question-circle-o" style="font-size:20px;cursor:pointer;"></i>
+                      </el-tooltip>
                   </el-form-item>
                   <el-form-item>
                       <el-button @click="handlesubmit('ruleForm')">{{!id?'添加':'编辑'}}</el-button>
@@ -140,7 +143,7 @@ export default {
           this.adList = res.data;
           return;
         }
-        this.loading = true;
+        this.loading = false;
         this.$message({type:'warning',message:`${res.code}数据接收异常`})
       });
     },
@@ -210,6 +213,7 @@ export default {
       this.imageUrl = null;
       this.imgFile = null;
       // this.$refs.upload.getInputValue().value = "";
+      this.ruleForm.goods_id = null;
       this.showmodel = true;
 
     },
@@ -222,9 +226,9 @@ export default {
         console.log(res);
         this.ruleForm.name = res.data.ad_name;
         this.ruleForm.ad_link = res.data.ad_link;
+        this.ruleForm.goods_id = res.data.goods_id;
         this.ruleForm.enabled = res.data.enabled.toString();
         this.ruleForm.orderby = res.data.orderby;
-        this.ruleForm.ad_link = res.data.ad_link;
         this.ruleForm.linkType = res.data.media_type.toString();
         this.imageUrl = res.data.ad_code;
         this.imgFile = res.data.ad_code;

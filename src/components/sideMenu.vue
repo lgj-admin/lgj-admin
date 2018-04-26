@@ -44,7 +44,6 @@ export default {
       this.getCurrentMenu(currentMenu);
       ApiDataModule('FEEDBACKCOUNT').then(res=>{
         this.get_newsCount(res.count);
-        console.log('123',res.count)
       })
     },
     ...mapMutations({

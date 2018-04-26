@@ -88,7 +88,7 @@
 <script>
 import Panpel from "base/panpel";
 import ModelBox from "components/modelBox";
-import { isMobil ,codeStatus,setStore,removeStore} from "config/utils";
+import { isMobil ,codeStatus,setStore,removeStore,getStore} from "config/utils";
 import {ApiDataModule,CODE_OK,CODE_ERR} from "config/axios.js";
 import {mapMutations ,mapGetters} from 'vuex'
 
@@ -162,9 +162,12 @@ export default {
     });
   },
   computed:{
-    ...mapGetters(['codeList'])
+    ...mapGetters(['codeList','adminInfo'])
   },
   methods: {
+    ...mapMutations({
+      get_adminInfo:'GET_ADMININFO'
+    }),
     init(){
       this.loading = true;
       //大区经理列表
@@ -216,10 +219,22 @@ export default {
           } else {
             formData.id = this.id;
             ApiDataModule("BRANCHMANAGERDOEDIT", formData).then(res => {
+              console.log(res);
               if (res.code == CODE_OK) {
-                removeStore('ADMININFO');
-                setStore('ADMININFO',res.admininfo);
+                if(res.admininfo.admin_id == this.adminInfo.admin_id){
+                  removeStore('ADMININFO');
+                  setStore('ADMININFO',res.admininfo);
+                }
                 this.showmodel = false;
+                this.$message({
+                  type: "success",
+                  message: '编辑成功',
+                  onClose:()=>{
+                    if(res.admininfo.admin_id == this.adminInfo.admin_id){
+                      this.get_adminInfo(JSON.parse(getStore('ADMININFO')));
+                    }
+                }
+                });
                 console.log(res);
                 this.init();
               } else if (res.code == CODE_ERR) {

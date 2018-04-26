@@ -36,14 +36,14 @@
 			            <div class="tr body-table-tr" v-for="(item,index) of orderList" :key="index">
 			                <div class="td">{{item.order_sn}}</div>
 			                <div class="td">{{item.mobile}}</div>
-			                <div class="td">{{item.consignee}}</div>
+			                <div class="td td-word">{{item.consignee}}</div>
 			                <div class="td">{{item.reservation_time}}</div>
-			                <div class="td">
+			                <div class="td td-word">
                           <div v-for="(item2,index2) in item.goods_list" :key="index2" style="padding:4px 2px;">
                               {{item2.goods_name}}-{{item2.attr_name}}
                           </div>
                       </div>
-			                <div class="td">{{item.address}}</div>
+			                <div class="td td-word">{{item.address}}</div>
 			                <div class="td" v-if="active_index == '1'">{{allocateStatus(item.area_boss_id)}}</div>
 			                <div class="td" v-if="active_index == '2'">
                           <a href="javascript:void(0)" @click="changeOrderStatus(item.order_id)">修改到服务中</a>
@@ -173,13 +173,13 @@
  					            <div class="td" style="text-align: left;">{{item.city_name}}</div>
  					        </div>
                    <div class="tr body-table-tr" v-for="(item,index) in staffList" :key="index"  v-if="ruleForm.identityRadio == 2">
- 					            <div class="td" style="text-align: left;">
+ 					            <div class="td td-word" style="text-align: left;">
                           <el-radio v-model="selectRadioValue" :label="item.id">{{item.name}}</el-radio>
                       </div>
  					            <div class="td" style="text-align: left;">{{item.tel}}</div>
  					        </div>
  					        <div class="tr body-table-tr" v-for="(item,index) in staffList" :key="index" v-if="ruleForm.identityRadio == 3">
- 					            <div class="td" style="text-align: left;">
+ 					            <div class="td td-word" style="text-align: left;">
                           <el-radio v-model="selectRadioValue" :label="item.id">{{item.name}}</el-radio>
                       </div>
  					            <div class="td" style="text-align: left;">{{item.tel}}</div>

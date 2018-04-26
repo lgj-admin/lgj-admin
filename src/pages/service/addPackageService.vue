@@ -65,6 +65,9 @@
                 </upload>
             </el-form-item>
             <el-form-item label="服务说明">
+                <el-tooltip class="item" effect="dark" content="服务套餐详情说明，上传图片大小不能超过2M" placement="top-start">
+                    <i class="fa fa-question-circle-o" style="font-size:20px;cursor:pointer;"></i>
+                </el-tooltip>
                 <div>
                     <quill-editor
                         v-model="ruleForm.content"

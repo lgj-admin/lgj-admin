@@ -7,11 +7,14 @@
             <nav>
                 <div class="nav-padding nav-name">
                     <transition name="move">
-                          <i class="news_tip fa fa-commenting" v-if="newsCount && handleCode('System@feedbackList')" @click="jump()">
-                            <span class="news_count inner">{{newsCount}}</span>
-                          </i>
+                          <el-tooltip effect="dark" content="客服问答未回消息数" placement="bottom-end">
+                              <i class="news_tip fa fa-commenting" v-show="newsCount && handleCode('System@feedbackList')" @click="jump()">
+                                <span class="news_count inner">{{newsCount}}</span>
+                              </i>
+                          </el-tooltip>
                     </transition>
-                    <span v-html="admininfo.user_name"></span>
+
+                    <span>{{adminInfo.user_name}}</span>
                 </div>
                 <a class="nav-padding nav-out" @click="handleSiginOut">退出</a>
             </nav>
@@ -29,9 +32,6 @@ export default {
   name: "v-header",
   data() {
     return {
-      admininfo:{
-        user_name:''
-      },
       submit:true,
       timer:null
     };
@@ -46,7 +46,6 @@ export default {
   created(){
     console.log(getStore('ADMININFO'));
     if(getStore('ADMININFO')){
-      this.admininfo = JSON.parse(getStore('ADMININFO'));
       ApiDataModule('FEEDBACKCOUNT').then(res=>{
         console.log(res);
         this.get_newsCount(res.count);
@@ -68,9 +67,15 @@ export default {
       }
     })
   },
+  mounted(){
+    if(getStore('ADMININFO')){
+      this.get_adminInfo(JSON.parse(getStore('ADMININFO')));
+    }
+  },
   methods:{
     ...mapMutations({
-      get_newsCount: "GET_NEWSCOUNT"
+      get_newsCount: "GET_NEWSCOUNT",
+      get_adminInfo:'GET_ADMININFO'
     }),
     handleCode(data){
       return codeStatus(this.codeList,data);

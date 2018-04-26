@@ -1,5 +1,6 @@
 <template>
     <div class="user">
+        <panpel>
             <div slot="header" class="header-content">
                 <div class="header-content-left">
                     <el-input placeholder="用户昵称"

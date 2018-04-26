@@ -32,12 +32,14 @@
                             添加生活套餐
                         </el-button>
                         <!-- <el-button  @click="addlifepackage = true" type="primary">上传服务图标</el-button> -->
-                        <upload
-                            v-show="activeIndex == 4"
-                            @selectUpload="handleUploadFile"
-                            listType="file">
-                        </upload>
-                        <span v-show="activeIndex == 4" style="color:red">上传图标 (建议尺寸:200X200)</span>
+                        <el-tooltip class="item" effect="dark" content="此处上传图片为服务项目添加图标所用" placement="top-start">
+                            <upload
+                                v-show="activeIndex == 4"
+                                @selectUpload="handleUploadFile"
+                                listType="file">
+                            </upload>
+                        </el-tooltip>
+                        <span v-show="activeIndex == 4" style="color:red">(上传图标建议尺寸:200X200)</span>
                     </div>
                     <div class="header-content-right">
                     </div>
@@ -72,6 +74,7 @@
                     <div class="body-table table" v-if="activeIndex == 2" v-loading="loading">
                         <div class="thead body-table-thead">
                             <div class="tr">
+                                <div class="td">ID</div>
                                 <div class="td">服务名称</div>
                                 <div class="td">服务分类</div>
                                 <div class="td">价格</div>
@@ -85,6 +88,7 @@
                         </div>
                         <div class="tbody" v-if="handleCode('Goods@getGoodsList')">
                             <div class="tr body-table-tr" v-for="(item,index) in getGoodsList" :key="index">
+                                <div class="td">{{item.goods_id}}</div>
                                 <div class="td">{{item.goods_name}}</div>
                                 <div class="td">{{item.cat_name}}</div>
                                 <div class="td">{{item.min_price}}起</div>
@@ -92,10 +96,10 @@
                                 <div class="td" @click="changeStatus(item.goods_id,item.is_on_sale,'is_on_sale','service')" style="cursor:pointer;">
                                   <a href="javascript:void(0)">{{judgmentStatus(item.is_on_sale,'is_on_sale')}}</a>
                                 </div>
-                                <div class="td" @click="changeStatus(item.goods_id,item.is_on_sale,'is_hot','service')" style="cursor:pointer;">
+                                <div class="td" @click="changeStatus(item.goods_id,item.is_hot,'is_hot','service')" style="cursor:pointer;">
                                   <a href="javascript:void(0)">{{judgmentStatus(item.is_hot,'is_hot')}}</a>
                                 </div>
-                                <div class="td" @click="changeStatus(item.goods_id,item.is_on_sale,'is_new','service')" style="cursor:pointer;">
+                                <div class="td" @click="changeStatus(item.goods_id,item.is_new,'is_new','service')" style="cursor:pointer;">
                                   <a href="javascript:void(0)">{{judgmentStatus(item.is_new,'is_new')}}</a>
                                 </div>
                                 <!-- <div class="td">1</div> -->
@@ -433,31 +437,19 @@ export default {
     ...mapGetters(['codeList'])
   },
   methods: {
-    async init() {
+    init() {
       this.loading = true;
-      //服务分类列表
-      await ApiDataModule("GETCATEGORY").then(res => {
-        console.log(res);
-        this.getCategoryList = res.data;
-      });
-      //图标列表
-      await ApiDataModule("ICONLIST").then(res => {
-        console.log(res);
-        this.iconList = res.data;
-      });
-      this.loading = false;
-    },
-    handleCode(data){
-      return codeStatus(this.codeList,data);
-    },
-    //el-menu
-    handleSelect(e) {
-      this.activeIndex = e;
-      if(e==2){
-        this.loading = true;
+      if(this.activeIndex == 1){
+        //服务分类列表
+        ApiDataModule("GETCATEGORY").then(res => {
+          this.getCategoryList = res.data;
+        });
+        this.loading = false;
+        return;
+      }
+      if(this.activeIndex == 2){
         //服务列表
         ApiDataModule("GETGOODSLIST").then(res => {
-          console.log(res, "getGoodsList");
           if(res.code == CODE_OK){
             this.loading = false;
             this.getGoodsList = res.data;
@@ -468,15 +460,30 @@ export default {
         });
         return;
       }
-      if(e==3){
-        this.loading = true;
+      if(this.activeIndex == 3){
         //服务套餐列表
         ApiDataModule("GETSERVERPACKAGELIST").then(res => {
           this.loading = false;
           this.getServerPackageList = res.data;
         });
+        this.loading = false;
         return;
       }
+      if(this.activeIndex == 4){
+        //图标列表
+        ApiDataModule("ICONLIST").then(res => {
+          this.iconList = res.data;
+        });
+        this.loading = false;
+        return;
+      }
+    },
+    handleCode(data){
+      return codeStatus(this.codeList,data);
+    },
+    //el-menu
+    handleSelect(e) {
+      this.activeIndex = e;
       this.init();
     },
     //生活套餐 添加服务项目
@@ -721,6 +728,7 @@ export default {
     //添加服务提交方法
     handleSubmitAddService(formName) {
       console.log(formName, "formName");
+      console.log(this.serviceListIcon, "this.serviceListIcon");
       console.log(this.serviceListIcon, "serviceListIcon");
       let form = new FormData();
       if (formName.serviceType == 1) {

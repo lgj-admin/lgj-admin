@@ -43,7 +43,9 @@
 
 <script>
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
-import { setStore } from "config/utils";
+import { setStore,getStore } from "config/utils";
+import {mapMutations ,mapGetters} from 'vuex'
+
 
 
 export default {
@@ -61,6 +63,9 @@ export default {
     };
   },
   methods:{
+    ...mapMutations({
+      get_adminInfo:'GET_ADMININFO'
+    }),
     handlelogin(formName){
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -69,12 +74,14 @@ export default {
           formData.phone = this.ruleForm.name;
           formData.pass  = this.ruleForm.pasd;
           ApiDataModule('ADMINLOGIN',formData).then(res=>{
+            console.log(res);
             if(res.code == CODE_OK){
               setStore('ADMININFO',res.admininfo);
               this.$message({
                 type:'success',
                 message:'登录成功',
                 onClose:()=>{
+                  this.get_adminInfo(JSON.parse(getStore('ADMININFO')));
                   this.loading = false;
                   this.$router.push({
                     path:'/service'
