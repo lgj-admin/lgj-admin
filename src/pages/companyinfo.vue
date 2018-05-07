@@ -42,7 +42,6 @@ export default {
   },
   created() {
     ApiDataModule('COMPANYINFO').then(res=>{
-      console.log(res);
       if(res.code == CODE_OK){
         this.phone = res.phone;
         this.info = res.store_desc;
@@ -76,7 +75,6 @@ export default {
         formData.store_desc = this.info;
       }
       ApiDataModule('HANDLECONFIG',formData).then(res=>{
-        console.log(res);
         if(res.code == CODE_OK){
           this.$message({
             type:'success',

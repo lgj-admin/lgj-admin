@@ -429,7 +429,6 @@ export default {
     //城市区域
     ApiDataModule("CITYLIST").then(res => {
       this.area = res.data.data;
-      console.log(res);
     });
     this.init();
   },
@@ -502,21 +501,17 @@ export default {
       this.sgp_id = id;
       this.sgp_id_radio = [];
       this.ruleForm.selectServiceItem = null;
-      console.log(id, "asdsad");
       this.selectgoodsItemList.map((item, index) => {
         if (item.sgp_id == id) {
           ApiDataModule("GETATTRBYATTR", {
             id: id
           }).then(res => {
-            console.log(res, "根据商品获取商品属性");
-            // console.log(this.selectgoodsItemList[index].goods_id, "goods_id");
             this.extend_cat_id = res.data.info.extend_cat_id;
             this.goodsAttributesList = res.data.list;
             this.$nextTick(() => {
               ApiDataModule("GETGOODSBYCATE", {
                 cate: res.data.info.cat_id
               }).then(res => {
-                console.log(res,'通过分类获取服务项目');
                 if (res.code == CODE_OK) {
                   this.getGoodsArray = res.data;
                 }else{
@@ -528,19 +523,15 @@ export default {
               });
               this.goodsAttributesList.map((item2, index2) => {
                 if (item2.sgp_id == id) {
-                  console.log("一致");
                   if (this.extend_cat_id != 3) {
                     this.goodsAttributesList[
                       index2
                     ].count = this.selectgoodsItemList[index].count;
                   } else {
-                    console.log("一致2");
-                    console.log(this.selectgoodsItemList[index], "一致22222");
                     let packagearea = `packagearea${item2.sgp_id}`;
                     document.getElementsByClassName(
                       packagearea
                     )[0].value = this.selectgoodsItemList[index].count;
-                    console.log("一致3");
                   }
                 }
               });
@@ -556,7 +547,6 @@ export default {
           this.ruleForm.serviceCategory = this.selectgoodsItemList[
             index
           ].cate_id;
-          console.log(this.selectgoodsItemList, "selectgoodsItemList");
           this.ruleForm.serviceItem = this.selectgoodsItemList[index].goods_id;
           this.ruleForm.selectServiceItem = this.selectgoodsItemList[
             index
@@ -655,7 +645,6 @@ export default {
         ApiDataModule("GETGOODSINFO", {
           id: id
         }).then(res => {
-          console.log(res, "getGoodsInfo");
           if (res.code == CODE_OK) {
             this.goods_id = res.data.goods_id;
             this.goodsInfo = res.data;
@@ -682,7 +671,6 @@ export default {
       if (type == "editPackageService") {
         this.selectgoodsItemList = [];
         ApiDataModule("GETSERVERPACKAGEINFO", { id: id }).then(res => {
-          console.log(res);
           if (res.code == CODE_OK) {
             this.goods_id = res.data.goods_id;
             this.goodsInfo = res.data;
@@ -711,7 +699,6 @@ export default {
             formData.id = this.categoryId;
           }
           ApiDataModule("ADDCATEGORY", formData).then(res => {
-            console.log(res);
             if (res.code == CODE_OK) {
               this.$message({ type: "success", message: "添加成功" });
               this.init();
@@ -727,9 +714,6 @@ export default {
     },
     //添加服务提交方法
     handleSubmitAddService(formName) {
-      console.log(formName, "formName");
-      console.log(this.serviceListIcon, "this.serviceListIcon");
-      console.log(this.serviceListIcon, "serviceListIcon");
       let form = new FormData();
       if (formName.serviceType == 1) {
         const serviceListIcon = JSON.stringify(this.serviceListIcon);
@@ -754,10 +738,8 @@ export default {
       });
       if (this.goods_id) {
         //编辑
-        console.log("编辑");
         form.append("id", this.goods_id);
         ApiDataModule("EDITGOODS", form).then(res => {
-          console.log(res, "编辑");
           if (res.data.code == CODE_OK) {
             this.addservice = false;
             //服务列表
@@ -776,9 +758,7 @@ export default {
         return;
       } else {
         //添加
-        console.log("添加");
         ApiDataModule("ADDGOODS", form).then(res => {
-          console.log(res);
           if (res.data.code == CODE_OK) {
             this.addservice = false;
             //服务列表
@@ -805,14 +785,10 @@ export default {
     },
     //生活套餐里添加项目提交方法
     handleAddServiceItem(formName) {
-      console.log(this.goodsAttributesList, "goodsAttributesList");
-      console.log(this.sgp_id_radio, "sgp_id_radio");
-      console.log(this.selectgoodsItemList, "ruleForm.selectgoodsItemList");
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (this.sgp_id) {
             //编辑
-            console.log("编辑");
             this.selectgoodsItemList.map((item, index) => {
               if (item.sgp_id == this.sgp_id) {
                 this.selectgoodsItemList.splice(index, 1);
@@ -836,16 +812,8 @@ export default {
                         return;
                       }
                     }
-                    console.log(
-                      this.goodsAttributesList[index2],
-                      " this.goodsAttributesList[index2]"
-                    );
                     this.selectgoodsItemList.push(
                       this.goodsAttributesList[index2]
-                    );
-                    console.log(
-                      this.selectgoodsItemList,
-                      "selectgoodsItemList"
                     );
                   }
                 });
@@ -853,7 +821,6 @@ export default {
             });
           } else {
             //添加
-            console.log("添加");
             this.goodsAttributesList.map((item, index) => {
               if (item.sgp_id == this.ruleForm.selectServiceItem) {
                 if (this.extend_cat_id == 3) {
@@ -873,10 +840,6 @@ export default {
                   }
                 }
                 this.selectgoodsItemList.push(item);
-                console.log(
-                  this.selectgoodsItemList,
-                  "ruleForm.selectgoodsItemList"
-                );
               }
             });
           }
@@ -906,7 +869,6 @@ export default {
       });
       form.append("goods_content", formName.content);
       form.append("market_price", formName.serviceTotal);
-      console.log("请添加服务内容");
       this.selectgoodsItemList.map((item, index) => {
         goods_list.push({
           goods_attr_id: item.sgp_id,
@@ -919,7 +881,6 @@ export default {
         form.append("id", this.goods_id);
         //编辑套餐
         ApiDataModule("EDITGOODSPACKAGE", form).then(res => {
-          console.log(res);
           if (res.data.code == CODE_OK) {
             this.$message({ type: "success", message: "编辑成功" });
             //服务套餐列表
@@ -954,7 +915,6 @@ export default {
               message: res.data.msg
             });
           }
-          console.log(res);
         });
       }
     },
@@ -967,7 +927,6 @@ export default {
     //添加服务图标
     handleAddIcon(id) {
       // this.serviceListIcon.attr_icon = id;
-      console.log(id);
       this.serviceListIcon[this.iconActiveIndex].attr_icon = id;
 
       this.$message({
@@ -982,7 +941,6 @@ export default {
       ApiDataModule("GETGOODSBYCATE", {
         cate: id
       }).then(res => {
-        console.log(res);
         if (res.code == CODE_OK) {
           this.getGoodsArray = res.data;
         }
@@ -993,7 +951,6 @@ export default {
       ApiDataModule("GETATTRBYGOODS", {
         id: id
       }).then(res => {
-        console.log(res, "根据商品获取商品属性");
         this.extend_cat_id = res.data.info.extend_cat_id;
         this.goodsAttributesList = res.data.list;
         this.$nextTick(() => {
@@ -1010,7 +967,6 @@ export default {
                   ) {
                     sgp_id_radio_new.push(sgp_id_radio[index]);
                     this.sgp_id_radio = sgp_id_radio_new;
-                    console.log(this.sgp_id_radio, "this.sgp_id_radio");
                   }
                 });
               }
@@ -1030,12 +986,10 @@ export default {
     },
     //upload 上传图标
     handleUploadFile(e) {
-      console.log(e);
       const file = e.target.files[0];
       const form = new FormData();
       form.append("icon", file);
       ApiDataModule("UPLOAD_ICON", form).then(res => {
-        console.log(res);
         if (res.data.code == CODE_OK) {
           this.$message({
             type: "success",
@@ -1130,7 +1084,6 @@ export default {
               }
             }
             ApiDataModule("EDITGOODSSTATUS", formData).then(res => {
-              console.log(res);
               if (res.code == CODE_OK) {
                 this.$message({
                   type: "success",
@@ -1157,7 +1110,6 @@ export default {
               }
             }
             ApiDataModule("CHANGESALESTATUS", formData).then(res => {
-              console.log(res);
               if (res.code == CODE_OK) {
                 this.$message({
                   type: "success",
@@ -1195,7 +1147,6 @@ export default {
           };
           if (type == "getCategoryList") {
             ApiDataModule("DELCATEGORY", formData).then(res => {
-              console.log(res);
               if (res.code == CODE_OK) {
                 this.$message({
                   type: "success",
@@ -1213,7 +1164,6 @@ export default {
           }
           if (type == "serviceIcon") {
             ApiDataModule("DEL_ICON", formData).then(res => {
-              console.log(res);
               if (res.code == CODE_OK) {
                 this.$message({
                   type: "success",
@@ -1233,7 +1183,6 @@ export default {
           //删除服务
           if (type == "deleteService") {
             ApiDataModule("DELGOODS", { id: id }).then(res => {
-              console.log(res);
               if (res.code == CODE_OK) {
                 this.$message({
                   type: "success",
@@ -1253,14 +1202,12 @@ export default {
                   message: res.msg
                 });
               }
-              console.log(res);
             });
             return;
           }
           //删除套餐
           if (type == "deletePackage") {
             ApiDataModule("DELPACKAGE", formData).then(res => {
-              console.log(res);
               if (res.code == CODE_OK) {
                 this.$message({ type: "success", message: "删除成功" });
                 //服务套餐列表

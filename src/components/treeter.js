@@ -76,7 +76,6 @@ const updateTreeNode = (list, item, idPropName = "id", childrenPropName = "child
   if (!list || list == null || list.length <= 0) return false;
   for (var i = 0; i < list.length; i++) {
     if (list[i][idPropName] == item[idPropName]) {
-      console.log(list[i][idPropName],item[idPropName]);
       list.splice(i, 1, item);
       return true;
     } else {

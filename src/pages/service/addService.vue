@@ -279,7 +279,6 @@ export default {
   },
   created() {
     if (this.goodsInfo.goods_id) {
-      console.log(this.goodsInfo, "asdsad");
       this.ruleForm.serviceCategory = this.goodsInfo.cat_id;
       this.ruleForm.goods_name = this.goodsInfo.goods_name;
       this.ruleForm.goods_remark = this.goodsInfo.goods_remark;
@@ -310,7 +309,6 @@ export default {
           mc_rebate: null, //员工提成
           mc_packrebate: null //套餐员工提成
         });
-        console.log(this.serviceListIcon, "this.serviceList");
         return;
       }
       if (this.ruleForm.serviceType == 3) {
@@ -341,14 +339,17 @@ export default {
       //删除服务项目
       if (type == "removeServiceItem") {
         if (this.ruleForm.serviceType == 1) {
+          if(this.serviceListIcon.length == 1)return;
           this.serviceListIcon.splice(index, 1);
           return;
         }
         if (this.ruleForm.serviceType == 2) {
+          if(this.serviceList.length == 1)return;
           this.serviceList.splice(index, 1);
           return;
         }
         if (this.ruleForm.serviceType == 3) {
+          if(this.serviceListArea.length == 1)return;
           this.serviceListArea.splice(index, 1);
           return;
         }
@@ -367,8 +368,6 @@ export default {
     },
     //添加服务提交方法
     handleSubmitAddService(formName) {
-      console.log(this.content, "content");
-      console.log(this.serviceListIcon, "serviceListIcon");
       this.$refs[formName].validate(valid => {
         if (valid) {
           const verificationService = this.verificationService();
@@ -380,10 +379,6 @@ export default {
             return;
           }
           const verificationServiceType = this.verificationServiceType();
-          console.log(
-            this.verificationServiceType(),
-            "this.verificationServiceType()"
-          );
           if (!verificationServiceType) return;
           if (!this.verificationServiceNameBtn) return;
           this.$emit("selectAddService", this.ruleForm);
@@ -397,12 +392,10 @@ export default {
     },
     //upload 上传图标
     handleUploadFile(e) {
-      console.log(e);
       const file = e.target.files[0];
       const form = new FormData();
       form.append("icon", file);
       ApiDataModule("UPLOAD_ICON", form).then(res => {
-        console.log(res);
         if (res.data.code == CODE_OK) {
           this.$message({
             type: "success",
@@ -416,13 +409,8 @@ export default {
     },
     //upload
     handleUpload(e) {
-      console.log(e,'e')
-      // console.log(this.imageArr,'this.imageArr11111111')
       this.imageArr.push(window.URL.createObjectURL(e.target.files[0]));
-      console.log(this.imageArr,'this.imageArr')
       this.ruleForm.banner_img.push(e.target.files[0]);
-      console.log(this.ruleForm.banner_img,'this.ruleForm.banner_img');
-      console.log(this.goodsInfo,'this.goodsInfo');
     },
     handleRemove(index) {
       this.imageArr.splice(index, 1);
@@ -578,8 +566,6 @@ export default {
         }
       });
       return this.verificationServiceNameBtn;
-      console.log(name, "name");
-      console.log(this.verificationServiceNameArray, "arr");
     },
     //验证服务项目字段类型
     verificationServiceType() {

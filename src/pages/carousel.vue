@@ -49,7 +49,7 @@
                 </div>
             </div>
         </panpel>
-        <model-box :show.sync="showmodel" :title="!id?'添加轮播图':'编辑轮播图'" :showButton="false">
+        <model-box :show.sync="showmodel" :title="!id?'添加轮播图':'编辑轮播图'" :showButton="false" :width="'40%'">
           <div slot="dialog-body">
               <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="35%" v-if="showmodel">
                   <el-form-item label="上传图片:(建议尺寸)">
@@ -137,7 +137,6 @@ export default {
     init(){
       this.loading = true;
       ApiDataModule("ADLIST").then(res => {
-        console.log(res);
         if(res.code == CODE_OK){
           this.loading = false;
           this.adList = res.data;
@@ -151,7 +150,6 @@ export default {
       return codeStatus(this.codeList,data);
     },
     handlesubmit(formName) {
-      console.log("bbb");
       this.$refs[formName].validate(valid => {
         if (valid) {
           let form = new FormData();
@@ -173,7 +171,6 @@ export default {
             form.append("id", this.id);
           }
           ApiDataModule("HANDLEAD", form).then(res => {
-            console.log(res);
             if (res.data.code == CODE_OK) {
               this.showmodel = false;
               this.$message({
@@ -194,7 +191,6 @@ export default {
       });
     },
     handleUpload(e) {
-      console.log(e)
       this.imageUrl = window.URL.createObjectURL(e.target.files[0]);
       this.imgFile = e.target.files[0];
     },
@@ -203,7 +199,6 @@ export default {
       this.imgFile = null;
     },
     add() {
-      console.log('aaa')
       this.id = null;
       this.ruleForm.name = null;
       this.ruleForm.ad_link = null;
@@ -223,7 +218,6 @@ export default {
       ApiDataModule("ADINFO", {
         id: id
       }).then(res => {
-        console.log(res);
         this.ruleForm.name = res.data.ad_name;
         this.ruleForm.ad_link = res.data.ad_link;
         this.ruleForm.goods_id = res.data.goods_id;
@@ -242,7 +236,6 @@ export default {
       })
         .then(() => {
           ApiDataModule('ADDEL',{id:id}).then(res=>{
-            console.log(res);
             if(res.code == CODE_OK){
               this.$message({
                 type: "success",

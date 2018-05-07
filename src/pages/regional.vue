@@ -172,7 +172,6 @@ export default {
       this.loading = true;
       //大区经理列表
       ApiDataModule("BRANCHMANAGERLIST", {page:this.page}).then(res => {
-        console.log(res);
         if(res.code == CODE_OK){
           this.loading = false;
           this.branchManagerList = res.data.data;
@@ -202,7 +201,6 @@ export default {
             formData.password = this.ruleForm.pasd;
             formData.password2 = this.ruleForm.checkPasd;
             ApiDataModule("BRANCHMANAGER", formData).then(res => {
-              console.log(res);
               if (res.code == CODE_OK) {
                 this.showmodel = false;
                 this.init();
@@ -219,7 +217,6 @@ export default {
           } else {
             formData.id = this.id;
             ApiDataModule("BRANCHMANAGERDOEDIT", formData).then(res => {
-              console.log(res);
               if (res.code == CODE_OK) {
                 if(res.admininfo.admin_id == this.adminInfo.admin_id){
                   removeStore('ADMININFO');
@@ -235,7 +232,6 @@ export default {
                     }
                 }
                 });
-                console.log(res);
                 this.init();
               } else if (res.code == CODE_ERR) {
                 this.$message({
@@ -256,7 +252,6 @@ export default {
       ApiDataModule("BRANCHMANAGEREDIT", {
         id: id
       }).then(res => {
-        console.log(res);
         if (res.code == CODE_OK) {
           this.ruleForm.name = res.data.user_name;
           this.ruleForm.phone = res.data.phone;
@@ -290,7 +285,6 @@ export default {
             formData.status = 0;
           }
           ApiDataModule("BRANCHMANAGERDELETE", formData).then(res => {
-            console.log(res);
             if (res.code == CODE_OK) {
               this.$message({
                 type: "success",

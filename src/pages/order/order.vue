@@ -256,7 +256,6 @@ export default {
         formData.keyword = this.searche_input;
       }
       ApiDataModule("GETORDERLIST", formData).then(res => {
-        console.log(res);
         if(res.code == CODE_OK){
           this.loading = false;
           this.orderList = res.data.data;
@@ -284,7 +283,6 @@ export default {
     },
     //添加订单
     handleAddOrder(form) {
-      console.log(form)
       let formData = {};
       if(!form) return;
       formData.user_tel = form.order_account_number;//用户账号
@@ -300,7 +298,6 @@ export default {
       formData.goods_attr = form.goods_attr;//服务数组
       formData.goods_type = form.serviceType;//添加订单类型
       ApiDataModule('ADDORDER',formData).then(res=>{
-        console.log(res,'sdfsdf');
         if(res.code == CODE_OK){
           this.add_order_switch = false;
           this.$message({type:'success',message:'添加成功'})
@@ -316,7 +313,6 @@ export default {
       ApiDataModule("GETORDERINFO", {
         id: id
       }).then(res => {
-        console.log(res);
         this.order_details = res.data;
         if (res.data.area_boss_id != 0 || res.data.area_boss_id != null) {
           this.areaBossId = res.data.area_boss_id;
@@ -333,7 +329,6 @@ export default {
       if (type == 1) {
         //分配订单到大区经理
         ApiDataModule("GETCITYBOSS").then(res => {
-          console.log(res);
           this.staffList = res.data;
         });
         return;
@@ -348,7 +343,6 @@ export default {
         }
         formData.id = this.cityBossId;
         ApiDataModule("GETAREABOSSBYCITY", formData).then(res => {
-          console.log(res);
           this.staffList = res.data;
         });
         return;
@@ -365,14 +359,12 @@ export default {
         formData.area_id = this.areaBossId;
         this.rec_id = rec_id;
         ApiDataModule("GETSTAFFBYGOODS", formData).then(res => {
-          console.log(res);
           this.staffList = res.data;
         });
         return;
       }
     },
     allocateOrder() {
-      console.log("allotOrder");
       if (this.selectRadioValue == null) {
         this.$message({ type: "warning", message: "请选择分配人员" });
         return;
@@ -391,12 +383,10 @@ export default {
         this.areaBossId = this.selectRadioValue;
       } else if (this.ruleForm.identityRadio == 3) {
         //员工
-        console.log("bbb");
         formData.rec_id = this.rec_id;
         formData.staff_id = this.selectRadioValue;
       }
       ApiDataModule("DISTRIBUTIONORDER", formData).then(res => {
-        console.log(res);
         if (res.code == CODE_OK) {
           this.init();
           this.$message({ type: "success", message: "分配成功" });
@@ -456,7 +446,6 @@ export default {
             formData.status = 4;
           }
           ApiDataModule('CHANGEORDERSTATUS',formData).then(res=>{
-            console.log(res);
             if(res.code == CODE_OK){
               this.$message({type:'success',message:'操作成功'})
               this.init();
@@ -481,7 +470,6 @@ export default {
       })
         .then(() => {
           ApiDataModule("DELORDER", { id: id }).then(res => {
-            console.log(res);
             if (res.code == CODE_OK) {
               this.$message({
                 type: "success",

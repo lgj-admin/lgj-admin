@@ -124,7 +124,6 @@ export default {
     this.init();
     //权限分组数据
     ApiDataModule("AUTHGROUP").then(res => {
-      console.log(res);
       if (res.code == CODE_OK) {
         this.groupArray = res.data;
       }
@@ -144,7 +143,6 @@ export default {
       this.loading = true;
       //权限列表
       ApiDataModule("SYSTEMAUTHLIST").then(res => {
-        console.log(res);
         if (res.code == CODE_OK) {
           this.loading = false;
           this.systemAuthList = res.data;
@@ -158,12 +156,10 @@ export default {
       return codeStatus(this.codeList,data);
     },
     handleSelectGroup(e){
-      console.log(e);
       this.ruleForm.code2 = null;
       ApiDataModule('GETACTION',{
         controller:e
       }).then(res=>{
-        console.log(res);
         this.getAction = res;
       })
     },

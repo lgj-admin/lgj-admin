@@ -9,7 +9,7 @@
                     <transition name="move">
                           <el-tooltip effect="dark" content="客服问答未回消息数" placement="bottom-end">
                               <i class="news_tip fa fa-commenting" v-show="newsCount && handleCode('System@feedbackList')" @click="jump()">
-                                <span class="news_count inner">{{newsCount}}</span>
+                                <span class="news_count inner" >{{newsCount>99? `99+`:newsCount}}</span>
                               </i>
                           </el-tooltip>
                     </transition>
@@ -44,21 +44,17 @@ export default {
     ])
   },
   created(){
-    console.log(getStore('ADMININFO'));
     if(getStore('ADMININFO')){
       ApiDataModule('FEEDBACKCOUNT').then(res=>{
-        console.log(res);
         this.get_newsCount(res.count);
       })
       this.timer = setInterval(()=>{
         ApiDataModule('FEEDBACKCOUNT').then(res=>{
-          console.log(res);
           this.get_newsCount(res.count);
         })
       },3600000)
     }
     ApiDataModule('FEEDBACKLIST').then(res=>{
-      console.log(res,'1111111');
       if(res.code == CODE_Login){
         this.$message({type:'warning',message:"未登录，请先登录"});
         removeStore('ADMININFO');
@@ -179,9 +175,9 @@ nav .nav-out{
   position: absolute;
   top:-10px;
   right:-12px;
-  width:16px;
-  height:16px;
-  line-height: 16px;
+  width:18px;
+  height: 18px;
+  line-height: 18px;
   text-align: center;
   font-size:10px;
   color:#fff;

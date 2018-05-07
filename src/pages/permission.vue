@@ -120,7 +120,6 @@ export default {
     this.init();
     //所有权限组合数据
     ApiDataModule("SYSTEMAUTHARRAY").then(res => {
-      console.log(res);
       if (res.code == CODE_OK) {
         this.systemAuthList = res.data;
       }
@@ -137,7 +136,6 @@ export default {
       this.loading = true;
       //角色列表
       ApiDataModule("ADMINROLE").then(res => {
-        console.log(res);
         if(res.code == CODE_OK){
           this.loading = false;
           this.adminRole = res.data;
@@ -167,7 +165,6 @@ export default {
           }
           ApiDataModule("HANDLEADMINROLE", formData).then(res => {
             this.showmodel = false;
-            console.log(res);
             if (res.code == CODE_OK) {
               this.$message({
                 type:'success',
@@ -217,7 +214,6 @@ export default {
       ApiDataModule("ADMININFO", {
         id: id
       }).then(res => {
-        console.log(res)
         if (res.code == CODE_OK) {
           this.ruleForm.name = res.data.role_name;
           this.ruleForm.desc = res.data.role_desc;
@@ -226,7 +222,6 @@ export default {
               this.$refs.tree.setChecked(item, true);
             });
           }
-          console.log(this.$refs.tree.getCheckedNodes(),'qqqq');
           this.ruleForm.permissionArr = []
           this.$refs.tree.getCheckedNodes().map((item,index)=>{
 

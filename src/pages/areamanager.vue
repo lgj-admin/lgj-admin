@@ -143,7 +143,6 @@ export default {
     ApiDataModule("LEADERLIST", {
       type: 1
     }).then(res => {
-      console.log(res);
       this.selectregional = res.data;
     });
   },
@@ -164,7 +163,6 @@ export default {
         formData.tel = this.searchValueTel;
       }
       ApiDataModule("AREAMANAGERLIST",formData).then(res => {
-        console.log(res, "aaa");
         if(res.code == CODE_OK){
           this.loading = false;
           this.areaManagerList = res.data.data;
@@ -197,7 +195,6 @@ export default {
           if (!this.id) {
             //添加操作
             ApiDataModule("AREAMANAGERADD", formData).then(res => {
-              console.log(res);
               if (res.code == CODE_OK) {
                 this.$message({
                   type: "success",
@@ -214,10 +211,8 @@ export default {
             return;
           }
           //编辑操作
-          console.log('编辑')
           formData.id = this.id;
           ApiDataModule("AREAMANAGERDOEDIT", formData).then(res => {
-            console.log(res);
             if (res.code == CODE_OK) {
               this.$message({
                 type: "success",
@@ -280,7 +275,6 @@ export default {
             formData.status = 0;
           }
           ApiDataModule("AREAMANAGERDELETE", formData).then(res => {
-            console.log(res);
             if (res.code == CODE_OK) {
               this.$message({
                 type: "success",

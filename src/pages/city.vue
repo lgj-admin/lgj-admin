@@ -107,7 +107,6 @@ export default {
           this.loading = false;
           this.cityList = res.data.data;
           this.total = res.data.total;
-          console.log(res);
           return;
         }
         this.loading = false;
@@ -194,7 +193,6 @@ export default {
           ApiDataModule("CITYDELETE", {
             id: id
           }).then(res => {
-            console.log(res);
             if (res.code == CODE_OK) {
               this.$message({
                 type: "success",

@@ -278,7 +278,6 @@ export default {
       });
     },
     handleTreeNodeClick(nodeData) {
-      console.log(nodeData, "dar2");
       if (this.multiple) return;
       this.$emit("input", nodeData.id);
       this.visible = false;
@@ -287,7 +286,6 @@ export default {
       this.handleResize();
     },
     handleCheckChange(data, checked, indeterminate) {
-      console.log(data, "dar");
       if (!this.multiple) return;
       this.selected = this.$refs.tree.getCheckedNodes();
       let tmpValue = [];

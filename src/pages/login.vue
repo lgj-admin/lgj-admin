@@ -36,74 +36,69 @@
                 <el-button type="primary" @click="handlelogin('ruleForm')" >登录</el-button>
             </el-form>
         </div>
-        <img src="../assets/login.jpg" alt="">
+        <!-- <img src="../assets/login.jpg" alt=""> -->
+        <div class="bgc-img"></div>
         <div class="mask"></div>
     </div>
 </template>
 
 <script>
 import { ApiDataModule, CODE_OK, CODE_ERR } from "config/axios.js";
-import { setStore,getStore } from "config/utils";
-import {mapMutations ,mapGetters} from 'vuex'
-
-
+import { setStore, getStore } from "config/utils";
+import { mapMutations, mapGetters } from "vuex";
 
 export default {
   data() {
     return {
       ruleForm: {
         name: "",
-        pasd:""
+        pasd: ""
       },
       rules: {
         name: [{ required: true, message: "请输入用户名", trigger: "blur" }],
         pasd: [{ required: true, message: "请输入密码", trigger: "blur" }]
       },
-      loading:false,
+      loading: false
     };
   },
-  methods:{
+  methods: {
     ...mapMutations({
-      get_adminInfo:'GET_ADMININFO'
+      get_adminInfo: "GET_ADMININFO"
     }),
-    handlelogin(formName){
+    handlelogin(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.loading = true;
           const formData = {};
           formData.phone = this.ruleForm.name;
-          formData.pass  = this.ruleForm.pasd;
-          ApiDataModule('ADMINLOGIN',formData).then(res=>{
-            console.log(res);
-            if(res.code == CODE_OK){
-              setStore('ADMININFO',res.admininfo);
+          formData.pass = this.ruleForm.pasd;
+          ApiDataModule("ADMINLOGIN", formData).then(res => {
+            if (res.code == CODE_OK) {
+              setStore("ADMININFO", res.admininfo);
               this.$message({
-                type:'success',
-                message:'登录成功',
-                onClose:()=>{
-                  this.get_adminInfo(JSON.parse(getStore('ADMININFO')));
+                type: "success",
+                message: "登录成功",
+                onClose: () => {
+                  this.get_adminInfo(JSON.parse(getStore("ADMININFO")));
                   this.loading = false;
                   this.$router.push({
-                    path:'/service'
-                  })
+                    path: "/service"
+                  });
                 }
-              })
-
-            }else{
+              });
+            } else {
               this.loading = false;
               this.$message({
-                type:'warning',
-                message:res.msg
-              })
+                type: "warning",
+                message: res.msg
+              });
             }
           });
-
         } else {
           return false;
         }
       });
-    },
-
+    }
   }
 };
 </script>
@@ -115,46 +110,60 @@ export default {
   align-items: center;
   width: 100%;
   height: 100%;
-  z-index:199;
+  z-index: 199;
 }
-.login img{
+.login img {
   position: fixed;
-  top:0;
+  top: 0;
   left: 0;
-  width:100%;
-  height:100%;
-  filter:blur(5px);
-  z-index:89;
+  width: 100%;
+  height: 100%;
+  filter: blur(5px);
+  z-index: 89;
 }
-.mask{
+.mask {
   position: fixed;
-  top:0;
+  top: 0;
   left: 0;
-  width:100%;
-  height:100%;
-  background-color:rgba(0,0,0,0.4);
-  z-index:99;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 99;
 }
 .login-wrapper {
   width: 380px;
-  padding:30px;
+  padding: 30px;
   text-align: center;
-  z-index:999;
+  z-index: 999;
   background-color: #fdfdfd;
 }
-.login-header{
-  padding-bottom:30px;
+.login-header {
+  padding-bottom: 30px;
 }
-.login-header>span{
+.login-header > span {
   display: block;
   margin-bottom: 10px;
-  color:#5a5454;
-  font-size:16px;
+  color: #5a5454;
+  font-size: 16px;
 }
-.login-header>label{
+.login-header > label {
   display: block;
-  color:#666;
-  font-size:12px;
+  color: #666;
+  font-size: 12px;
+}
+.bgc-img {
+  width: 100%;
+  height:100%;
+  background-image: url("../assets/login.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: 10;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  filter: blur(5px);
 }
 </style>
 

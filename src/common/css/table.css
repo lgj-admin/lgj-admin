@@ -35,18 +35,23 @@
   color: #999999;
 }
 .td-word{
-  max-width:135px;
+  /* max-width:135px;
   line-height: 20px;
-  word-wrap:break-word;
+  word-wrap:break-word; */
 }
 .tbody .tr {
   border-bottom: 1px solid #ccc;
 }
 
 .td {
+  max-width: 176px;
   display: table-cell;
   text-align: left;
   padding: 10px;
+  word-break: break-all;
+  box-sizing: border-box;
+  line-height: 18px;
+  white-space: normal;
 }
 
 table a:not(.btn),

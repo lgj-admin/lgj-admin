@@ -17,8 +17,6 @@ export default {
   methods:{
   },
   created(){
-        console.log('asdasd');
-
   }
 }
 </script>

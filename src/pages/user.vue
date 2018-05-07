@@ -175,7 +175,6 @@ export default {
         formData.mobile = this.searchTelValue
       }
       ApiDataModule("USERSEARCH",formData).then(res => {
-        console.log(res);
         if(res.code == CODE_OK){
           this.loading = false;
           this.userList = res.data.data;
@@ -217,7 +216,6 @@ export default {
               type: "warning",
               message: res.msg
             });
-            console.log(res);
           });
         } else {
           return false;
@@ -260,7 +258,6 @@ export default {
             formData.is_lock = 0;
           }
           ApiDataModule("USERLOCK", formData).then(res => {
-            console.log(res);
             if (res.code == CODE_OK) {
               this.init();
               this.$message({
@@ -298,7 +295,6 @@ export default {
     handleEdit(id) {
       this.user_id = id;
       ApiDataModule("USEREDIT", { user_id: id }).then(res => {
-        console.log(res);
         this.ruleForm.name = res.data.nickname;
         this.ruleForm.phone = res.data.mobile;
       });

@@ -159,7 +159,6 @@ export default {
             msg_content:this.ruleForm.content
           };
           ApiDataModule('REPLYFEEDBACK',formDta).then(res=>{
-            console.log(res);
             if(res.code == CODE_OK){
               this.init(this.page);
               this.$message({
@@ -194,7 +193,6 @@ export default {
       this.showmodel = true;
       this.msg_id = id;
       ApiDataModule('FEEDBACKCOUNT').then(res=>{
-        console.log(res);
         this.get_newsCount(res.count);
       })
     },

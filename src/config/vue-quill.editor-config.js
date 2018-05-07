@@ -66,7 +66,6 @@ const handlers = {
     var self = this;
 
     var fileInput = this.container.querySelector('input.ql-image[type=file]');
-    console.log(fileInput,'fileInput')
     if (fileInput === null) {
       fileInput = document.createElement('input');
       fileInput.setAttribute('type', 'file');
@@ -98,7 +97,6 @@ const handlers = {
         xhr.onload = function (e) {
           if (xhr.status === 200) {
             var res = JSON.parse(xhr.responseText)
-            console.log(res)
             let length = self.quill.getSelection(true).index;
             self.quill.insertEmbed(length, 'image', ROOT_URL  + res.url)
             self.quill.setSelection(length + 1)
@@ -108,13 +106,11 @@ const handlers = {
         // 开始上传数据
         xhr.upload.onloadstart = function (e) {
           fileInput.value = ''
-          console.log('开始上传')
         }
         // 当发生网络异常的时候会触发，如果上传数据的过程还未结束
         xhr.upload.onerror = function (e) {}
         // 上传数据完成（成功或者失败）时会触发
         xhr.upload.onloadend = function (e) {
-          console.log('上传结束')
         }
         xhr.send(formData)
       });

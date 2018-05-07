@@ -281,7 +281,6 @@ export default {
   created() {
     //获取七天日期
     ApiDataModule("GETDATEADDSEVEN").then(res => {
-      console.log(res);
       this.dateList = res.data;
       this.$nextTick(() => {
         this.ruleForm.order_reservation_date = this.dateList[0];
@@ -290,24 +289,20 @@ export default {
     });
     //服务分类列表
     ApiDataModule("GETCATEGORY").then(res => {
-      console.log(res,'服务分类列表');
       this.getCategoryList = res.data;
     });
     //获取城市数据
     ApiDataModule("CITYLIST").then(res => {
-      console.log(res);
       this.cityList = res.data.data;
     });
     //服务套餐列表
     ApiDataModule("GETSERVERPACKAGELIST").then(res => {
       this.getServerPackageList = res.data;
-      console.log(res, "GETSERVERPACKAGELIST");
     });
   },
   methods: {
     //全选事件
     CheckAllChange(e, val) {
-      console.log(e, val);
       var newArticList = [];
       this.goodsAttributesList.map(function(item, index) {
         newArticList.push(item.sgp_id);
@@ -317,7 +312,6 @@ export default {
     },
     //复选框事件
     handleCheckedCitiesChange(value) {
-      console.log(value);
       this.ruleForm.checkServiceItem = value;
       var checkedCount = value.length;
       this.checkAll = checkedCount === this.goodsAttributesList.length;
@@ -333,7 +327,6 @@ export default {
       ApiDataModule("GETGOODSBYCATE", {
         cate: id
       }).then(res => {
-        console.log(res,'服务项目');
         if (res.code == CODE_OK) {
           this.getGoodsArray = res.data;
         }
@@ -352,7 +345,6 @@ export default {
       ApiDataModule("GETATTRBYGOODS", {
         id: id
       }).then(res => {
-        console.log(res, "根据商品获取商品属性");
         this.extend_cat_id = res.data.info.extend_cat_id;
         this.goodsAttributesList = res.data.list;
       });
@@ -379,7 +371,6 @@ export default {
             key_name:item.key_name
           })
         })
-        console.log(this.ruleForm.goods_attr,'aaaaaaaaaaaaa')
         this.ruleForm.goods_attr.map((item2,index2)=>{
           total += item2.goods_num * item2.price;
         })
@@ -401,7 +392,6 @@ export default {
               }
               item.count = document.getElementsByClassName(packagearea)[0].value;
             }
-            console.log(item, "dszfdsfds");
             this.selectgoodsItemList.push(item);
           }
         });
@@ -413,7 +403,6 @@ export default {
             key_name:item.key_name
           })
         })
-        console.log(this.ruleForm.goods_attr,'bbbbbbbbbbbbbb');
         this.ruleForm.goods_attr.map((item2,index2)=>{
           total += item2.goods_num * item2.price;
         })
@@ -435,7 +424,6 @@ export default {
     },
     handleSelectDate(e) {
       this.ruleForm.order_reservation_date = e;
-      console.log(this.ruleForm.order_reservation_date, "asdasd");
     },
     handleSelectTime(e) {
       this.ruleForm.order_reservation_time = e;

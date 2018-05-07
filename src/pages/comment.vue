@@ -133,7 +133,6 @@ export default {
         page:currentPage,
         is_package:activeIndex
       }).then(res=>{
-        console.log(res)
         if(res.code == CODE_OK){
           this.loading = false;
           this.feedback_list = res.data.data;
@@ -155,7 +154,6 @@ export default {
       this.init(this.page,e);
     },
     handlesubmit(formName) {
-      console.log("bbb");
       this.$refs[formName].validate(valid => {
         if (valid) {
           const formDta = {
@@ -164,7 +162,6 @@ export default {
             is_package:this.active_index
           };
           ApiDataModule('REPLYCOMMENT',formDta).then(res=>{
-            console.log(res);
             if(res.code == CODE_OK){
               this.init(this.page,this.active_index);
               this.ruleForm.content = null;
@@ -205,7 +202,6 @@ export default {
       })
         .then(() => {
           ApiDataModule('DELCOMMENT',{comment_id:id}).then(res=>{
-            console.log(res);
             if(res.code == CODE_OK){
               this.$message({
                 type: "success",

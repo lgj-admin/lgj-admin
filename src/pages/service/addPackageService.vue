@@ -171,8 +171,6 @@ export default {
   },
   created() {
     if(this.goodsInfo.goods_id){
-      console.log('有');
-      console.log(this.goodsInfo);
       this.ruleForm.goods_name = this.goodsInfo.goods_name;
       this.ruleForm.goods_remark = this.goodsInfo.goods_remark;
       this.ruleForm.checkedArea = this.goodsInfo.shipping_area_ids;
@@ -200,7 +198,6 @@ export default {
         total += item2.count * item2.price;
         totalArray.push(totalString);
       });
-      console.log(total, "total");
       this.ruleForm.serviceTotal = total;
       return `${totalArray.join("+")} = ${total}`;
     }

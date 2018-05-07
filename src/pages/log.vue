@@ -87,7 +87,6 @@ export default {
       this.loading = true;
       //日志列表
       ApiDataModule('LOGSLIST',{page:this.page}).then(res=>{
-        console.log(res)
         if(res.code == CODE_OK){
           this.loading = false;
           this.logs_list = res.logs_list.data;
@@ -120,7 +119,6 @@ export default {
             end:end,
           };
           ApiDataModule('LOGSDEL',formData).then(res=>{
-            console.log(res);
             if(res.code == CODE_OK){
               this.$message({
                 type: 'success',

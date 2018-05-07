@@ -158,7 +158,6 @@ export default {
       this.loading = true;
       //客服列表
       ApiDataModule("CUSTOMERSERVICELIST",{page:this.page}).then(res => {
-        console.log(res);
         if(res.code == CODE_OK){
           this.loading = false;
           this.customerServiceList = res.data.data;
@@ -201,10 +200,8 @@ export default {
             return;
           }
           //编辑
-          console.log('编辑')
           formData.id = this.id;
           ApiDataModule("CUSTOMERSERVICEDOEDIT", formData).then(res => {
-            console.log(res);
             if (res.code == CODE_OK) {
               if(res.admininfo.admin_id == this.adminInfo.admin_id){
                   removeStore('ADMININFO');
@@ -280,7 +277,6 @@ export default {
             formData.status = 0;
           }
           ApiDataModule("CUSTOMERSERVICEDELETE",formData).then(res => {
-            console.log(res);
             if (res.code == CODE_OK) {
               this.$message({
                 type: "success",

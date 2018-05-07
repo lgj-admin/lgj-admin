@@ -160,7 +160,6 @@ import {mapGetters} from 'vuex'
 export default {
   data() {
     const validateName = (rule, value, callback) => {
-      console.log(value)
       if(value === null || value === ''){
         callback(new Error("请输入姓名"));
       }else{
@@ -226,14 +225,12 @@ export default {
     ApiDataModule("LEADERLIST", {
       type: 1
     }).then(res => {
-      console.log(res, "regionalManager");
       this.regionalManager = res.data;
     });
     //区域经理
     ApiDataModule("LEADERLIST", {
       type: 2
     }).then(res => {
-      console.log(res);
       this.areaManager = res.data;
     });
     //服务技能
@@ -264,7 +261,6 @@ export default {
       }
       //员工列表
       ApiDataModule("EMPLOYEELIST",formData).then(res => {
-        console.log(res, "list");
         if(res.code == CODE_OK){
           this.loading = false;
           this.employeeList = res.data.data;
@@ -316,11 +312,9 @@ export default {
             return;
           }
           //编辑
-          console.log('编辑')
           formData.type = 2;
           formData.id = this.id;
           ApiDataModule("EMPLOYEEADDEDIT", formData).then(res => {
-            console.log(res);
             if (res.code == CODE_OK) {
               this.$refs[formName].resetFields();
               this.showmodel = false;
@@ -359,9 +353,7 @@ export default {
     //编辑
     handleEdit(id) {
       this.id = id;
-      console.log(id,'id')
       ApiDataModule("EMPLOYEEEDIT", { id: id }).then(res => {
-        console.log(res);
         this.ruleForm.name = res.data.name;
         this.ruleForm.phone = res.data.tel;
         this.ruleForm.regionalManagerValue = res.data.city_boss;
@@ -390,7 +382,6 @@ export default {
             formData.status = 0;
           }
           ApiDataModule("EMPLOYEEDELETE", formData).then(res => {
-            console.log(res);
             if (res.code == CODE_OK) {
               this.$message({
                 type: "success",

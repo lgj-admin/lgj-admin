@@ -564,7 +564,6 @@ export default {
       );
     },
     getParentId(parentId) {
-      console.log(parentId);
     },
     newAdd() {
       this.form = {
@@ -583,7 +582,6 @@ export default {
     },
     batchDelete() {
       var checkKeys = this.$refs.menuTree.getCheckedKeys();
-      console.log(checkKeys, "checkKeys");
       if (checkKeys == null || checkKeys.length <= 0) {
         this.$message.warning("请选择要删除的资源");
         return;
@@ -597,7 +595,6 @@ export default {
       });
     },
     handleNodeClick(data) {
-      console.log(data, "data");
       this.form = data;
     },
     onSubmit() {
